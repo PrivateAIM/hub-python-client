@@ -11,6 +11,8 @@ from testcontainers.rabbitmq import RabbitMqContainer
 from testcontainers.redis import RedisContainer
 from testcontainers.vault import VaultContainer
 
+from flame_hub import flow
+
 
 def get_redis_connection_string(r: RedisContainer) -> str:
     return f"redis://redis:{r.port}"
@@ -304,3 +306,15 @@ def nginx(ui, core, authup, storage, messenger, network, use_testcontainers, tmp
         ) as c:
             wait_for_logs(c, "Watching docker events", raise_on_exit=True)
             yield c
+
+
+@pytest.fixture(scope="session")
+def client(nginx, auth_base_url, auth_admin_username, auth_admin_password):
+    pw_auth = flow.PasswordAuth(auth_admin_username, auth_admin_password, auth_base_url)
+    client = httpx.Client(auth=pw_auth)
+
+    # perform pre-check
+    r = client.get(auth_base_url)
+    assert r.status_code == httpx.codes.OK.value
+
+    yield client
