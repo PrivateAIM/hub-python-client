@@ -7,8 +7,6 @@ import urllib.parse
 
 from flame_hub import common
 
-_DEFAULT_AUTH_BASE_URL = "https://auth.privateaim.dev"
-
 
 class AccessToken(BaseModel):
     access_token: str
@@ -22,7 +20,9 @@ class RefreshToken(AccessToken):
 
 
 class RobotAuth(httpx.Auth):
-    def __init__(self, robot_id: str, robot_secret: str, base_url=_DEFAULT_AUTH_BASE_URL, client: httpx.Client = None):
+    def __init__(
+        self, robot_id: str, robot_secret: str, base_url=common.DEFAULT_AUTH_BASE_URL, client: httpx.Client = None
+    ):
         self._robot_id = robot_id
         self._robot_secret = robot_secret
         self._base_url = urllib.parse.urlsplit(base_url)
@@ -53,7 +53,9 @@ class RobotAuth(httpx.Auth):
 
 
 class PasswordAuth(httpx.Auth):
-    def __init__(self, username: str, password: str, base_url=_DEFAULT_AUTH_BASE_URL, client: httpx.Client = None):
+    def __init__(
+        self, username: str, password: str, base_url=common.DEFAULT_AUTH_BASE_URL, client: httpx.Client = None
+    ):
         self._username = username
         self._password = password
         self._base_url = urllib.parse.urlsplit(base_url)
