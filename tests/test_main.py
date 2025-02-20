@@ -1,4 +1,4 @@
-from project.main import add
+from flame_hub.main import add
 
 
 def test_add():

@@ -1,5 +1,5 @@
 [project]
-name = "python-template-repo"
+name = "flame-hub-client"
 version = "0.1.0"
 description = ""
 authors = [
@@ -12,7 +12,7 @@ dependencies = [
 license = "Apache-2.0"
 
 [tool.poetry]
-packages = [{ include = "project" }]
+packages = [{ include = "flame_hub" }]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.3.0"
