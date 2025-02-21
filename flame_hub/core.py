@@ -46,6 +46,28 @@ class UpdateNode(BaseModel):
     realm_id: uuid.UUID | None
 
 
+class MasterImageGroup(BaseModel):
+    id: uuid.UUID
+    name: str
+    path: str
+    virtual_path: str
+    command: str | None
+    command_arguments: t.Any
+    created_at: datetime
+    updated_at: datetime
+
+
+class MasterImage(BaseModel):
+    id: uuid.UUID
+    path: str | None
+    virtual_path: str
+    group_virtual_path: str
+    name: str
+    command: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -106,3 +128,9 @@ class CoreClient(BaseClient):
             ),
             "nodes",
         )
+
+    def get_master_image_groups(self) -> ResourceList[MasterImageGroup]:
+        return self._get_all_resources(MasterImageGroup, "master-image-groups")
+
+    def get_master_images(self) -> ResourceList[MasterImage]:
+        return self._get_all_resources(MasterImage, "master-images")

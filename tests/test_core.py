@@ -31,3 +31,11 @@ def test_update_node(core_client, node):
 
     assert node != new_node
     assert new_node.external_name == new_name
+
+
+def test_get_master_images(core_client):
+    _ = core_client.get_master_images()
+
+
+def test_get_master_image_groups(core_client):
+    _ = core_client.get_master_image_groups()
