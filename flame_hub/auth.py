@@ -1,14 +1,15 @@
 __all__ = ["AuthClient"]
 
 import typing as t
-import urllib.parse
 import uuid
 from datetime import datetime
 
 import httpx
 from pydantic import BaseModel
 
-from flame_hub import common, flow
+from flame_hub.base_client import ResourceList, BaseClient, obtain_uuid_from
+from flame_hub.defaults import DEFAULT_AUTH_BASE_URL
+from flame_hub.flow import RobotAuth, PasswordAuth
 
 
 class CreateRealm(BaseModel):
@@ -56,129 +57,63 @@ class UpdateRobot(BaseModel):
     secret: str | None
 
 
-class AuthClient(object):
+class AuthClient(BaseClient):
     def __init__(
         self,
-        base_url=common.DEFAULT_AUTH_BASE_URL,
+        base_url=DEFAULT_AUTH_BASE_URL,
         client: httpx.Client = None,
-        auth: t.Union[flow.RobotAuth, flow.PasswordAuth] = None,
+        auth: t.Union[RobotAuth, PasswordAuth] = None,
     ):
-        self._base_url = urllib.parse.urlsplit(base_url)
-        self._client = client or httpx.Client(auth=auth)
+        super().__init__(base_url, client, auth)
 
-    def get_realms(self) -> common.ResourceList[Realm]:
-        r = self._client.get(
-            common.merge_parse_result(self._base_url, path=common.join_url_path(self._base_url.path, "realms")),
-        )
-
-        assert r.status_code == httpx.codes.OK.value
-        return common.ResourceList[Realm](**r.json())
+    def get_realms(self) -> ResourceList[Realm]:
+        return self._get_all_resources(Realm, "realms")
 
     def create_realm(self, name: str, display_name: str = None, description: str = None) -> Realm:
-        r = self._client.post(
-            common.merge_parse_result(self._base_url, path=common.join_url_path(self._base_url.path, "realms")),
-            json=CreateRealm(
+        return self._create_resource(
+            Realm,
+            CreateRealm(
                 name=name,
                 display_name=display_name,
                 description=description,
-            ).model_dump(mode="json"),
-        )
-
-        assert r.status_code == httpx.codes.CREATED.value
-        return Realm(**r.json())
-
-    def delete_realm(self, realm_id: Realm | str | uuid.UUID):
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        r = self._client.delete(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"realms/{realm_id}")
             ),
+            "realms",
         )
 
-        assert r.status_code == httpx.codes.ACCEPTED.value
+    def delete_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]):
+        self._delete_resource(realm_id, "realms")
 
-    def get_realm(self, realm_id: Realm | str | uuid.UUID) -> Realm | None:
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        r = self._client.get(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"realms/{realm_id}")
-            ),
-        )
-
-        if r.status_code == httpx.codes.NOT_FOUND.value:
-            return None
-
-        assert r.status_code == httpx.codes.OK.value
-        return Realm(**r.json())
+    def get_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]) -> Realm | None:
+        return self._get_single_resource(Realm, realm_id, "realms")
 
     def update_realm(
         self, realm_id: Realm | str | uuid.UUID, name: str = None, display_name: str = None, description: str = None
     ) -> Realm:
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        r = self._client.post(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"realms/{realm_id}")
-            ),
-            json=UpdateRealm(
+        return self._update_resource(
+            Realm,
+            realm_id,
+            UpdateRealm(
                 name=name,
                 display_name=display_name,
                 description=description,
-            ).model_dump(mode="json", exclude_none=True),
+            ),
+            "realms",
         )
-
-        assert r.status_code == httpx.codes.ACCEPTED.value
-        return Realm(**r.json())
 
     def create_robot(
         self, name: str, realm_id: t.Union[Realm, str, uuid.UUID], secret: str, display_name: str = None
     ) -> Robot:
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        # noinspection PyTypeChecker
-        r = self._client.post(
-            common.merge_parse_result(self._base_url, path=common.join_url_path(self._base_url.path, "robots")),
-            json=CreateRobot(name=name, display_name=display_name, realm_id=str(realm_id), secret=secret).model_dump(
-                mode="json"
-            ),
+        return self._create_resource(
+            Robot,
+            CreateRobot(name=name, display_name=display_name, realm_id=str(obtain_uuid_from(realm_id)), secret=secret),
+            "robots",
         )
-
-        assert r.status_code == httpx.codes.CREATED.value
-        return Robot(**r.json())
 
     def delete_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]):
-        if isinstance(robot_id, Robot):
-            robot_id = robot_id.id
-
-        r = self._client.delete(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"robots/{robot_id}")
-            ),
-        )
-
-        assert r.status_code == httpx.codes.ACCEPTED.value
+        self._delete_resource(robot_id, "robots")
 
     def get_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]) -> Robot | None:
-        if isinstance(robot_id, Robot):
-            robot_id = robot_id.id
-
-        r = self._client.get(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"robots/{robot_id}")
-            ),
-        )
-
-        if r.status_code == httpx.codes.NOT_FOUND.value:
-            return None
-
-        assert r.status_code == httpx.codes.OK.value
-        return Robot(**r.json())
+        return self._get_single_resource(Robot, robot_id, "robots")
 
     def update_robot(
         self,
@@ -188,24 +123,14 @@ class AuthClient(object):
         realm_id: t.Union[Realm, str, uuid.UUID] = None,
         secret: str = None,
     ) -> Robot:
-        if isinstance(robot_id, Robot):
-            robot_id = robot_id.id
-
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        # noinspection PyTypeChecker
-        r = self._client.post(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"robots/{robot_id}")
-            ),
-            json=UpdateRobot(
+        return self._update_resource(
+            Robot,
+            robot_id,
+            UpdateRobot(
                 name=name,
                 display_name=display_name,
-                realm_id=str(realm_id) if realm_id is not None else None,
+                realm_id=str(obtain_uuid_from(realm_id)) if realm_id else None,
                 secret=secret,
-            ).model_dump(mode="json", exclude_none=True),
+            ),
+            "robots",
         )
-
-        assert r.status_code == httpx.codes.ACCEPTED.value
-        return Robot(**r.json())

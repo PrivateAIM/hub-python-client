@@ -1,19 +1,17 @@
 __all__ = ["CoreClient"]
 
+import typing as t
 import uuid
 from datetime import datetime
 from enum import Enum
 
-import typing as t
-
 import httpx
 from pydantic import BaseModel
 
-from flame_hub import common, flow
-
-import urllib.parse
-
 from flame_hub.auth import Realm
+from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from
+from flame_hub.defaults import DEFAULT_CORE_BASE_URL
+from flame_hub.flow import PasswordAuth, RobotAuth
 
 
 class NodeType(str, Enum):
@@ -48,23 +46,17 @@ class UpdateNode(BaseModel):
     realm_id: uuid.UUID | None
 
 
-class CoreClient(object):
+class CoreClient(BaseClient):
     def __init__(
         self,
-        base_url=common.DEFAULT_CORE_BASE_URL,
+        base_url: str = DEFAULT_CORE_BASE_URL,
         client: httpx.Client = None,
-        auth: t.Union[flow.RobotAuth, flow.PasswordAuth] = None,
+        auth: t.Union[PasswordAuth, RobotAuth] = None,
     ):
-        self._base_url = urllib.parse.urlsplit(base_url)
-        self._client = client or httpx.Client(auth=auth)
+        super().__init__(base_url, client, auth)
 
-    def get_nodes(self) -> common.ResourceList[Node]:
-        r = self._client.get(
-            common.merge_parse_result(self._base_url, path=common.join_url_path(self._base_url.path, "nodes"))
-        )
-
-        assert r.status_code == httpx.codes.OK.value
-        return common.ResourceList[Node](**r.json())
+    def get_nodes(self) -> ResourceList[Node]:
+        return self._get_all_resources(Node, "nodes")
 
     def create_node(
         self,
@@ -74,52 +66,24 @@ class CoreClient(object):
         node_type: NodeType = NodeType.default,
         hidden: bool = False,
     ) -> Node:
-        if isinstance(realm_id, Realm):
-            realm_id = str(realm_id.id)
-
-        # noinspection PyTypeChecker
-        r = self._client.post(
-            common.merge_parse_result(self._base_url, path=common.join_url_path(self._base_url.path, "nodes")),
-            json=CreateNode(
+        return self._create_resource(
+            Node,
+            CreateNode(
                 name=name,
-                realm_id=str(realm_id),
+                realm_id=str(obtain_uuid_from(realm_id)),
                 external_name=external_name,
                 hidden=hidden,
                 registry_id=None,  # TODO add registries
                 type=node_type,
-            ).model_dump(mode="json"),
+            ),
+            "nodes",
         )
-
-        assert r.status_code == httpx.codes.CREATED.value
-        return Node(**r.json())
 
     def get_node(self, node_id: t.Union[Node, uuid.UUID, str]) -> Node | None:
-        if isinstance(node_id, Node):
-            node_id = node_id.id
-
-        r = self._client.get(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"nodes/{node_id}")
-            ),
-        )
-
-        if r.status_code == httpx.codes.NOT_FOUND.value:
-            return None
-
-        assert r.status_code == httpx.codes.OK.value
-        return Node(**r.json())
+        return self._get_single_resource(Node, node_id, "nodes")
 
     def delete_node(self, node_id: t.Union[Node, uuid.UUID, str]):
-        if isinstance(node_id, Node):
-            node_id = node_id.id
-
-        r = self._client.delete(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"nodes/{node_id}")
-            ),
-        )
-
-        assert r.status_code == httpx.codes.ACCEPTED.value
+        self._delete_resource(node_id, "nodes")
 
     def update_node(
         self,
@@ -130,24 +94,15 @@ class CoreClient(object):
         realm_id: t.Union[Realm, str, uuid.UUID] = None,
         public_key: str = None,
     ) -> Node:
-        if isinstance(node_id, Node):
-            node_id = node_id.id
-
-        if isinstance(realm_id, Realm):
-            realm_id = realm_id.id
-
-        r = self._client.post(
-            common.merge_parse_result(
-                self._base_url, path=common.join_url_path(self._base_url.path, f"nodes/{node_id}")
-            ),
-            json=UpdateNode(
+        return self._update_resource(
+            Node,
+            node_id,
+            UpdateNode(
                 external_name=external_name,
                 hidden=hidden,
                 type=node_type,
                 public_key=public_key,
-                realm_id=str(realm_id) if realm_id else None,
-            ).model_dump(mode="json", exclude_none=True),
+                realm_id=str(obtain_uuid_from(realm_id)) if realm_id else None,
+            ),
+            "nodes",
         )
-
-        assert r.status_code == httpx.codes.ACCEPTED.value
-        return Node(**r.json())

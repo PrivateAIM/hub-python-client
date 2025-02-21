@@ -1,24 +1,6 @@
 import time
 import urllib.parse
 
-import typing as t
-
-from pydantic import BaseModel
-
-DEFAULT_AUTH_BASE_URL = "https://auth.privateaim.dev"
-DEFAULT_CORE_BASE_URL = "https://core.privateaim.dev"
-
-ResourceT = t.TypeVar("ResourceT")
-
-
-class ResourceListMeta(BaseModel):
-    total: int
-
-
-class ResourceList(BaseModel, t.Generic[ResourceT]):
-    data: list[ResourceT]
-    meta: ResourceListMeta
-
 
 def build_url(scheme="", netloc="", path="", query: dict[str, str | list[str]] = None, fragment=""):
     """

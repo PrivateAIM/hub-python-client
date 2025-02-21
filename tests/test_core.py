@@ -12,6 +12,10 @@ def node(core_client, master_realm):
     core_client.delete_node(new_node)
 
 
+def test_get_nodes(core_client, node):
+    assert any(node.id == n.id for n in core_client.get_nodes().data)
+
+
 def test_get_node(core_client, node):
     assert node == core_client.get_node(node.id)
 
