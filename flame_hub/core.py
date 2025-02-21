@@ -91,6 +91,26 @@ class UpdateProject(BaseModel):
     name: str | None
 
 
+class ProjectNodeApprovalStatus(str, Enum):
+    rejected = "rejected"
+    approved = "approved"
+
+
+class CreateProjectNode(BaseModel):
+    node_id: uuid.UUID
+    project_id: uuid.UUID
+
+
+class ProjectNode(CreateProjectNode):
+    id: uuid.UUID
+    approval_status: ProjectNodeApprovalStatus
+    comment: str | None
+    created_at: datetime
+    updated_at: datetime
+    project_realm_id: uuid.UUID
+    node_realm_id: uuid.UUID
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -197,3 +217,24 @@ class CoreClient(BaseClient):
             ),
             "projects",
         )
+
+    def create_project_node(
+        self, project_id: t.Union[Project, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
+    ) -> ProjectNode:
+        return self._create_resource(
+            ProjectNode,
+            CreateProjectNode(
+                project_id=str(obtain_uuid_from(project_id)),
+                node_id=str(obtain_uuid_from(node_id)),
+            ),
+            "project-nodes",
+        )
+
+    def delete_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]):
+        self._delete_resource(project_node_id, "project-nodes")
+
+    def get_project_nodes(self) -> ResourceList[ProjectNode]:
+        return self._get_all_resources(ProjectNode, "project-nodes")
+
+    def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
+        return self._get_single_resource(ProjectNode, project_node_id, "project-nodes")

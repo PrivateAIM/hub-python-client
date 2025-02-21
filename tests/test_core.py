@@ -31,6 +31,13 @@ def project(core_client, master_image):
     core_client.delete_project(new_project)
 
 
+@pytest.fixture()
+def project_node(core_client, node, project):
+    new_project_node = core_client.create_project_node(project, node)
+    yield new_project_node
+    core_client.delete_project_node(new_project_node)
+
+
 def test_get_nodes(core_client, node):
     assert any(node.id == n.id for n in core_client.get_nodes().data)
 
@@ -78,3 +85,11 @@ def test_update_project(core_client, project):
 
     assert project != new_node
     assert new_node.name == new_name
+
+
+def test_get_project_nodes(core_client, project_node):
+    assert any(project_node.id == pn.id for pn in core_client.get_project_nodes().data)
+
+
+def test_get_project_node(core_client, project_node):
+    assert project_node == core_client.get_project_node(project_node.id)
