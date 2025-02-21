@@ -6,6 +6,7 @@ import typing as t
 from pydantic import BaseModel
 
 DEFAULT_AUTH_BASE_URL = "https://auth.privateaim.dev"
+DEFAULT_CORE_BASE_URL = "https://core.privateaim.dev"
 
 ResourceT = t.TypeVar("ResourceT")
 
