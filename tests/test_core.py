@@ -5,6 +5,8 @@ import pytest
 
 from tests.helpers import next_random_string, next_uuid
 
+pytestmark = pytest.mark.integration
+
 
 @pytest.fixture(scope="module")
 def master_image(core_client):
