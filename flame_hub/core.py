@@ -68,6 +68,29 @@ class MasterImage(BaseModel):
     updated_at: datetime
 
 
+class CreateProject(BaseModel):
+    description: str | None
+    master_image_id: uuid.UUID
+    name: str
+
+
+class Project(CreateProject):
+    id: uuid.UUID
+    analyses: int
+    nodes: int
+    created_at: datetime
+    updated_at: datetime
+    realm_id: uuid.UUID
+    user_id: uuid.UUID | None
+    robot_id: uuid.UUID | None
+
+
+class UpdateProject(BaseModel):
+    description: str | None
+    master_image_id: uuid.UUID | None
+    name: str | None
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -134,3 +157,43 @@ class CoreClient(BaseClient):
 
     def get_master_images(self) -> ResourceList[MasterImage]:
         return self._get_all_resources(MasterImage, "master-images")
+
+    def get_projects(self) -> ResourceList[Project]:
+        return self._get_all_resources(Project, "projects")
+
+    def create_project(
+        self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str], description: str = None
+    ) -> Project:
+        return self._create_resource(
+            Project,
+            CreateProject(
+                name=name,
+                master_image_id=str(obtain_uuid_from(master_image_id)),
+                description=description,
+            ),
+            "projects",
+        )
+
+    def delete_project(self, project_id: t.Union[Project, uuid.UUID, str]):
+        self._delete_resource(project_id, "projects")
+
+    def get_project(self, project_id: t.Union[Project, uuid.UUID, str]) -> Project | None:
+        return self._get_single_resource(Project, project_id, "projects")
+
+    def update_project(
+        self,
+        project_id: t.Union[Project, uuid.UUID, str],
+        description: str = None,
+        master_image_id: t.Union[MasterImage, str, uuid.UUID] = None,
+        name: str = None,
+    ) -> Project:
+        return self._update_resource(
+            Project,
+            project_id,
+            UpdateProject(
+                description=description,
+                master_image_id=str(obtain_uuid_from(master_image_id)) if master_image_id else None,
+                name=name,
+            ),
+            "projects",
+        )
