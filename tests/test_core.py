@@ -40,6 +40,13 @@ def project_node(core_client, node, project):
     core_client.delete_project_node(new_project_node)
 
 
+@pytest.fixture()
+def analysis(core_client, project):
+    new_analysis = core_client.create_analysis(next_random_string(), project)
+    yield new_analysis
+    core_client.delete_analysis(new_analysis)
+
+
 def test_get_nodes(core_client, node):
     assert any(node.id == n.id for n in core_client.get_nodes().data)
 
@@ -95,3 +102,19 @@ def test_get_project_nodes(core_client, project_node):
 
 def test_get_project_node(core_client, project_node):
     assert project_node == core_client.get_project_node(project_node.id)
+
+
+def test_get_project_node_not_found(core_client):
+    assert core_client.get_project_node(next_uuid()) is None
+
+
+def test_get_analyses(core_client, analysis):
+    assert any(analysis.id == a.id for a in core_client.get_analyses().data)
+
+
+def test_get_analysis(core_client, analysis):
+    assert analysis == core_client.get_analysis(analysis.id)
+
+
+def test_get_analysis_not_found(core_client):
+    assert core_client.get_analysis(next_uuid()) is None

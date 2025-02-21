@@ -111,6 +111,45 @@ class ProjectNode(CreateProjectNode):
     node_realm_id: uuid.UUID
 
 
+class AnalysisBuildStatus(str, Enum):
+    starting = "starting"
+    started = "started"
+    stopping = "stopping"
+    stopped = "stopped"
+    finished = "finished"
+    failed = "failed"
+
+
+class AnalysisRunStatus(str, Enum):
+    starting = "starting"
+    started = "started"
+    running = "running"
+    stopping = "stopping"
+    stopped = "stopped"
+    finished = "finished"
+    failed = "failed"
+
+
+class CreateAnalysis(BaseModel):
+    description: str | None
+    name: str
+    project_id: uuid.UUID
+
+
+class Analysis(CreateAnalysis):
+    id: uuid.UUID
+    configuration_locked: bool
+    build_status: AnalysisBuildStatus | None
+    run_status: AnalysisRunStatus | None
+    created_at: datetime
+    updated_at: datetime
+    registry_id: uuid.UUID | None
+    realm_id: uuid.UUID
+    user_id: uuid.UUID
+    project_id: uuid.UUID
+    master_image_id: uuid.UUID
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -238,3 +277,25 @@ class CoreClient(BaseClient):
 
     def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
         return self._get_single_resource(ProjectNode, project_node_id, "project-nodes")
+
+    def create_analysis(
+        self, name: str, project_id: t.Union[Project, uuid.UUID, str], description: str = None
+    ) -> Analysis:
+        return self._create_resource(
+            Analysis,
+            CreateAnalysis(
+                name=name,
+                project_id=str(obtain_uuid_from(project_id)),
+                description=description,
+            ),
+            "analyses",
+        )
+
+    def delete_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]):
+        self._delete_resource(analysis_id, "analyses")
+
+    def get_analyses(self) -> ResourceList[Analysis]:
+        return self._get_all_resources(Analysis, "analyses")
+
+    def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
+        return self._get_single_resource(Analysis, analysis_id, "analyses")
