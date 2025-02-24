@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from flame_hub.auth import Realm
 from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from
+from flame_hub.common import merge_parse_result, join_url_path
 from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
 
@@ -219,6 +220,13 @@ class CoreClient(BaseClient):
 
     def get_projects(self) -> ResourceList[Project]:
         return self._get_all_resources(Project, "projects")
+
+    def sync_master_images(self):
+        r = self._client.post(
+            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "master-images/command"))
+        )
+
+        assert r.status_code == httpx.codes.ACCEPTED.value
 
     def create_project(
         self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str], description: str = None
