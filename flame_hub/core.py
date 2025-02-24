@@ -151,6 +151,42 @@ class Analysis(CreateAnalysis):
     master_image_id: uuid.UUID
 
 
+class CreateAnalysisNode(BaseModel):
+    analysis_id: uuid.UUID
+    node_id: uuid.UUID
+
+
+class AnalysisNodeApprovalStatus(str, Enum):
+    rejected = "rejected"
+    approved = "approved"
+
+
+class AnalysisNodeRunStatus(str, Enum):
+    starting = "starting"
+    started = "started"
+    stopping = "stopping"
+    stopped = "stopped"
+    running = "running"
+    finished = "finished"
+    failed = "failed"
+
+
+class AnalysisNode(CreateAnalysisNode):
+    id: uuid.UUID
+    approval_status: AnalysisNodeApprovalStatus | None
+    run_status: AnalysisNodeRunStatus | None
+    comment: str | None
+    index: int
+    artifact_tag: str | None
+    artifact_digest: str | None
+    created_at: datetime
+    updated_at: datetime
+    analysis_id: uuid.UUID
+    analysis_realm_id: uuid.UUID
+    node_id: uuid.UUID
+    node_realm_id: uuid.UUID
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -307,3 +343,13 @@ class CoreClient(BaseClient):
 
     def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
         return self._get_single_resource(Analysis, analysis_id, "analyses")
+
+    def create_analysis_node(
+        self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
+    ):
+        return self._create_resource(
+            AnalysisNode, CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id), "analysis-nodes"
+        )
+
+    def delete_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
+        self._delete_resource(analysis_node_id, "analysis-nodes")

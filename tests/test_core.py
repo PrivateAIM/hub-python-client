@@ -47,6 +47,13 @@ def analysis(core_client, project):
     core_client.delete_analysis(new_analysis)
 
 
+@pytest.fixture()
+def analysis_node(core_client, analysis, project_node):
+    new_analysis_node = core_client.create_analysis_node(analysis.id, project_node.node_id)
+    yield new_analysis_node
+    core_client.delete_analysis_node(new_analysis_node)
+
+
 def test_get_nodes(core_client, node):
     assert any(node.id == n.id for n in core_client.get_nodes().data)
 
@@ -118,3 +125,8 @@ def test_get_analysis(core_client, analysis):
 
 def test_get_analysis_not_found(core_client):
     assert core_client.get_analysis(next_uuid()) is None
+
+
+def test_analysis_node(core_client, analysis_node):
+    # empty test because these resources only really need to be created and deleted
+    pass
