@@ -52,6 +52,3 @@ class StorageClient(BaseClient):
 
     def get_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]) -> Bucket | None:
         return self._get_single_resource(Bucket, bucket_id, "buckets")
-
-    def update_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID], name: str = None, region: str = None) -> Bucket:
-        return self._update_resource(Bucket, bucket_id, UpdateBucket(name=name, region=region), "buckets")

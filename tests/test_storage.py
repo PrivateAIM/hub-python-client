@@ -22,12 +22,3 @@ def test_get_bucket(storage_client, bucket):
 
 def test_get_bucket_not_found(storage_client):
     assert storage_client.get_bucket(next_uuid()) is None
-
-
-@pytest.mark.skip(reason="service does not return updated object")
-def test_update_bucket(storage_client, bucket):
-    new_name = next_random_string()
-    new_bucket = storage_client.update_bucket(bucket.id, name=new_name, region="us-west-1")
-
-    assert bucket != new_bucket
-    assert new_bucket.name == new_name
