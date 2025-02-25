@@ -11,7 +11,13 @@ from testcontainers.rabbitmq import RabbitMqContainer
 from testcontainers.redis import RedisContainer
 from testcontainers.vault import VaultContainer
 
-from flame_hub import flow, auth, CoreClient, StorageClient
+from flame_hub import PasswordAuth, AuthClient, CoreClient, StorageClient
+
+
+def pytest_sessionfinish(session, exitstatus):
+    # exit code 5 = empty test suite. CI shouldn't exit if the suite is empty.
+    if exitstatus == 5:
+        session.exitstatus = 0
 
 
 def get_redis_connection_string(r: RedisContainer) -> str:
@@ -309,30 +315,30 @@ def nginx(ui, core, authup, storage, messenger, network, use_testcontainers, tmp
 
 
 @pytest.fixture(scope="session")
-def client(nginx, auth_base_url, auth_admin_username, auth_admin_password):
-    pw_auth = flow.PasswordAuth(auth_admin_username, auth_admin_password, auth_base_url)
+def password_auth(nginx, auth_base_url, auth_admin_username, auth_admin_password):
+    pw_auth = PasswordAuth(auth_admin_username, auth_admin_password, auth_base_url)
     client = httpx.Client(auth=pw_auth)
 
     # perform pre-check
     r = client.get(auth_base_url)
     assert r.status_code == httpx.codes.OK.value
 
-    yield client
+    yield pw_auth
 
 
 @pytest.fixture(scope="session")
-def auth_client(client, auth_base_url):
-    yield auth.AuthClient(auth_base_url, client)
+def auth_client(password_auth, auth_base_url):
+    yield AuthClient(base_url=auth_base_url, auth=password_auth)
 
 
 @pytest.fixture(scope="session")
-def core_client(client, core_base_url):
-    yield CoreClient(core_base_url, client)
+def core_client(password_auth, core_base_url):
+    yield CoreClient(base_url=core_base_url, auth=password_auth)
 
 
 @pytest.fixture(scope="session")
-def storage_client(client, storage_base_url):
-    yield StorageClient(storage_base_url, client)
+def storage_client(password_auth, storage_base_url):
+    yield StorageClient(base_url=storage_base_url, auth=password_auth)
 
 
 @pytest.fixture(scope="session")

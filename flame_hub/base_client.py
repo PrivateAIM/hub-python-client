@@ -4,10 +4,7 @@ import uuid
 import httpx
 from pydantic import BaseModel
 
-import urllib.parse
-
 from flame_hub.flow import PasswordAuth, RobotAuth
-from flame_hub.common import merge_parse_result, join_url_path
 
 # base resource type which assumes BaseModel as the base class
 ResourceT = t.TypeVar("ResourceT", bound=BaseModel)
@@ -48,21 +45,20 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
 
 
 class BaseClient(object):
-    def __init__(self, base_url: str, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None):
-        self._base_url = urllib.parse.urlsplit(base_url)
-        self._client = client or httpx.Client(auth=auth)
+    def __init__(
+        self, base_url: str = None, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None
+    ):
+        self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
-        r = self._client.get(
-            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "/".join(path))),
-        )
+        r = self._client.get("/".join(path))
 
         assert r.status_code == httpx.codes.OK.value
         return ResourceList[resource_type](**r.json())
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
         r = self._client.post(
-            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "/".join(path))),
+            "/".join(path),
             json=resource.model_dump(mode="json"),
         )
 
@@ -73,10 +69,7 @@ class BaseClient(object):
         self, resource_type: type[ResourceT], resource_id: UuidIdentifiable, *path: str
     ) -> ResourceT | None:
         path = (*path, str(obtain_uuid_from(resource_id)))
-
-        r = self._client.get(
-            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "/".join(path))),
-        )
+        r = self._client.get("/".join(path))
 
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
@@ -94,7 +87,7 @@ class BaseClient(object):
         path = (*path, str(obtain_uuid_from(resource_id)))
 
         r = self._client.post(
-            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "/".join(path))),
+            "/".join(path),
             json=resource.model_dump(mode="json", exclude_none=True),
         )
 
@@ -104,8 +97,6 @@ class BaseClient(object):
     def _delete_resource(self, resource_id: t.Union[UuidModel, str, uuid.UUID], *path: str):
         path = (*path, str(obtain_uuid_from(resource_id)))
 
-        r = self._client.delete(
-            merge_parse_result(self._base_url, path=join_url_path(self._base_url.path, "/".join(path))),
-        )
+        r = self._client.delete("/".join(path))
 
         assert r.status_code == httpx.codes.ACCEPTED.value
