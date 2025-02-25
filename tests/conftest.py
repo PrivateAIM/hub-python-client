@@ -11,7 +11,7 @@ from testcontainers.rabbitmq import RabbitMqContainer
 from testcontainers.redis import RedisContainer
 from testcontainers.vault import VaultContainer
 
-from flame_hub import flow, auth, CoreClient
+from flame_hub import flow, auth, CoreClient, StorageClient
 
 
 def get_redis_connection_string(r: RedisContainer) -> str:
@@ -328,6 +328,11 @@ def auth_client(client, auth_base_url):
 @pytest.fixture(scope="session")
 def core_client(client, core_base_url):
     yield CoreClient(core_base_url, client)
+
+
+@pytest.fixture(scope="session")
+def storage_client(client, storage_base_url):
+    yield StorageClient(storage_base_url, client)
 
 
 @pytest.fixture(scope="session")
