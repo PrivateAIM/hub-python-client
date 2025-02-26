@@ -1,4 +1,6 @@
 import typing as t
+import typing_extensions as te
+
 import uuid
 
 import httpx
@@ -44,6 +46,25 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
     meta: ResourceListMeta
 
 
+class PageParams(te.TypedDict, total=False):
+    limit: int
+    offset: int
+
+
+_DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
+
+
+def build_page_params_with_defaults(page_params: PageParams = None):
+    # use empty dict if None is provided
+    if page_params is None:
+        page_params = {}
+
+    # overwrite default values with user-defined ones
+    page_params = _DEFAULT_PAGE_PARAMS | page_params
+
+    return {f"page[{k}]": v for k, v in page_params.items()}
+
+
 class BaseClient(object):
     def __init__(
         self, base_url: str = None, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None
@@ -51,7 +72,11 @@ class BaseClient(object):
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
-        r = self._client.get("/".join(path))
+        return self._find_all_resources(resource_type, None, *path)
+
+    def _find_all_resources(self, resource_type: type[ResourceT], page_params: PageParams = None, *path: str):
+        request_params = build_page_params_with_defaults(page_params)
+        r = self._client.get("/".join(path), params=request_params)
 
         assert r.status_code == httpx.codes.OK.value
         return ResourceList[resource_type](**r.json())
