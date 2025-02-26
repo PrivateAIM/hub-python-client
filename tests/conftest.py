@@ -1,4 +1,5 @@
 import os
+import random
 
 import httpx
 import pytest
@@ -350,3 +351,8 @@ def master_realm(auth_client):
         raise ValueError(f"expected single master realm, found {len(filtered_realms)}")
 
     yield filtered_realms[0]
+
+
+@pytest.fixture(scope="function")
+def rng():
+    return random.Random(727)
