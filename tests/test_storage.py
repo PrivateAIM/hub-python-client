@@ -7,13 +7,6 @@ from tests.helpers import next_random_string, next_uuid
 
 pytestmark = pytest.mark.integration
 
-_RNG_BYTE_SIZE = 16
-
-
-@pytest.fixture()
-def rng_bytes(rng):
-    return rng.randbytes(n=_RNG_BYTE_SIZE)
-
 
 @pytest.fixture()
 def bucket(storage_client):
@@ -78,4 +71,4 @@ def test_get_bucket_files(storage_client, bucket_file):
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
-    assert rng_bytes == next(storage_client.stream_bucket_file(bucket_file.id, _RNG_BYTE_SIZE))
+    assert rng_bytes == next(storage_client.stream_bucket_file(bucket_file.id))

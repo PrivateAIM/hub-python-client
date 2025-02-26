@@ -3,7 +3,8 @@ import string
 
 import pytest
 
-from tests.helpers import next_random_string, next_uuid
+from flame_hub.core import AnalysisBucketType
+from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
 
@@ -52,6 +53,22 @@ def analysis_node(core_client, analysis, project_node):
     new_analysis_node = core_client.create_analysis_node(analysis.id, project_node.node_id)
     yield new_analysis_node
     core_client.delete_analysis_node(new_analysis_node)
+
+
+@pytest.fixture()
+def analysis_buckets_ready(core_client, analysis):
+    def _check_analysis_buckets_present():
+        all_analysis_bucket_types = set(t.value for t in AnalysisBucketType)
+
+        # constrain to buckets created for this analysis
+        analysis_buckets = tuple(ab for ab in core_client.get_analysis_buckets().data if ab.analysis_id == analysis.id)
+        assert len(analysis_buckets) == len(all_analysis_bucket_types)
+
+        # check that a bucket for each type exists
+        analysis_bucket_types = set(a.type.value for a in analysis_buckets)
+        assert all_analysis_bucket_types == analysis_bucket_types
+
+    assert_eventually(_check_analysis_buckets_present)
 
 
 def test_get_nodes(core_client, node):
@@ -127,6 +144,27 @@ def test_get_analysis_not_found(core_client):
     assert core_client.get_analysis(next_uuid()) is None
 
 
-def test_analysis_node(core_client, analysis_node):
-    # empty test because these resources only really need to be created and deleted
-    pass
+def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
+    # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
+    analysis_buckets = tuple(
+        ab
+        for ab in core_client.get_analysis_buckets().data
+        if ab.analysis_id == analysis.id and ab.type == AnalysisBucketType.code
+    )
+
+    # check that this exact bucket was found
+    assert len(analysis_buckets) == 1
+    analysis_bucket = analysis_buckets[0]
+
+    # upload example file to referenced bucket
+    bucket_files = storage_client.upload_to_bucket(
+        analysis_bucket.external_id, {"file_name": next_random_string(), "content": rng_bytes}
+    ).data
+
+    # link uploaded file to analysis bucket
+    analysis_bucket_file_name = next_random_string()
+    analysis_bucket_file = core_client.create_analysis_bucket_file(
+        analysis_bucket_file_name, bucket_files.pop(), analysis_bucket
+    )
+
+    assert core_client.get_analysis_bucket_file(analysis_bucket_file.id) == analysis_bucket_file

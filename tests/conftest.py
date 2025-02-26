@@ -15,6 +15,9 @@ from testcontainers.vault import VaultContainer
 from flame_hub import PasswordAuth, AuthClient, CoreClient, StorageClient
 
 
+_RNG_BYTE_SIZE = 16
+
+
 def pytest_sessionfinish(session, exitstatus):
     # exit code 5 = empty test suite. CI shouldn't exit if the suite is empty.
     if exitstatus == 5:
@@ -356,3 +359,8 @@ def master_realm(auth_client):
 @pytest.fixture(scope="function")
 def rng():
     return random.Random(727)
+
+
+@pytest.fixture()
+def rng_bytes(rng):
+    return rng.randbytes(n=_RNG_BYTE_SIZE)

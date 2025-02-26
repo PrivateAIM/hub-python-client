@@ -12,6 +12,7 @@ from flame_hub.auth import Realm
 from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from
 from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
+from flame_hub.storage import BucketFile
 
 
 class NodeType(str, Enum):
@@ -186,6 +187,39 @@ class AnalysisNode(CreateAnalysisNode):
     node_realm_id: uuid.UUID
 
 
+class AnalysisBucketType(str, Enum):
+    code = "CODE"
+    result = "RESULT"
+    temp = "TEMP"
+
+
+class AnalysisBucket(BaseModel):
+    id: uuid.UUID
+    type: AnalysisBucketType
+    external_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+    analysis_id: uuid.UUID
+    realm_id: uuid.UUID
+
+
+class CreateAnalysisBucketFile(BaseModel):
+    name: str
+    external_id: uuid.UUID
+    bucket_id: uuid.UUID
+
+
+class AnalysisBucketFile(CreateAnalysisBucketFile):
+    id: uuid.UUID
+    root: bool
+    created_at: datetime
+    updated_at: datetime
+    realm_id: uuid.UUID
+    user_id: uuid.UUID | None
+    robot_id: uuid.UUID | None
+    analysis_id: uuid.UUID
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -349,3 +383,31 @@ class CoreClient(BaseClient):
 
     def delete_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
         self._delete_resource(analysis_node_id, "analysis-nodes")
+
+    def get_analysis_buckets(self) -> ResourceList[AnalysisBucket]:
+        return self._get_all_resources(AnalysisBucket, "analysis-buckets")
+
+    def get_analysis_bucket(self, analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str]) -> AnalysisBucket | None:
+        return self._get_single_resource(AnalysisBucket, analysis_bucket_id)
+
+    def get_analysis_bucket_files(self) -> ResourceList[AnalysisBucketFile]:
+        return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files")
+
+    def get_analysis_bucket_file(
+        self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str]
+    ) -> AnalysisBucketFile | None:
+        return self._get_single_resource(AnalysisBucketFile, analysis_bucket_file_id, "analysis-bucket-files")
+
+    def create_analysis_bucket_file(
+        self,
+        name: str,
+        bucket_file_id: t.Union[BucketFile, uuid.UUID, str],
+        analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str],
+    ):
+        return self._create_resource(
+            AnalysisBucketFile,
+            CreateAnalysisBucketFile(
+                external_id=obtain_uuid_from(bucket_file_id), bucket_id=obtain_uuid_from(analysis_bucket_id), name=name
+            ),
+            "analysis-bucket-files",
+        )
