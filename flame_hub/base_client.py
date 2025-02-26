@@ -1,4 +1,6 @@
 import typing as t
+from enum import Enum
+
 import typing_extensions as te
 
 import uuid
@@ -54,6 +56,19 @@ class PageParams(te.TypedDict, total=False):
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 
+class FilterOperator(str, Enum):
+    eq = ""
+    neq = "!"
+    like = "~"
+    lt = "<"
+    gt = ">"
+
+
+_ALL_FILTER_OPERATOR_STRINGS = {f.value for f in FilterOperator}
+
+FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
+
+
 def build_page_params_with_defaults(page_params: PageParams = None):
     # use empty dict if None is provided
     if page_params is None:
@@ -65,6 +80,28 @@ def build_page_params_with_defaults(page_params: PageParams = None):
     return {f"page[{k}]": v for k, v in page_params.items()}
 
 
+def build_filter_params(filter_params: FilterParams = None):
+    if filter_params is None:
+        filter_params = {}
+
+    query_params = {}
+
+    for property_name, property_filter in filter_params.items():
+        query_param_name = f"filter[{property_name}]"
+
+        if not isinstance(property_filter, tuple):  # t.Any -> (FilterOperator, t.Any)
+            property_filter = (FilterOperator.eq, property_filter)
+
+        query_filter_op, query_filter_value = property_filter  # (FilterOperator | str, t.Any)
+
+        if isinstance(query_filter_op, FilterOperator):  # FilterOperator -> str
+            query_filter_op = query_filter_op.value
+
+        query_params[query_param_name] = f"{query_filter_op}{query_filter_value}"
+
+    return query_params
+
+
 class BaseClient(object):
     def __init__(
         self, base_url: str = None, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None
@@ -72,10 +109,17 @@ class BaseClient(object):
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
-        return self._find_all_resources(resource_type, None, *path)
+        return self._find_all_resources(resource_type, None, None, *path)
 
-    def _find_all_resources(self, resource_type: type[ResourceT], page_params: PageParams = None, *path: str):
-        request_params = build_page_params_with_defaults(page_params)
+    def _find_all_resources(
+        self,
+        resource_type: type[ResourceT],
+        page_params: PageParams = None,
+        filter_params: FilterParams = None,
+        *path: str,
+    ):
+        # merge processed filter and page params
+        request_params = build_page_params_with_defaults(page_params) | build_filter_params(filter_params)
         r = self._client.get("/".join(path), params=request_params)
 
         assert r.status_code == httpx.codes.OK.value

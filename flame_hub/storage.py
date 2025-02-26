@@ -9,7 +9,7 @@ import httpx
 from pydantic import BaseModel
 
 from flame_hub import PasswordAuth, RobotAuth
-from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from, PageParams
+from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from, PageParams, FilterParams
 from flame_hub.defaults import DEFAULT_STORAGE_BASE_URL
 
 
@@ -77,8 +77,8 @@ class StorageClient(BaseClient):
     def get_buckets(self) -> ResourceList[Bucket]:
         return self._get_all_resources(Bucket, "buckets")
 
-    def find_buckets(self, page_params: PageParams = None) -> ResourceList[Bucket]:
-        return self._find_all_resources(Bucket, page_params, "buckets")
+    def find_buckets(self, page_params: PageParams = None, filter_params: FilterParams = None) -> ResourceList[Bucket]:
+        return self._find_all_resources(Bucket, page_params, filter_params, "buckets")
 
     def get_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]) -> Bucket | None:
         return self._get_single_resource(Bucket, bucket_id, "buckets")
@@ -114,8 +114,10 @@ class StorageClient(BaseClient):
     def get_bucket_files(self) -> ResourceList[BucketFile]:
         return self._get_all_resources(BucketFile, "bucket-files")
 
-    def find_bucket_files(self, page_params: PageParams = None) -> ResourceList[BucketFile]:
-        return self._find_all_resources(BucketFile, page_params, "bucket-files")
+    def find_bucket_files(
+        self, page_params: PageParams = None, filter_params: FilterParams = None
+    ) -> ResourceList[BucketFile]:
+        return self._find_all_resources(BucketFile, page_params, filter_params, "bucket-files")
 
     def stream_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID], chunk_size=1024):
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:

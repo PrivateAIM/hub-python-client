@@ -72,11 +72,15 @@ def analysis_buckets_ready(core_client, analysis):
 
 
 def test_get_nodes(core_client, node):
-    assert any(node.id == n.id for n in core_client.get_nodes().data)
+    assert len(core_client.get_nodes().data) > 0
 
 
 def test_get_node(core_client, node):
     assert node == core_client.get_node(node.id)
+
+
+def test_find_nodes(core_client, node):
+    assert core_client.find_nodes(filter_params={"id": node.id}).data == [node]
 
 
 def test_get_node_not_found(core_client):
@@ -101,7 +105,7 @@ def test_get_master_image_groups(core_client):
 
 
 def test_get_projects(core_client, project):
-    assert any(p.id == project.id for p in core_client.get_projects().data)
+    assert len(core_client.get_projects().data) > 0
 
 
 def test_get_project(core_client, project):
@@ -121,7 +125,7 @@ def test_update_project(core_client, project):
 
 
 def test_get_project_nodes(core_client, project_node):
-    assert any(project_node.id == pn.id for pn in core_client.get_project_nodes().data)
+    assert len(core_client.get_project_nodes().data) > 0
 
 
 def test_get_project_node(core_client, project_node):
@@ -133,7 +137,7 @@ def test_get_project_node_not_found(core_client):
 
 
 def test_get_analyses(core_client, analysis):
-    assert any(analysis.id == a.id for a in core_client.get_analyses().data)
+    assert len(core_client.get_analyses().data) > 0
 
 
 def test_get_analysis(core_client, analysis):

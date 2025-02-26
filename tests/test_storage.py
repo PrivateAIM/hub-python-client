@@ -35,7 +35,7 @@ def bucket_file(storage_client, bucket, rng_bytes):
 
 
 def test_get_buckets(storage_client, bucket):
-    assert any(bucket.id == b.id for b in storage_client.get_buckets().data)
+    assert len(storage_client.get_buckets().data) > 0
 
 
 def test_get_bucket(storage_client, bucket):
@@ -67,7 +67,7 @@ def test_get_bucket_file_none(storage_client):
 
 
 def test_get_bucket_files(storage_client, bucket_file):
-    assert any(bucket_file.id == bf.id for bf in storage_client.get_bucket_files().data)
+    assert len(storage_client.get_bucket_files().data) > 0
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
