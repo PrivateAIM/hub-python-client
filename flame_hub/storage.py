@@ -1,6 +1,7 @@
 __all__ = ["StorageClient"]
 
 import typing as t
+import typing_extensions as te
 import uuid
 from datetime import datetime
 
@@ -45,10 +46,10 @@ class BucketFile(BaseModel):
     bucket_id: uuid.UUID
 
 
-class UploadFile(t.TypedDict):
+class UploadFile(te.TypedDict):
     file_name: str
     content: t.Union[bytes, t.IO[bytes], str]
-    content_type: t.NotRequired[str]
+    content_type: te.NotRequired[str]
 
 
 def apply_upload_file_defaults(uf: UploadFile) -> UploadFile:
