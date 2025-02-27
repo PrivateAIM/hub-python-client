@@ -177,10 +177,8 @@ def test_get_analysis_not_found(core_client):
 
 def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
     # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
-    analysis_buckets = tuple(
-        ab
-        for ab in core_client.get_analysis_buckets()
-        if ab.analysis_id == analysis.id and ab.type == AnalysisBucketType.code
+    analysis_buckets = core_client.find_analysis_buckets(
+        filter={"analysis_id": analysis.id, "type": AnalysisBucketType.code.value}
     )
 
     # check that this exact bucket was found
