@@ -294,7 +294,7 @@ def ui(storage, core, authup, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def nginx(ui, core, authup, storage, messenger, network, use_testcontainers, tmp_path_factory):
+def nginx(ui, core, authup, storage, messenger, network, analysis_manager, use_testcontainers, tmp_path_factory):
     if not use_testcontainers:
         yield None
     else:

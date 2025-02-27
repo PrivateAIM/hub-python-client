@@ -16,6 +16,7 @@ from flame_hub.base_client import (
     UpdateModel,
     _UNSET,
     FindAllKwargs,
+    new_error_from_response,
 )
 from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
@@ -313,8 +314,10 @@ class CoreClient(BaseClient):
         return self._find_all_resources(Project, "projects", **params)
 
     def sync_master_images(self):
-        r = self._client.post("master-images/command")
-        assert r.status_code == httpx.codes.ACCEPTED.value
+        r = self._client.post("master-images/command", json={"command": "sync"})
+
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_error_from_response(r)
 
     def create_project(
         self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str], description: str = None

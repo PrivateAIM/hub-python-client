@@ -7,9 +7,9 @@ import uuid
 import typing as t
 
 
-def assert_eventually(callback_fn: t.Callable[[], t.Any]):
-    max_retries = int(os.getenv("PYTEST_ASYNC_MAX_RETRIES", "5"))
-    delay_millis = int(os.getenv("PYTEST_ASYNC_RETRY_DELAY_MILLIS", "500"))
+def assert_eventually(callback_fn: t.Callable[[], t.Any], max_retries: int = None, delay_millis: int = None):
+    max_retries = max_retries or int(os.getenv("PYTEST_ASYNC_MAX_RETRIES", "5"))
+    delay_millis = delay_millis or int(os.getenv("PYTEST_ASYNC_RETRY_DELAY_MILLIS", "500"))
     e = None
 
     for _ in range(max_retries):

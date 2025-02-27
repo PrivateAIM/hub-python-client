@@ -3,6 +3,7 @@ import string
 
 import pytest
 
+from flame_hub import HubAPIError
 from flame_hub.core import AnalysisBucketType
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
@@ -11,8 +12,23 @@ pytestmark = pytest.mark.integration
 
 @pytest.fixture(scope="module")
 def master_image(core_client):
+    if len(core_client.get_master_images()) == 0:
+        try:
+            core_client.sync_master_images()
+        except HubAPIError as e:
+            # ignore if command is locked, means the hub is probably syncing right now
+            if e.error_response.message.startswith("The command is locked"):
+                pass
+
+            # otherwise this is an unknown error and should be raised
+            raise e
+
+        def _check_master_images_available():
+            assert len(core_client.get_master_images()) > 0
+
+        assert_eventually(_check_master_images_available, max_retries=10, delay_millis=1000)
+
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
-    # master_images = [i for i in core_client.get_master_images() if i.path == default_master_image]
     master_images = core_client.find_master_images(filter={"path": default_master_image})
 
     if len(master_images) != 1:
