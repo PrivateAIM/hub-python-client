@@ -69,10 +69,10 @@ class StorageClient(BaseClient):
     def delete_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]):
         self._delete_resource("buckets", bucket_id)
 
-    def get_buckets(self) -> ResourceList[Bucket]:
+    def get_buckets(self) -> list[Bucket]:
         return self._get_all_resources(Bucket, "buckets")
 
-    def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Bucket]:
+    def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[Bucket]:
         return self._find_all_resources(Bucket, "buckets", **params)
 
     def get_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]) -> Bucket | None:
@@ -85,7 +85,7 @@ class StorageClient(BaseClient):
 
     def upload_to_bucket(
         self, bucket_id: t.Union[Bucket, str, uuid.UUID], *upload_file: UploadFile
-    ) -> ResourceList[BucketFile]:
+    ) -> list[BucketFile]:
         upload_file_tpl = (apply_upload_file_defaults(uf) for uf in upload_file)
         upload_file_dict = {
             str(uuid.uuid4()): (uf["file_name"], uf["content"], uf["content_type"]) for uf in upload_file_tpl
@@ -98,7 +98,7 @@ class StorageClient(BaseClient):
 
         assert r.status_code == httpx.codes.CREATED.value
 
-        return ResourceList[BucketFile](**r.json())
+        return ResourceList[BucketFile](**r.json()).data
 
     def delete_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID]):
         self._delete_resource("bucket-files", bucket_file_id)
@@ -106,10 +106,10 @@ class StorageClient(BaseClient):
     def get_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID]) -> BucketFile | None:
         return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id)
 
-    def get_bucket_files(self) -> ResourceList[BucketFile]:
+    def get_bucket_files(self) -> list[BucketFile]:
         return self._get_all_resources(BucketFile, "bucket-files")
 
-    def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[BucketFile]:
+    def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
         return self._find_all_resources(BucketFile, "bucket-files", **params)
 
     def stream_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID], chunk_size=1024):

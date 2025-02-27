@@ -9,7 +9,6 @@ import typing_extensions as te
 from pydantic import BaseModel
 
 from flame_hub.base_client import (
-    ResourceList,
     BaseClient,
     obtain_uuid_from,
     UpdateModel,
@@ -74,10 +73,10 @@ class AuthClient(BaseClient):
     ):
         super().__init__(base_url, client, auth)
 
-    def get_realms(self) -> ResourceList[Realm]:
+    def get_realms(self) -> list[Realm]:
         return self._get_all_resources(Realm, "realms")
 
-    def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Realm]:
+    def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> list[Realm]:
         return self._find_all_resources(Realm, "realms", **params)
 
     def create_realm(self, name: str, display_name: str = None, description: str = None) -> Realm:

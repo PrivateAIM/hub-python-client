@@ -26,8 +26,8 @@ def bucket_file(storage_client, bucket, rng_bytes):
     )
 
     # check that one file was uploaded
-    assert len(new_bucket_file_lst.data) == 1
-    new_bucket_file = new_bucket_file_lst.data.pop()
+    assert len(new_bucket_file_lst) == 1
+    new_bucket_file = new_bucket_file_lst.pop()
 
     yield new_bucket_file
 
@@ -35,11 +35,11 @@ def bucket_file(storage_client, bucket, rng_bytes):
 
 
 def test_get_buckets(storage_client, bucket):
-    assert len(storage_client.get_buckets().data) > 0
+    assert len(storage_client.get_buckets()) > 0
 
 
 def test_find_buckets(storage_client, bucket):
-    assert storage_client.find_buckets(filter={"id": bucket.id}).data == [bucket]
+    assert storage_client.find_buckets(filter={"id": bucket.id}) == [bucket]
 
 
 def test_get_bucket(storage_client, bucket):
@@ -71,11 +71,11 @@ def test_get_bucket_file_none(storage_client):
 
 
 def test_get_bucket_files(storage_client, bucket_file):
-    assert len(storage_client.get_bucket_files().data) > 0
+    assert len(storage_client.get_bucket_files()) > 0
 
 
 def test_find_bucket_files(storage_client, bucket_file):
-    assert storage_client.find_bucket_files(filter={"id": bucket_file.id}).data == [bucket_file]
+    assert storage_client.find_bucket_files(filter={"id": bucket_file.id}) == [bucket_file]
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):

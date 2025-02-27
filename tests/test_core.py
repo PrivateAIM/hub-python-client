@@ -12,8 +12,8 @@ pytestmark = pytest.mark.integration
 @pytest.fixture(scope="module")
 def master_image(core_client):
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
-    # master_images = [i for i in core_client.get_master_images().data if i.path == default_master_image]
-    master_images = core_client.find_master_images(filter={"path": default_master_image}).data
+    # master_images = [i for i in core_client.get_master_images() if i.path == default_master_image]
+    master_images = core_client.find_master_images(filter={"path": default_master_image})
 
     if len(master_images) != 1:
         raise ValueError(f"expected single master image named {default_master_image}, found {len(master_images)}")
@@ -62,7 +62,7 @@ def analysis_buckets_ready(core_client, analysis):
         all_analysis_bucket_types = set(t.value for t in AnalysisBucketType)
 
         # constrain to buckets created for this analysis
-        analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id}).data
+        analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
         assert len(analysis_buckets) == len(all_analysis_bucket_types)
 
         # check that a bucket for each type exists
@@ -73,7 +73,7 @@ def analysis_buckets_ready(core_client, analysis):
 
 
 def test_get_nodes(core_client, node):
-    assert len(core_client.get_nodes().data) > 0
+    assert len(core_client.get_nodes()) > 0
 
 
 def test_get_node(core_client, node):
@@ -81,7 +81,7 @@ def test_get_node(core_client, node):
 
 
 def test_find_nodes(core_client, node):
-    assert core_client.find_nodes(filter={"id": node.id}).data == [node]
+    assert core_client.find_nodes(filter={"id": node.id}) == [node]
 
 
 def test_get_node_not_found(core_client):
@@ -106,11 +106,11 @@ def test_get_master_image_groups(core_client):
 
 
 def test_get_projects(core_client, project):
-    assert len(core_client.get_projects().data) > 0
+    assert len(core_client.get_projects()) > 0
 
 
 def test_find_projects(core_client, project):
-    assert core_client.find_projects(filter={"id": project.id}).data == [project]
+    assert core_client.find_projects(filter={"id": project.id}) == [project]
 
 
 def test_get_project(core_client, project):
@@ -130,11 +130,11 @@ def test_update_project(core_client, project):
 
 
 def test_get_project_nodes(core_client, project_node):
-    assert len(core_client.get_project_nodes().data) > 0
+    assert len(core_client.get_project_nodes()) > 0
 
 
 def test_find_project_nodes(core_client, project_node):
-    assert core_client.find_project_nodes(filter={"id": project_node.id}).data == [project_node]
+    assert core_client.find_project_nodes(filter={"id": project_node.id}) == [project_node]
 
 
 def test_get_project_node(core_client, project_node):
@@ -146,11 +146,11 @@ def test_get_project_node_not_found(core_client):
 
 
 def test_get_analyses(core_client, analysis):
-    assert len(core_client.get_analyses().data) > 0
+    assert len(core_client.get_analyses()) > 0
 
 
 def test_find_analyses(core_client, analysis):
-    assert core_client.find_analyses(filter={"id": analysis.id}).data == [analysis]
+    assert core_client.find_analyses(filter={"id": analysis.id}) == [analysis]
 
 
 def test_get_analysis(core_client, analysis):
@@ -165,7 +165,7 @@ def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_
     # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
     analysis_buckets = tuple(
         ab
-        for ab in core_client.get_analysis_buckets().data
+        for ab in core_client.get_analysis_buckets()
         if ab.analysis_id == analysis.id and ab.type == AnalysisBucketType.code
     )
 
@@ -176,7 +176,7 @@ def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_
     # upload example file to referenced bucket
     bucket_files = storage_client.upload_to_bucket(
         analysis_bucket.external_id, {"file_name": next_random_string(), "content": rng_bytes}
-    ).data
+    )
 
     # link uploaded file to analysis bucket
     analysis_bucket_file_name = next_random_string()

@@ -215,7 +215,7 @@ class BaseClient(object):
         if r.status_code != httpx.codes.OK.value:
             raise new_error_from_response(r)
 
-        return ResourceList[resource_type](**r.json())
+        return ResourceList[resource_type](**r.json()).data
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
         """Create a resource of a certain type at the specified path."""
