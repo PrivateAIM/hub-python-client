@@ -9,7 +9,7 @@ import typing_extensions as te
 from pydantic import BaseModel
 
 from flame_hub import PasswordAuth, RobotAuth
-from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from, FindAllKwargs
+from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from, FindAllKwargs, new_error_from_response
 from flame_hub.defaults import DEFAULT_STORAGE_BASE_URL
 
 
@@ -96,7 +96,8 @@ class StorageClient(BaseClient):
             files=upload_file_dict,
         )
 
-        assert r.status_code == httpx.codes.CREATED.value
+        if r.status_code != httpx.codes.CREATED.value:
+            raise new_error_from_response(r)
 
         return ResourceList[BucketFile](**r.json()).data
 
