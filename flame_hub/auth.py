@@ -5,16 +5,16 @@ import uuid
 from datetime import datetime
 
 import httpx
+import typing_extensions as te
 from pydantic import BaseModel
 
 from flame_hub.base_client import (
     ResourceList,
     BaseClient,
     obtain_uuid_from,
-    PageParams,
-    FilterParams,
     UpdateModel,
     _UNSET,
+    FindAllKwargs,
 )
 from flame_hub.defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub.flow import RobotAuth, PasswordAuth
@@ -77,8 +77,8 @@ class AuthClient(BaseClient):
     def get_realms(self) -> ResourceList[Realm]:
         return self._get_all_resources(Realm, "realms")
 
-    def find_realms(self, page_params: PageParams = None, filter_params: FilterParams = None) -> ResourceList[Realm]:
-        return self._find_all_resources(Realm, page_params, filter_params, "realms")
+    def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Realm]:
+        return self._find_all_resources(Realm, "realms", **params)
 
     def create_realm(self, name: str, display_name: str = None, description: str = None) -> Realm:
         return self._create_resource(

@@ -39,7 +39,7 @@ def test_get_buckets(storage_client, bucket):
 
 
 def test_find_buckets(storage_client, bucket):
-    assert storage_client.find_buckets(filter_params={"id": bucket.id}).data == [bucket]
+    assert storage_client.find_buckets(filter={"id": bucket.id}).data == [bucket]
 
 
 def test_get_bucket(storage_client, bucket):
@@ -75,7 +75,7 @@ def test_get_bucket_files(storage_client, bucket_file):
 
 
 def test_find_bucket_files(storage_client, bucket_file):
-    assert storage_client.find_bucket_files(filter_params={"id": bucket_file.id}).data == [bucket_file]
+    assert storage_client.find_bucket_files(filter={"id": bucket_file.id}).data == [bucket_file]
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):

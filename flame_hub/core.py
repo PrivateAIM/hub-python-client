@@ -1,6 +1,7 @@
 __all__ = ["CoreClient"]
 
 import typing as t
+import typing_extensions as te
 import uuid
 from datetime import datetime
 from enum import Enum
@@ -13,10 +14,9 @@ from flame_hub.base_client import (
     BaseClient,
     ResourceList,
     obtain_uuid_from,
-    PageParams,
-    FilterParams,
     UpdateModel,
     _UNSET,
+    FindAllKwargs,
 )
 from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
@@ -240,8 +240,8 @@ class CoreClient(BaseClient):
     def get_nodes(self) -> ResourceList[Node]:
         return self._get_all_resources(Node, "nodes")
 
-    def find_nodes(self, page_params: PageParams = None, filter_params: FilterParams = None) -> ResourceList[Node]:
-        return self._find_all_resources(Node, page_params, filter_params, "nodes")
+    def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Node]:
+        return self._find_all_resources(Node, "nodes", **params)
 
     def create_node(
         self,
@@ -298,26 +298,20 @@ class CoreClient(BaseClient):
     def get_master_image_groups(self) -> ResourceList[MasterImageGroup]:
         return self._get_all_resources(MasterImageGroup, "master-image-groups")
 
-    def find_master_image_groups(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[MasterImageGroup]:
-        return self._find_all_resources(MasterImageGroup, page_params, filter_params, "master-image-groups")
+    def find_master_image_groups(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[MasterImageGroup]:
+        return self._find_all_resources(MasterImageGroup, "master-image-groups", **params)
 
     def get_master_images(self) -> ResourceList[MasterImage]:
         return self._get_all_resources(MasterImage, "master-images")
 
-    def find_master_images(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[MasterImage]:
-        return self._find_all_resources(MasterImage, page_params, filter_params, "master-images")
+    def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[MasterImage]:
+        return self._find_all_resources(MasterImage, "master-images", **params)
 
     def get_projects(self) -> ResourceList[Project]:
         return self._get_all_resources(Project, "projects")
 
-    def find_projects(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[Project]:
-        return self._find_all_resources(Project, page_params, filter_params, "projects")
+    def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Project]:
+        return self._find_all_resources(Project, "projects", **params)
 
     def sync_master_images(self):
         r = self._client.post("master-images/command")
@@ -381,10 +375,8 @@ class CoreClient(BaseClient):
     def get_project_nodes(self) -> ResourceList[ProjectNode]:
         return self._get_all_resources(ProjectNode, "project-nodes")
 
-    def find_project_nodes(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[ProjectNode]:
-        return self._find_all_resources(ProjectNode, page_params, filter_params, "project-nodes")
+    def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[ProjectNode]:
+        return self._find_all_resources(ProjectNode, "project-nodes", **params)
 
     def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
         return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
@@ -408,10 +400,8 @@ class CoreClient(BaseClient):
     def get_analyses(self) -> ResourceList[Analysis]:
         return self._get_all_resources(Analysis, "analyses")
 
-    def find_analyses(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[Analysis]:
-        return self._find_all_resources(Analysis, page_params, filter_params, "analyses")
+    def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[Analysis]:
+        return self._find_all_resources(Analysis, "analyses", **params)
 
     def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
@@ -429,10 +419,8 @@ class CoreClient(BaseClient):
     def get_analysis_buckets(self) -> ResourceList[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets")
 
-    def find_analysis_buckets(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[AnalysisBucket]:
-        return self._find_all_resources(AnalysisBucket, page_params, filter_params, "analysis-buckets")
+    def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[AnalysisBucket]:
+        return self._find_all_resources(AnalysisBucket, "analysis-buckets", **params)
 
     def get_analysis_bucket(self, analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str]) -> AnalysisBucket | None:
         return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id)
@@ -440,10 +428,8 @@ class CoreClient(BaseClient):
     def get_analysis_bucket_files(self) -> ResourceList[AnalysisBucketFile]:
         return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files")
 
-    def find_analysis_bucket_files(
-        self, page_params: PageParams = None, filter_params: FilterParams = None
-    ) -> ResourceList[AnalysisBucketFile]:
-        return self._find_all_resources(AnalysisBucketFile, page_params, filter_params, "analysis-bucket-files")
+    def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> ResourceList[AnalysisBucketFile]:
+        return self._find_all_resources(AnalysisBucketFile, "analysis-bucket-files", **params)
 
     def get_analysis_bucket_file(
         self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str]

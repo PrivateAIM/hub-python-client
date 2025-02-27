@@ -13,7 +13,7 @@ pytestmark = pytest.mark.integration
 def master_image(core_client):
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
     # master_images = [i for i in core_client.get_master_images().data if i.path == default_master_image]
-    master_images = core_client.find_master_images(filter_params={"path": default_master_image}).data
+    master_images = core_client.find_master_images(filter={"path": default_master_image}).data
 
     if len(master_images) != 1:
         raise ValueError(f"expected single master image named {default_master_image}, found {len(master_images)}")
@@ -62,7 +62,7 @@ def analysis_buckets_ready(core_client, analysis):
         all_analysis_bucket_types = set(t.value for t in AnalysisBucketType)
 
         # constrain to buckets created for this analysis
-        analysis_buckets = core_client.find_analysis_buckets(filter_params={"analysis_id": analysis.id}).data
+        analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id}).data
         assert len(analysis_buckets) == len(all_analysis_bucket_types)
 
         # check that a bucket for each type exists
@@ -81,7 +81,7 @@ def test_get_node(core_client, node):
 
 
 def test_find_nodes(core_client, node):
-    assert core_client.find_nodes(filter_params={"id": node.id}).data == [node]
+    assert core_client.find_nodes(filter={"id": node.id}).data == [node]
 
 
 def test_get_node_not_found(core_client):
@@ -110,7 +110,7 @@ def test_get_projects(core_client, project):
 
 
 def test_find_projects(core_client, project):
-    assert core_client.find_projects(filter_params={"id": project.id}).data == [project]
+    assert core_client.find_projects(filter={"id": project.id}).data == [project]
 
 
 def test_get_project(core_client, project):
@@ -134,7 +134,7 @@ def test_get_project_nodes(core_client, project_node):
 
 
 def test_find_project_nodes(core_client, project_node):
-    assert core_client.find_project_nodes(filter_params={"id": project_node.id}).data == [project_node]
+    assert core_client.find_project_nodes(filter={"id": project_node.id}).data == [project_node]
 
 
 def test_get_project_node(core_client, project_node):
@@ -150,7 +150,7 @@ def test_get_analyses(core_client, analysis):
 
 
 def test_find_analyses(core_client, analysis):
-    assert core_client.find_analyses(filter_params={"id": analysis.id}).data == [analysis]
+    assert core_client.find_analyses(filter={"id": analysis.id}).data == [analysis]
 
 
 def test_get_analysis(core_client, analysis):

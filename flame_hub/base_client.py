@@ -132,6 +132,11 @@ class FilterOperator(str, Enum):
 FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
 
 
+class FindAllKwargs(te.TypedDict, total=False):
+    filter: FilterParams | None
+    page: PageParams | None
+
+
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
@@ -195,18 +200,15 @@ class BaseClient(object):
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, None, None, *path)
+        return self._find_all_resources(resource_type, *path, filter=None, page=None)
 
-    def _find_all_resources(
-        self,
-        resource_type: type[ResourceT],
-        page_params: PageParams = None,
-        filter_params: FilterParams = None,
-        *path: str,
-    ):
+    def _find_all_resources(self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]):
         """Find all resources of a certain type at the specified path.
         Custom pagination and filter parameters can be applied."""
         # merge processed filter and page params
+        page_params = params.get("page", None)
+        filter_params = params.get("filter", None)
+
         request_params = build_page_params(page_params) | build_filter_params(filter_params)
         r = self._client.get("/".join(path), params=request_params)
 
