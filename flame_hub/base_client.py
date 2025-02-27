@@ -1,16 +1,30 @@
 __all__ = ["HubAPIError"]
 
 import typing as t
+import uuid
 from enum import Enum
 
-import typing_extensions as te
-
-import uuid
-
 import httpx
-from pydantic import BaseModel, Field, ValidationError, ConfigDict
+import typing_extensions as te
+from pydantic import BaseModel, Field, ValidationError, ConfigDict, model_validator
 
 from flame_hub.flow import PasswordAuth, RobotAuth
+
+_UNSET = object()
+
+
+class UpdateModel(BaseModel):
+    @model_validator(mode="before")
+    @classmethod
+    def strip_unset_properties(cls, data: t.Any) -> t.Any:
+        if isinstance(data, dict):
+            props_to_delete = [k for k, v in data.items() if v == _UNSET]
+
+            for prop in props_to_delete:
+                del data[prop]
+
+        return data
+
 
 # base resource type which assumes BaseModel as the base class
 ResourceT = t.TypeVar("ResourceT", bound=BaseModel)
@@ -207,7 +221,7 @@ class BaseClient(object):
 
         r = self._client.post(
             "/".join(path),
-            json=resource.model_dump(mode="json", exclude_none=True),
+            json=resource.model_dump(mode="json", exclude_none=False, exclude_unset=True),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:

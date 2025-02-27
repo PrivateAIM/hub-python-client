@@ -1,11 +1,11 @@
 __all__ = ["StorageClient"]
 
 import typing as t
-import typing_extensions as te
 import uuid
 from datetime import datetime
 
 import httpx
+import typing_extensions as te
 from pydantic import BaseModel
 
 from flame_hub import PasswordAuth, RobotAuth
@@ -15,11 +15,6 @@ from flame_hub.defaults import DEFAULT_STORAGE_BASE_URL
 
 class CreateBucket(BaseModel):
     name: str
-    region: str | None
-
-
-class UpdateBucket(BaseModel):
-    name: str | None
     region: str | None
 
 

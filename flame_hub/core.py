@@ -9,7 +9,15 @@ import httpx
 from pydantic import BaseModel
 
 from flame_hub.auth import Realm
-from flame_hub.base_client import BaseClient, ResourceList, obtain_uuid_from, PageParams, FilterParams
+from flame_hub.base_client import (
+    BaseClient,
+    ResourceList,
+    obtain_uuid_from,
+    PageParams,
+    FilterParams,
+    UpdateModel,
+    _UNSET,
+)
 from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
 from flame_hub.storage import BucketFile
@@ -39,12 +47,12 @@ class Node(CreateNode):
     updated_at: datetime
 
 
-class UpdateNode(BaseModel):
-    hidden: bool | None
-    external_name: str | None
-    type: NodeType | None
-    public_key: str | None
-    realm_id: uuid.UUID | None
+class UpdateNode(UpdateModel):
+    hidden: bool | None = None
+    external_name: str | None = None
+    type: NodeType | None = None
+    public_key: str | None = None
+    realm_id: uuid.UUID | None = None
 
 
 class MasterImageGroup(BaseModel):
@@ -86,10 +94,10 @@ class Project(CreateProject):
     robot_id: uuid.UUID | None
 
 
-class UpdateProject(BaseModel):
-    description: str | None
-    master_image_id: uuid.UUID | None
-    name: str | None
+class UpdateProject(UpdateModel):
+    description: str | None = None
+    master_image_id: uuid.UUID | None = None
+    name: str | None = None
 
 
 class ProjectNodeApprovalStatus(str, Enum):
@@ -265,12 +273,15 @@ class CoreClient(BaseClient):
     def update_node(
         self,
         node_id: t.Union[Node, uuid.UUID, str],
-        external_name: str = None,
-        hidden: bool = None,
-        node_type: NodeType = None,
-        realm_id: t.Union[Realm, str, uuid.UUID] = None,
-        public_key: str = None,
+        external_name: str = _UNSET,
+        hidden: bool = _UNSET,
+        node_type: NodeType = _UNSET,
+        realm_id: t.Union[Realm, str, uuid.UUID] = _UNSET,
+        public_key: str = _UNSET,
     ) -> Node:
+        if realm_id not in (None, _UNSET):
+            realm_id = obtain_uuid_from(realm_id)
+
         return self._update_resource(
             Node,
             node_id,
@@ -279,7 +290,7 @@ class CoreClient(BaseClient):
                 hidden=hidden,
                 type=node_type,
                 public_key=public_key,
-                realm_id=str(obtain_uuid_from(realm_id)) if realm_id else None,
+                realm_id=realm_id,
             ),
             "nodes",
         )
@@ -334,16 +345,19 @@ class CoreClient(BaseClient):
     def update_project(
         self,
         project_id: t.Union[Project, uuid.UUID, str],
-        description: str = None,
-        master_image_id: t.Union[MasterImage, str, uuid.UUID] = None,
-        name: str = None,
+        description: str = _UNSET,
+        master_image_id: t.Union[MasterImage, str, uuid.UUID] = _UNSET,
+        name: str = _UNSET,
     ) -> Project:
+        if master_image_id not in (None, _UNSET):
+            master_image_id = obtain_uuid_from(master_image_id)
+
         return self._update_resource(
             Project,
             project_id,
             UpdateProject(
                 description=description,
-                master_image_id=str(obtain_uuid_from(master_image_id)) if master_image_id else None,
+                master_image_id=master_image_id,
                 name=name,
             ),
             "projects",

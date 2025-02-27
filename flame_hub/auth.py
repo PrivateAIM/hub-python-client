@@ -7,7 +7,15 @@ from datetime import datetime
 import httpx
 from pydantic import BaseModel
 
-from flame_hub.base_client import ResourceList, BaseClient, obtain_uuid_from, PageParams, FilterParams
+from flame_hub.base_client import (
+    ResourceList,
+    BaseClient,
+    obtain_uuid_from,
+    PageParams,
+    FilterParams,
+    UpdateModel,
+    _UNSET,
+)
 from flame_hub.defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub.flow import RobotAuth, PasswordAuth
 
@@ -18,10 +26,10 @@ class CreateRealm(BaseModel):
     description: str | None
 
 
-class UpdateRealm(BaseModel):
-    name: str | None
-    display_name: str | None
-    description: str | None
+class UpdateRealm(UpdateModel):
+    name: str | None = None
+    display_name: str | None = None
+    description: str | None = None
 
 
 class Realm(CreateRealm):
@@ -50,11 +58,11 @@ class Robot(BaseModel):
     realm_id: uuid.UUID
 
 
-class UpdateRobot(BaseModel):
-    display_name: str | None
-    name: str | None
-    realm_id: uuid.UUID | None
-    secret: str | None
+class UpdateRobot(UpdateModel):
+    display_name: str | None = None
+    name: str | None = None
+    realm_id: uuid.UUID | None = None
+    secret: str | None = None
 
 
 class AuthClient(BaseClient):
@@ -90,7 +98,11 @@ class AuthClient(BaseClient):
         return self._get_single_resource(Realm, realm_id, "realms")
 
     def update_realm(
-        self, realm_id: Realm | str | uuid.UUID, name: str = None, display_name: str = None, description: str = None
+        self,
+        realm_id: Realm | str | uuid.UUID,
+        name: str = _UNSET,
+        display_name: str = _UNSET,
+        description: str = _UNSET,
     ) -> Realm:
         return self._update_resource(
             Realm,
@@ -121,18 +133,21 @@ class AuthClient(BaseClient):
     def update_robot(
         self,
         robot_id: t.Union[Robot, str, uuid.UUID],
-        name: str = None,
-        display_name: str = None,
-        realm_id: t.Union[Realm, str, uuid.UUID] = None,
-        secret: str = None,
+        name: str = _UNSET,
+        display_name: str = _UNSET,
+        realm_id: t.Union[Realm, str, uuid.UUID] = _UNSET,
+        secret: str = _UNSET,
     ) -> Robot:
+        if realm_id not in (None, _UNSET):
+            realm_id = obtain_uuid_from(realm_id)
+
         return self._update_resource(
             Robot,
             robot_id,
             UpdateRobot(
                 name=name,
                 display_name=display_name,
-                realm_id=str(obtain_uuid_from(realm_id)) if realm_id else None,
+                realm_id=realm_id,
                 secret=secret,
             ),
             "robots",
