@@ -1,3 +1,5 @@
+__all__ = ["HubAPIError"]
+
 import typing as t
 from enum import Enum
 
@@ -6,7 +8,7 @@ import typing_extensions as te
 import uuid
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ValidationError, ConfigDict
 
 from flame_hub.flow import PasswordAuth, RobotAuth
 
@@ -46,6 +48,39 @@ class ResourceListMeta(BaseModel):
 class ResourceList(BaseModel, t.Generic[ResourceT]):
     data: list[ResourceT]
     meta: ResourceListMeta
+
+
+class ErrorResponse(BaseModel):
+    model_config = ConfigDict(extra="allow")  # extra properties may be available
+    status_code: t.Annotated[int, Field(validation_alias="statusCode")]
+    code: str
+    message: str
+
+
+class HubAPIError(httpx.HTTPError):
+    def __init__(self, message: str, request: httpx.Request, error: ErrorResponse = None) -> None:
+        super().__init__(message)
+        self._request = request
+        self.error_response = error
+
+
+def new_error_from_response(r: httpx.Response):
+    error_response = None
+    error_message = f"received status code {r.status_code}"
+
+    try:
+        error_response = ErrorResponse(**r.json())
+        error_message = f"received status code {error_response.status_code} ({error_response.code}): "
+
+        if error_response.message.strip() == "":
+            error_message += "no error message present"
+        else:
+            error_message += error_response.message
+    except ValidationError:
+        # quietly dismiss this error
+        pass
+
+    return HubAPIError(error_message, r.request, error_response)
 
 
 class PageParams(te.TypedDict, total=False):
@@ -131,7 +166,9 @@ class BaseClient(object):
         request_params = build_page_params(page_params) | build_filter_params(filter_params)
         r = self._client.get("/".join(path), params=request_params)
 
-        assert r.status_code == httpx.codes.OK.value
+        if r.status_code != httpx.codes.OK.value:
+            raise new_error_from_response(r)
+
         return ResourceList[resource_type](**r.json())
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
@@ -140,7 +177,9 @@ class BaseClient(object):
             json=resource.model_dump(mode="json"),
         )
 
-        assert r.status_code == httpx.codes.CREATED.value
+        if r.status_code != httpx.codes.CREATED.value:
+            raise new_error_from_response(r)
+
         return resource_type(**r.json())
 
     def _get_single_resource(
@@ -152,7 +191,9 @@ class BaseClient(object):
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
 
-        assert r.status_code == httpx.codes.OK.value
+        if r.status_code != httpx.codes.OK.value:
+            raise new_error_from_response(r)
+
         return resource_type(**r.json())
 
     def _update_resource(
@@ -169,7 +210,9 @@ class BaseClient(object):
             json=resource.model_dump(mode="json", exclude_none=True),
         )
 
-        assert r.status_code == httpx.codes.ACCEPTED.value
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_error_from_response(r)
+
         return resource_type(**r.json())
 
     def _delete_resource(self, resource_id: t.Union[UuidModel, str, uuid.UUID], *path: str):
@@ -177,4 +220,5 @@ class BaseClient(object):
 
         r = self._client.delete("/".join(path))
 
-        assert r.status_code == httpx.codes.ACCEPTED.value
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_error_from_response(r)
