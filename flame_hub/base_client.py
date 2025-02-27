@@ -57,11 +57,13 @@ _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 
 class FilterOperator(str, Enum):
-    eq = ""
+    eq = "="
     neq = "!"
     like = "~"
     lt = "<"
+    le = "<="
     gt = ">"
+    ge = ">="
 
 
 _ALL_FILTER_OPERATOR_STRINGS = {f.value for f in FilterOperator}
@@ -69,13 +71,16 @@ _ALL_FILTER_OPERATOR_STRINGS = {f.value for f in FilterOperator}
 FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
 
 
-def build_page_params_with_defaults(page_params: PageParams = None):
+def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
     # use empty dict if None is provided
+    if default_page_params is None:
+        default_page_params = _DEFAULT_PAGE_PARAMS
+
     if page_params is None:
         page_params = {}
 
     # overwrite default values with user-defined ones
-    page_params = _DEFAULT_PAGE_PARAMS | page_params
+    page_params = default_page_params | page_params
 
     return {f"page[{k}]": v for k, v in page_params.items()}
 
@@ -96,6 +101,10 @@ def build_filter_params(filter_params: FilterParams = None):
 
         if isinstance(query_filter_op, FilterOperator):  # FilterOperator -> str
             query_filter_op = query_filter_op.value
+
+        # equals is replaced with an empty string
+        if query_filter_op == "=":
+            query_filter_op = ""
 
         query_params[query_param_name] = f"{query_filter_op}{query_filter_value}"
 
@@ -119,7 +128,7 @@ class BaseClient(object):
         *path: str,
     ):
         # merge processed filter and page params
-        request_params = build_page_params_with_defaults(page_params) | build_filter_params(filter_params)
+        request_params = build_page_params(page_params) | build_filter_params(filter_params)
         r = self._client.get("/".join(path), params=request_params)
 
         assert r.status_code == httpx.codes.OK.value
