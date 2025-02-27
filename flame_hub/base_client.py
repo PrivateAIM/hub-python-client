@@ -2,6 +2,7 @@ __all__ = ["HubAPIError"]
 
 import typing as t
 import uuid
+from collections.abc import Iterable
 from enum import Enum
 
 import httpx
@@ -10,10 +11,15 @@ from pydantic import BaseModel, Field, ValidationError, ConfigDict, model_valida
 
 from flame_hub.flow import PasswordAuth, RobotAuth
 
+# sentinel to mark parameters as unset (as opposed to using None)
 _UNSET = object()
 
 
 class UpdateModel(BaseModel):
+    """Base class for models where properties can be unset when passed into the class constructor.
+    Before validation, this class prunes all properties which have the unset sentinel assigned to them.
+    This way, they are considered unset by the base model."""
+
     @model_validator(mode="before")
     @classmethod
     def strip_unset_properties(cls, data: t.Any) -> t.Any:
@@ -72,6 +78,8 @@ class ErrorResponse(BaseModel):
 
 
 class HubAPIError(httpx.HTTPError):
+    """Base error for any unexpected response returned by the Hub API."""
+
     def __init__(self, message: str, request: httpx.Request, error: ErrorResponse = None) -> None:
         super().__init__(message)
         self._request = request
@@ -79,6 +87,9 @@ class HubAPIError(httpx.HTTPError):
 
 
 def new_error_from_response(r: httpx.Response):
+    """Create a new error from a response.
+    If present, this function will use the response body to add context to the error message.
+    The parsed response body is available using the error_response property of the returned error."""
     error_response = None
     error_message = f"received status code {r.status_code}"
 
@@ -97,14 +108,17 @@ def new_error_from_response(r: httpx.Response):
     return HubAPIError(error_message, r.request, error_response)
 
 
+# dict shape for specifying limit and offset for paginated queries
 class PageParams(te.TypedDict, total=False):
     limit: int
     offset: int
 
 
+# default limit and offset for paginated requests
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 
+# operators that are supported by the Hub API for filtering requests
 class FilterOperator(str, Enum):
     eq = "="
     neq = "!"
@@ -115,12 +129,11 @@ class FilterOperator(str, Enum):
     ge = ">="
 
 
-_ALL_FILTER_OPERATOR_STRINGS = {f.value for f in FilterOperator}
-
 FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
 
 
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
+    """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
     if default_page_params is None:
         default_page_params = _DEFAULT_PAGE_PARAMS
@@ -135,6 +148,7 @@ def build_page_params(page_params: PageParams = None, default_page_params: PageP
 
 
 def build_filter_params(filter_params: FilterParams = None):
+    """Build a dictionary of query parameters based on provided filter parameters."""
     if filter_params is None:
         filter_params = {}
 
@@ -160,6 +174,18 @@ def build_filter_params(filter_params: FilterParams = None):
     return query_params
 
 
+def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
+    path_parts = []
+
+    for p in path:
+        if isinstance(p, str):
+            path_parts.append(p)
+        else:
+            path_parts.append(str(obtain_uuid_from(p)))
+
+    return tuple(path_parts)
+
+
 class BaseClient(object):
     def __init__(
         self, base_url: str = None, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None
@@ -167,6 +193,8 @@ class BaseClient(object):
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
+        """Retrieve all resources of a certain type at the specified path.
+        Default pagination parameters are applied."""
         return self._find_all_resources(resource_type, None, None, *path)
 
     def _find_all_resources(
@@ -176,6 +204,8 @@ class BaseClient(object):
         filter_params: FilterParams = None,
         *path: str,
     ):
+        """Find all resources of a certain type at the specified path.
+        Custom pagination and filter parameters can be applied."""
         # merge processed filter and page params
         request_params = build_page_params(page_params) | build_filter_params(filter_params)
         r = self._client.get("/".join(path), params=request_params)
@@ -186,6 +216,7 @@ class BaseClient(object):
         return ResourceList[resource_type](**r.json())
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
+        """Create a resource of a certain type at the specified path."""
         r = self._client.post(
             "/".join(path),
             json=resource.model_dump(mode="json"),
@@ -197,10 +228,10 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], resource_id: UuidIdentifiable, *path: str
+        self, resource_type: type[ResourceT], *path: t.Union[str, UuidIdentifiable]
     ) -> ResourceT | None:
-        path = (*path, str(obtain_uuid_from(resource_id)))
-        r = self._client.get("/".join(path))
+        """Get a resource of a certain type at the specified path."""
+        r = self._client.get("/".join(convert_path(path)))
 
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
@@ -213,14 +244,12 @@ class BaseClient(object):
     def _update_resource(
         self,
         resource_type: type[ResourceT],
-        resource_id: UuidIdentifiable,
         resource: BaseModel,
-        *path: str,
+        *path: t.Union[str, UuidIdentifiable],
     ) -> ResourceT:
-        path = (*path, str(obtain_uuid_from(resource_id)))
-
+        """Update a resource of a certain type at the specified path."""
         r = self._client.post(
-            "/".join(path),
+            "/".join(convert_path(path)),
             json=resource.model_dump(mode="json", exclude_none=False, exclude_unset=True),
         )
 
@@ -229,10 +258,9 @@ class BaseClient(object):
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, resource_id: t.Union[UuidModel, str, uuid.UUID], *path: str):
-        path = (*path, str(obtain_uuid_from(resource_id)))
-
-        r = self._client.delete("/".join(path))
+    def _delete_resource(self, *path: t.Union[str, UuidIdentifiable]):
+        """Delete a resource of a certain type at the specified path."""
+        r = self._client.delete("/".join(convert_path(path)))
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_error_from_response(r)

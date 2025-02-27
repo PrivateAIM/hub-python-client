@@ -92,10 +92,10 @@ class AuthClient(BaseClient):
         )
 
     def delete_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]):
-        self._delete_resource(realm_id, "realms")
+        self._delete_resource("realms", realm_id)
 
     def get_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]) -> Realm | None:
-        return self._get_single_resource(Realm, realm_id, "realms")
+        return self._get_single_resource(Realm, "realms", realm_id)
 
     def update_realm(
         self,
@@ -106,13 +106,13 @@ class AuthClient(BaseClient):
     ) -> Realm:
         return self._update_resource(
             Realm,
-            realm_id,
             UpdateRealm(
                 name=name,
                 display_name=display_name,
                 description=description,
             ),
             "realms",
+            realm_id,
         )
 
     def create_robot(
@@ -125,10 +125,10 @@ class AuthClient(BaseClient):
         )
 
     def delete_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]):
-        self._delete_resource(robot_id, "robots")
+        self._delete_resource("robots", robot_id)
 
     def get_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]) -> Robot | None:
-        return self._get_single_resource(Robot, robot_id, "robots")
+        return self._get_single_resource(Robot, "robots", robot_id)
 
     def update_robot(
         self,
@@ -143,7 +143,6 @@ class AuthClient(BaseClient):
 
         return self._update_resource(
             Robot,
-            robot_id,
             UpdateRobot(
                 name=name,
                 display_name=display_name,
@@ -151,4 +150,5 @@ class AuthClient(BaseClient):
                 secret=secret,
             ),
             "robots",
+            robot_id,
         )

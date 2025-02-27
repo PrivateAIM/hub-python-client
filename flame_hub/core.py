@@ -265,10 +265,10 @@ class CoreClient(BaseClient):
         )
 
     def get_node(self, node_id: t.Union[Node, uuid.UUID, str]) -> Node | None:
-        return self._get_single_resource(Node, node_id, "nodes")
+        return self._get_single_resource(Node, "nodes", node_id)
 
     def delete_node(self, node_id: t.Union[Node, uuid.UUID, str]):
-        self._delete_resource(node_id, "nodes")
+        self._delete_resource("nodes", node_id)
 
     def update_node(
         self,
@@ -284,7 +284,6 @@ class CoreClient(BaseClient):
 
         return self._update_resource(
             Node,
-            node_id,
             UpdateNode(
                 external_name=external_name,
                 hidden=hidden,
@@ -293,6 +292,7 @@ class CoreClient(BaseClient):
                 realm_id=realm_id,
             ),
             "nodes",
+            node_id,
         )
 
     def get_master_image_groups(self) -> ResourceList[MasterImageGroup]:
@@ -337,10 +337,10 @@ class CoreClient(BaseClient):
         )
 
     def delete_project(self, project_id: t.Union[Project, uuid.UUID, str]):
-        self._delete_resource(project_id, "projects")
+        self._delete_resource("projects", project_id)
 
     def get_project(self, project_id: t.Union[Project, uuid.UUID, str]) -> Project | None:
-        return self._get_single_resource(Project, project_id, "projects")
+        return self._get_single_resource(Project, "projects", project_id)
 
     def update_project(
         self,
@@ -354,13 +354,13 @@ class CoreClient(BaseClient):
 
         return self._update_resource(
             Project,
-            project_id,
             UpdateProject(
                 description=description,
                 master_image_id=master_image_id,
                 name=name,
             ),
             "projects",
+            project_id,
         )
 
     def create_project_node(
@@ -376,7 +376,7 @@ class CoreClient(BaseClient):
         )
 
     def delete_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]):
-        self._delete_resource(project_node_id, "project-nodes")
+        self._delete_resource("project-nodes", project_node_id)
 
     def get_project_nodes(self) -> ResourceList[ProjectNode]:
         return self._get_all_resources(ProjectNode, "project-nodes")
@@ -387,7 +387,7 @@ class CoreClient(BaseClient):
         return self._find_all_resources(ProjectNode, page_params, filter_params, "project-nodes")
 
     def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
-        return self._get_single_resource(ProjectNode, project_node_id, "project-nodes")
+        return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
 
     def create_analysis(
         self, name: str, project_id: t.Union[Project, uuid.UUID, str], description: str = None
@@ -403,7 +403,7 @@ class CoreClient(BaseClient):
         )
 
     def delete_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]):
-        self._delete_resource(analysis_id, "analyses")
+        self._delete_resource("analyses", analysis_id)
 
     def get_analyses(self) -> ResourceList[Analysis]:
         return self._get_all_resources(Analysis, "analyses")
@@ -414,7 +414,7 @@ class CoreClient(BaseClient):
         return self._find_all_resources(Analysis, page_params, filter_params, "analyses")
 
     def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
-        return self._get_single_resource(Analysis, analysis_id, "analyses")
+        return self._get_single_resource(Analysis, "analyses", analysis_id)
 
     def create_analysis_node(
         self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
@@ -424,7 +424,7 @@ class CoreClient(BaseClient):
         )
 
     def delete_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
-        self._delete_resource(analysis_node_id, "analysis-nodes")
+        self._delete_resource("analysis-nodes", analysis_node_id)
 
     def get_analysis_buckets(self) -> ResourceList[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets")
@@ -435,7 +435,7 @@ class CoreClient(BaseClient):
         return self._find_all_resources(AnalysisBucket, page_params, filter_params, "analysis-buckets")
 
     def get_analysis_bucket(self, analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str]) -> AnalysisBucket | None:
-        return self._get_single_resource(AnalysisBucket, analysis_bucket_id)
+        return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id)
 
     def get_analysis_bucket_files(self) -> ResourceList[AnalysisBucketFile]:
         return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files")
@@ -448,7 +448,7 @@ class CoreClient(BaseClient):
     def get_analysis_bucket_file(
         self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str]
     ) -> AnalysisBucketFile | None:
-        return self._get_single_resource(AnalysisBucketFile, analysis_bucket_file_id, "analysis-bucket-files")
+        return self._get_single_resource(AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id)
 
     def create_analysis_bucket_file(
         self,

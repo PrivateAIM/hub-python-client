@@ -67,7 +67,7 @@ class StorageClient(BaseClient):
         return self._create_resource(Bucket, CreateBucket(name=name, region=region), "buckets")
 
     def delete_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]):
-        self._delete_resource(bucket_id, "buckets")
+        self._delete_resource("buckets", bucket_id)
 
     def get_buckets(self) -> ResourceList[Bucket]:
         return self._get_all_resources(Bucket, "buckets")
@@ -76,7 +76,7 @@ class StorageClient(BaseClient):
         return self._find_all_resources(Bucket, page_params, filter_params, "buckets")
 
     def get_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]) -> Bucket | None:
-        return self._get_single_resource(Bucket, bucket_id, "buckets")
+        return self._get_single_resource(Bucket, "buckets", bucket_id)
 
     def stream_bucket_tarball(self, bucket_id: t.Union[Bucket, str, uuid.UUID], chunk_size=1024):
         with self._client.stream("GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream") as r:
@@ -101,10 +101,10 @@ class StorageClient(BaseClient):
         return ResourceList[BucketFile](**r.json())
 
     def delete_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID]):
-        self._delete_resource(bucket_file_id, "bucket-files")
+        self._delete_resource("bucket-files", bucket_file_id)
 
     def get_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID]) -> BucketFile | None:
-        return self._get_single_resource(BucketFile, bucket_file_id, "bucket-files")
+        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id)
 
     def get_bucket_files(self) -> ResourceList[BucketFile]:
         return self._get_all_resources(BucketFile, "bucket-files")
