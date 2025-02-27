@@ -347,8 +347,7 @@ def storage_client(password_auth, storage_base_url):
 
 @pytest.fixture(scope="session")
 def master_realm(auth_client):
-    all_realms = auth_client.get_realms()
-    filtered_realms = list(filter(lambda r: r.name == "master", all_realms.data))
+    filtered_realms = auth_client.find_realms(filter_params={"name": "master"}).data
 
     if len(filtered_realms) != 1:
         raise ValueError(f"expected single master realm, found {len(filtered_realms)}")

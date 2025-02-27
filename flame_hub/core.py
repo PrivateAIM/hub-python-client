@@ -303,8 +303,10 @@ class CoreClient(BaseClient):
     def get_projects(self) -> ResourceList[Project]:
         return self._get_all_resources(Project, "projects")
 
-    def find_projects(self, page_params: PageParams = None) -> ResourceList[Project]:
-        return self._find_all_resources(Project, page_params, "projects")
+    def find_projects(
+        self, page_params: PageParams = None, filter_params: FilterParams = None
+    ) -> ResourceList[Project]:
+        return self._find_all_resources(Project, page_params, filter_params, "projects")
 
     def sync_master_images(self):
         r = self._client.post("master-images/command")

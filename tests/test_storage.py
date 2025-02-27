@@ -38,6 +38,10 @@ def test_get_buckets(storage_client, bucket):
     assert len(storage_client.get_buckets().data) > 0
 
 
+def test_find_buckets(storage_client, bucket):
+    assert storage_client.find_buckets(filter_params={"id": bucket.id}).data == [bucket]
+
+
 def test_get_bucket(storage_client, bucket):
     assert bucket == storage_client.get_bucket(bucket.id)
 
@@ -68,6 +72,10 @@ def test_get_bucket_file_none(storage_client):
 
 def test_get_bucket_files(storage_client, bucket_file):
     assert len(storage_client.get_bucket_files().data) > 0
+
+
+def test_find_bucket_files(storage_client, bucket_file):
+    assert storage_client.find_bucket_files(filter_params={"id": bucket_file.id}).data == [bucket_file]
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
