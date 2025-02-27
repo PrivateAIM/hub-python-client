@@ -17,11 +17,9 @@ def master_image(core_client):
             core_client.sync_master_images()
         except HubAPIError as e:
             # ignore if command is locked, means the hub is probably syncing right now
-            if e.error_response.message.startswith("The command is locked"):
-                pass
-
-            # otherwise this is an unknown error and should be raised
-            raise e
+            if not e.error_response.message.startswith("The command is locked"):
+                # otherwise this is an unknown error and should be raised
+                raise e
 
         def _check_master_images_available():
             assert len(core_client.get_master_images()) > 0
