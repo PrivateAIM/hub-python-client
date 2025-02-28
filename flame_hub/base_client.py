@@ -108,6 +108,11 @@ def new_error_from_response(r: httpx.Response):
     return HubAPIError(error_message, r.request, error_response)
 
 
+class SortParams(te.TypedDict, total=False):
+    by: str
+    order: t.Literal["ascending", "descending"]
+
+
 # dict shape for specifying limit and offset for paginated queries
 class PageParams(te.TypedDict, total=False):
     limit: int
@@ -135,6 +140,7 @@ FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
 class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None
+    sort: SortParams | None
 
 
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
@@ -179,6 +185,26 @@ def build_filter_params(filter_params: FilterParams = None):
     return query_params
 
 
+def build_sort_params(sort_params: SortParams = None):
+    if sort_params is None:
+        sort_params = {}
+
+    query_params = {}
+
+    # check if a property has been specified
+    param_sort_by = sort_params.get("by", None)
+
+    if param_sort_by is not None:
+        # default sort order should be ascending
+        param_sort_order = sort_params.get("order", "ascending")
+        # property gets a "-" prepended if sorting in descending order
+        param_sort_prefix = "-" if param_sort_order == "descending" else ""
+        # construct the actual query params
+        query_params["sort"] = param_sort_prefix + param_sort_by
+
+    return query_params
+
+
 def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
     path_parts = []
 
@@ -208,8 +234,12 @@ class BaseClient(object):
         # merge processed filter and page params
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
+        sort_params = params.get("sort", None)
 
-        request_params = build_page_params(page_params) | build_filter_params(filter_params)
+        request_params = (
+            build_page_params(page_params) | build_filter_params(filter_params) | build_sort_params(sort_params)
+        )
+
         r = self._client.get("/".join(path), params=request_params)
 
         if r.status_code != httpx.codes.OK.value:

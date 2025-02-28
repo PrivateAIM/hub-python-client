@@ -1,6 +1,6 @@
 import pytest
 
-from flame_hub.base_client import build_page_params, FilterOperator, build_filter_params, PageParams
+from flame_hub.base_client import build_page_params, FilterOperator, build_filter_params, PageParams, build_sort_params
 
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
@@ -42,3 +42,17 @@ def test_build_page_params(page_params, expected):
 )
 def test_build_filter_params(filter_params, expected):
     assert expected == build_filter_params(filter_params)
+
+
+@pytest.mark.parametrize(
+    "sort_params,expected",
+    [
+        (None, {}),
+        ({}, {}),
+        ({"by": "foobar"}, {"sort": "foobar"}),
+        ({"by": "foobar", "order": "ascending"}, {"sort": "foobar"}),
+        ({"by": "foobar", "order": "descending"}, {"sort": "-foobar"}),
+    ],
+)
+def test_build_sort_params(sort_params, expected):
+    assert expected == build_sort_params(sort_params)
