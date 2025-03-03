@@ -190,6 +190,18 @@ def test_analysis_node_update(core_client, analysis_node):
     assert new_analysis_node.run_status == AnalysisNodeRunStatus.starting
 
 
+def test_get_analysis_nodes(core_client, analysis_node):
+    assert len(core_client.get_analysis_nodes()) > 0
+
+
+def test_find_analysis_nodes(core_client, analysis_node):
+    assert core_client.find_analysis_nodes(filter={"id": analysis_node.id}) == [analysis_node]
+
+
+def test_get_analysis_node(core_client, analysis_node):
+    assert analysis_node == core_client.get_analysis_node(analysis_node.id)
+
+
 def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
     # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
     analysis_buckets = core_client.find_analysis_buckets(

@@ -461,6 +461,15 @@ class CoreClient(BaseClient):
             analysis_node_id,
         )
 
+    def get_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
+        return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id)
+
+    def get_analysis_nodes(self):
+        return self._get_all_resources(AnalysisNode, "analysis-nodes")
+
+    def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]):
+        return self._find_all_resources(AnalysisNode, "analysis-nodes", **params)
+
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets")
 
