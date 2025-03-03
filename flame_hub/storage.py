@@ -86,7 +86,7 @@ class StorageClient(BaseClient):
     def upload_to_bucket(
         self, bucket_id: t.Union[Bucket, str, uuid.UUID], *upload_file: UploadFile
     ) -> list[BucketFile]:
-        upload_file_tpl = (apply_upload_file_defaults(uf) for uf in upload_file)
+        upload_file_tpl = tuple(apply_upload_file_defaults(uf) for uf in upload_file)
         upload_file_dict = {
             str(uuid.uuid4()): (uf["file_name"], uf["content"], uf["content_type"]) for uf in upload_file_tpl
         }

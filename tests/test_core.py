@@ -175,6 +175,14 @@ def test_get_analysis_not_found(core_client):
     assert core_client.get_analysis(next_uuid()) is None
 
 
+def test_update_analysis(core_client, analysis):
+    new_name = next_random_string()
+    new_analysis = core_client.update_analysis(analysis.id, name=new_name)
+
+    assert analysis != new_analysis
+    assert new_analysis.name == new_name
+
+
 def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
     # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
     analysis_buckets = core_client.find_analysis_buckets(

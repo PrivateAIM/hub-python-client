@@ -159,6 +159,13 @@ class Analysis(CreateAnalysis):
     master_image_id: uuid.UUID
 
 
+class UpdateAnalysis(UpdateModel):
+    name: str | None
+
+
+AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
+
+
 class CreateAnalysisNode(BaseModel):
     analysis_id: uuid.UUID
     node_id: uuid.UUID
@@ -215,17 +222,21 @@ class CreateAnalysisBucketFile(BaseModel):
     name: str
     external_id: uuid.UUID
     bucket_id: uuid.UUID
+    root: bool
 
 
 class AnalysisBucketFile(CreateAnalysisBucketFile):
     id: uuid.UUID
-    root: bool
     created_at: datetime
     updated_at: datetime
     realm_id: uuid.UUID
     user_id: uuid.UUID | None
     robot_id: uuid.UUID | None
     analysis_id: uuid.UUID
+
+
+class UpdateAnalysisBucketFile(UpdateModel):
+    root: bool | None = None
 
 
 class CoreClient(BaseClient):
@@ -408,6 +419,18 @@ class CoreClient(BaseClient):
     def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
 
+    def update_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str], name: str = _UNSET):
+        if analysis_id not in (None, _UNSET):
+            analysis_id = obtain_uuid_from(analysis_id)
+
+        return self._update_resource(Analysis, UpdateAnalysis(name=name), "analyses", analysis_id)
+
+    def send_analysis_command(self, analysis_id: t.Union[Analysis, uuid.UUID, str], command: AnalysisCommand):
+        r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
+
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_error_from_response(r)
+
     def create_analysis_node(
         self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
     ):
@@ -443,11 +466,28 @@ class CoreClient(BaseClient):
         name: str,
         bucket_file_id: t.Union[BucketFile, uuid.UUID, str],
         analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str],
+        is_entrypoint: bool = False,
     ):
         return self._create_resource(
             AnalysisBucketFile,
             CreateAnalysisBucketFile(
-                external_id=obtain_uuid_from(bucket_file_id), bucket_id=obtain_uuid_from(analysis_bucket_id), name=name
+                external_id=obtain_uuid_from(bucket_file_id),
+                bucket_id=obtain_uuid_from(analysis_bucket_id),
+                name=name,
+                root=is_entrypoint,
             ),
             "analysis-bucket-files",
+        )
+
+    def update_analysis_bucket_file(
+        self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str], is_entrypoint: bool = _UNSET
+    ) -> AnalysisBucketFile:
+        if analysis_bucket_file_id not in (None, _UNSET):
+            analysis_bucket_file_id = obtain_uuid_from(analysis_bucket_file_id)
+
+        return self._update_resource(
+            AnalysisBucketFile,
+            UpdateAnalysisBucketFile(root=is_entrypoint),
+            "analysis-bucket-files",
+            analysis_bucket_file_id,
         )
