@@ -4,7 +4,7 @@ import string
 import pytest
 
 from flame_hub import HubAPIError
-from flame_hub.core import AnalysisBucketType
+from flame_hub.core import AnalysisBucketType, AnalysisNodeRunStatus
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
@@ -181,6 +181,13 @@ def test_update_analysis(core_client, analysis):
 
     assert analysis != new_analysis
     assert new_analysis.name == new_name
+
+
+def test_analysis_node_update(core_client, analysis_node):
+    new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status=AnalysisNodeRunStatus.starting)
+
+    assert analysis_node != new_analysis_node
+    assert new_analysis_node.run_status == AnalysisNodeRunStatus.starting
 
 
 def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
