@@ -1,6 +1,14 @@
 import pytest
 
-from flame_hub.base_client import build_page_params, FilterOperator, build_filter_params, PageParams, build_sort_params
+from flame_hub.base_client import (
+    build_page_params,
+    FilterOperator,
+    build_filter_params,
+    PageParams,
+    build_sort_params,
+    UpdateModel,
+    _UNSET,
+)
 
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
@@ -56,3 +64,23 @@ def test_build_filter_params(filter_params, expected):
 )
 def test_build_sort_params(sort_params, expected):
     assert expected == build_sort_params(sort_params)
+
+
+class FooUpdateModel(UpdateModel):
+    foo: str | None = None
+
+
+def test_update_model_dump_if_not_set():
+    assert FooUpdateModel().model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
+
+
+def test_update_model_dump_if_none_set():
+    assert FooUpdateModel(foo=None).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {"foo": None}
+
+
+def test_update_model_dump_if_unset():
+    assert FooUpdateModel(foo=_UNSET).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
+
+
+def test_update_model_dump_if_set():
+    assert FooUpdateModel(foo="bar").model_dump(mode="json", exclude_unset=True, exclude_none=False) == {"foo": "bar"}
