@@ -202,6 +202,12 @@ class AnalysisNode(CreateAnalysisNode):
     node_realm_id: uuid.UUID
 
 
+class UpdateAnalysisNode(UpdateModel):
+    comment: str | None = None
+    approval_status: AnalysisNodeApprovalStatus | None = None
+    run_status: AnalysisNodeRunStatus | None = None
+
+
 class AnalysisBucketType(str, Enum):
     code = "CODE"
     result = "RESULT"
@@ -440,6 +446,20 @@ class CoreClient(BaseClient):
 
     def delete_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
         self._delete_resource("analysis-nodes", analysis_node_id)
+
+    def update_analysis_node(
+        self,
+        analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str],
+        comment: str = _UNSET,
+        approval_status: AnalysisNodeApprovalStatus = _UNSET,
+        run_status: AnalysisNodeRunStatus = _UNSET,
+    ):
+        return self._update_resource(
+            AnalysisNode,
+            UpdateAnalysisNode(comment=comment, approval_status=approval_status, run_status=run_status),
+            "analysis-nodes",
+            analysis_node_id,
+        )
 
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets")
