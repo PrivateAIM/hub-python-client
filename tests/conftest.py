@@ -12,8 +12,8 @@ from testcontainers.rabbitmq import RabbitMqContainer
 from testcontainers.redis import RedisContainer
 from testcontainers.vault import VaultContainer
 
-from flame_hub import PasswordAuth, AuthClient, CoreClient, StorageClient
-
+from flame_hub.auth import PasswordAuth
+from flame_hub import AuthClient, CoreClient, StorageClient
 
 _RNG_BYTE_SIZE = 16
 

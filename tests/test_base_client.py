@@ -1,6 +1,6 @@
 import pytest
 
-from flame_hub.base_client import (
+from flame_hub._base_client import (
     build_page_params,
     FilterOperator,
     build_filter_params,

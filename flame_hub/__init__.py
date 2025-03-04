@@ -1,7 +1,8 @@
-__all__ = ["AuthClient", "HubAPIError", "PasswordAuth", "RobotAuth", "CoreClient", "StorageClient"]
+__all__ = ["auth", "types", "AuthClient", "HubAPIError", "CoreClient", "StorageClient"]
 
-from .auth import AuthClient
-from .base_client import HubAPIError
-from .flow import PasswordAuth, RobotAuth
-from .core import CoreClient
-from .storage import StorageClient
+from . import auth, types
+
+from ._auth_client import AuthClient
+from ._base_client import HubAPIError
+from ._core_client import CoreClient
+from ._storage_client import StorageClient

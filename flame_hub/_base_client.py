@@ -1,5 +1,3 @@
-__all__ = ["HubAPIError", "FilterOperator"]
-
 import typing as t
 import uuid
 from collections.abc import Iterable
@@ -9,7 +7,7 @@ import httpx
 import typing_extensions as te
 from pydantic import BaseModel, Field, ValidationError, ConfigDict, model_validator
 
-from flame_hub.flow import PasswordAuth, RobotAuth
+from flame_hub._auth_flows import PasswordAuth, RobotAuth
 
 # sentinel to mark parameters as unset (as opposed to using None)
 _UNSET = object()

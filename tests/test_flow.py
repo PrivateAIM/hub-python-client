@@ -1,7 +1,7 @@
 import httpx
 import pytest
 
-from flame_hub import RobotAuth
+from flame_hub.auth import RobotAuth
 from tests.helpers import next_random_string
 
 pytestmark = pytest.mark.integration

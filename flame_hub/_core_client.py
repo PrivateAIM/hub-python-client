@@ -1,5 +1,3 @@
-__all__ = ["CoreClient"]
-
 import typing as t
 import uuid
 from datetime import datetime
@@ -8,8 +6,8 @@ import httpx
 import typing_extensions as te
 from pydantic import BaseModel
 
-from flame_hub.auth import Realm
-from flame_hub.base_client import (
+from flame_hub._auth_client import Realm
+from flame_hub._base_client import (
     BaseClient,
     obtain_uuid_from,
     UpdateModel,
@@ -17,9 +15,9 @@ from flame_hub.base_client import (
     FindAllKwargs,
     new_error_from_response,
 )
-from flame_hub.defaults import DEFAULT_CORE_BASE_URL
-from flame_hub.flow import PasswordAuth, RobotAuth
-from flame_hub.storage import BucketFile
+from flame_hub._defaults import DEFAULT_CORE_BASE_URL
+from flame_hub._auth_flows import PasswordAuth, RobotAuth
+from flame_hub._storage_client import BucketFile
 
 NodeType = t.Literal["aggregator", "default"]
 

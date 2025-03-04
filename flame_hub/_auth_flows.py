@@ -1,11 +1,9 @@
-__all__ = ["RobotAuth", "PasswordAuth"]
-
 import time
 
 import httpx
 from pydantic import BaseModel
 
-from flame_hub.defaults import DEFAULT_AUTH_BASE_URL
+from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 
 
 def now():
