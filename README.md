@@ -9,7 +9,7 @@ Pick one, provide your credentials and plug them into the class for the service 
 ```python
 import flame_hub
 
-auth = flame_hub.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
 auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
 ```
 
@@ -24,7 +24,7 @@ arguments.
 ```python
 import flame_hub
 
-auth = flame_hub.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
 auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
 
 # To get the master realm, you could call auth_client.get_realms() and hope that it's among the first
@@ -45,7 +45,7 @@ Always check which functions are available.
 ```python
 import flame_hub
 
-auth = flame_hub.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
 core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
 
 # This is the ID from the previous snippet.
