@@ -3,7 +3,6 @@ __all__ = ["CoreClient"]
 import typing as t
 import uuid
 from datetime import datetime
-from enum import Enum
 
 import httpx
 import typing_extensions as te
@@ -22,10 +21,7 @@ from flame_hub.defaults import DEFAULT_CORE_BASE_URL
 from flame_hub.flow import PasswordAuth, RobotAuth
 from flame_hub.storage import BucketFile
 
-
-class NodeType(str, Enum):
-    aggregator = "aggregator"
-    default = "default"
+NodeType = t.Literal["aggregator", "default"]
 
 
 class CreateNode(BaseModel):
@@ -100,9 +96,7 @@ class UpdateProject(UpdateModel):
     name: str | None = None
 
 
-class ProjectNodeApprovalStatus(str, Enum):
-    rejected = "rejected"
-    approved = "approved"
+ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
 
 
 class CreateProjectNode(BaseModel):
@@ -120,23 +114,8 @@ class ProjectNode(CreateProjectNode):
     node_realm_id: uuid.UUID
 
 
-class AnalysisBuildStatus(str, Enum):
-    starting = "starting"
-    started = "started"
-    stopping = "stopping"
-    stopped = "stopped"
-    finished = "finished"
-    failed = "failed"
-
-
-class AnalysisRunStatus(str, Enum):
-    starting = "starting"
-    started = "started"
-    running = "running"
-    stopping = "stopping"
-    stopped = "stopped"
-    finished = "finished"
-    failed = "failed"
+AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
+AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "stopped", "finished", "failed"]
 
 
 class CreateAnalysis(BaseModel):
@@ -171,19 +150,8 @@ class CreateAnalysisNode(BaseModel):
     node_id: uuid.UUID
 
 
-class AnalysisNodeApprovalStatus(str, Enum):
-    rejected = "rejected"
-    approved = "approved"
-
-
-class AnalysisNodeRunStatus(str, Enum):
-    starting = "starting"
-    started = "started"
-    stopping = "stopping"
-    stopped = "stopped"
-    running = "running"
-    finished = "finished"
-    failed = "failed"
+AnalysisNodeApprovalStatus = t.Literal["rejected", "approved"]
+AnalysisNodeRunStatus = t.Literal["starting", "started", "stopping", "stopped", "running", "finished", "failed"]
 
 
 class AnalysisNode(CreateAnalysisNode):
@@ -208,10 +176,7 @@ class UpdateAnalysisNode(UpdateModel):
     run_status: AnalysisNodeRunStatus | None = None
 
 
-class AnalysisBucketType(str, Enum):
-    code = "CODE"
-    result = "RESULT"
-    temp = "TEMP"
+AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
 
 
 class AnalysisBucket(BaseModel):
@@ -265,7 +230,7 @@ class CoreClient(BaseClient):
         name: str,
         realm_id: t.Union[Realm, str, uuid.UUID],
         external_name: str | None = None,
-        node_type: NodeType = NodeType.default,
+        node_type: NodeType = "default",
         hidden: bool = False,
     ) -> Node:
         return self._create_resource(

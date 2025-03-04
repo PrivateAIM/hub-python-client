@@ -4,7 +4,6 @@ import string
 import pytest
 
 from flame_hub import HubAPIError
-from flame_hub.core import AnalysisBucketType, AnalysisNodeRunStatus
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
@@ -73,14 +72,14 @@ def analysis_node(core_client, analysis, project_node):
 @pytest.fixture()
 def analysis_buckets_ready(core_client, analysis):
     def _check_analysis_buckets_present():
-        all_analysis_bucket_types = set(t.value for t in AnalysisBucketType)
+        all_analysis_bucket_types = {"CODE", "RESULT", "TEMP"}
 
         # constrain to buckets created for this analysis
         analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
         assert len(analysis_buckets) == len(all_analysis_bucket_types)
 
         # check that a bucket for each type exists
-        analysis_bucket_types = set(a.type.value for a in analysis_buckets)
+        analysis_bucket_types = set(a.type for a in analysis_buckets)
         assert all_analysis_bucket_types == analysis_bucket_types
 
     assert_eventually(_check_analysis_buckets_present)
@@ -184,10 +183,10 @@ def test_update_analysis(core_client, analysis):
 
 
 def test_analysis_node_update(core_client, analysis_node):
-    new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status=AnalysisNodeRunStatus.starting)
+    new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status="starting")
 
     assert analysis_node != new_analysis_node
-    assert new_analysis_node.run_status == AnalysisNodeRunStatus.starting
+    assert new_analysis_node.run_status == "starting"
 
 
 def test_get_analysis_nodes(core_client, analysis_node):
@@ -204,9 +203,7 @@ def test_get_analysis_node(core_client, analysis_node):
 
 def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
     # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
-    analysis_buckets = core_client.find_analysis_buckets(
-        filter={"analysis_id": analysis.id, "type": AnalysisBucketType.code.value}
-    )
+    analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id, "type": "CODE"})
 
     # check that this exact bucket was found
     assert len(analysis_buckets) == 1

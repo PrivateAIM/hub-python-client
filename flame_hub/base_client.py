@@ -1,4 +1,4 @@
-__all__ = ["HubAPIError"]
+__all__ = ["HubAPIError", "FilterOperator"]
 
 import typing as t
 import uuid
