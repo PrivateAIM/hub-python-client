@@ -55,8 +55,6 @@ class MasterImageGroup(BaseModel):
     name: str
     path: str
     virtual_path: str
-    command: str | None
-    command_arguments: t.Any
     created_at: datetime
     updated_at: datetime
 
