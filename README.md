@@ -1,6 +1,12 @@
-# FLAME Hub Python Client
+This repository contains the source code for a Python client which wraps the endpoints of the FLAME Hub API.
 
-## Example usage
+# Installation
+
+```
+python -m pip install flame_hub_client
+```
+
+# Example usage
 
 The FLAME Hub Python Client offers functions for the Core, Storage and Auth Hub endpoints.
 It is capable of authenticating against the API using the two main flows: password and robot authentication.
@@ -91,12 +97,65 @@ print(core_client.get_node(my_node.id))
 # => None
 ```
 
-## Running tests
+# Module contents
+
+## Module `flame_hub`
+
+The `flame_hub` module is the main module.
+It contains the `AuthClient`, `CoreClient` classes and `StorageClient` which can be used to access the endpoints of the
+Hub auth, core and storage APIs respectively.
+The signature of the class constructors is always the same and takes three optional arguments.
+
+| **Argument** | **Type**       | **Description**                                                                                 |
+|:-------------|:---------------|:------------------------------------------------------------------------------------------------|
+| `auth`       | *httpx.Auth*   | (Optional) Instance of subclass of `httpx.Auth`.                                                |
+| `base_url`   | *str*          | (Optional) Base URL of the Hub service.                                                         |
+| `client`     | *httpx.Client* | (Optional) Instance of `httpx.Client` to use for requests. **Overrides `base_url` and `auth`.** |
+
+There are some things to keep in mind regarding these arguments.
+
+- You *should* provide an instance of either `flame_hub.auth.PasswordAuth` or `flame_hub.auth.RobotAuth` to `auth` as
+  these are the two main authentication schemes supported by the FLAME Hub.
+- You *can* provide a custom `base_url` if you're hosting your own instance of the FLAME Hub, otherwise the client will
+  use the default publicly available Hub instance to connect to.
+- You *shouldn't* set `client` explicitly unless you know what you're doing. When providing any of the previous two
+  arguments, a suitable client instance will be generated automatically.
+
+## Module `flame_hub.auth`
+
+The `flame_hub.auth` module contains implementations of `httpx.Auth` supporting the password and robot authentication
+flows that are recognized by the FLAME Hub.
+These are meant for use with the clients provided by this package.
+
+### Class `flame_hub.auth.PasswordAuth`
+
+| **Argument** | **Type**       | **Description**                                                                      |
+|:-------------|:---------------|:-------------------------------------------------------------------------------------|
+| `username`   | *str*          | Username to authenticate with.                                                       |
+| `password`   | *str*          | Password to authenticate with.                                                       |
+| `base_url`   | *str*          | (Optional) Base URL of the Hub Auth service.                                         |
+| `client`     | *httpx.Client* | (Optional) Instance of `httpx.Client` to use for requests. **Overrides `base_url`.** |
+
+### Class `flame_hub.auth.RobotAuth`
+
+| **Argument**   | **Type**       | **Description**                                                                      |
+|:---------------|:---------------|:-------------------------------------------------------------------------------------|
+| `robot_id`     | *str*          | ID of robot account to authenticate with.                                            |
+| `robot_secret` | *str*          | Secret of robot account to authenticate with.                                        |
+| `base_url`     | *str*          | (Optional) Base URL of the Hub Auth service.                                         |
+| `client`       | *httpx.Client* | (Optional) Instance of `httpx.Client` to use for requests. **Overrides `base_url`.** |
+
+## Module `flame_hub.types`
+
+The `flame_hub.types` module contains type annotations that you might find useful when writing your own code.
+At this time, it only contains annotations for optional keyword parameters for `find_*` functions.
+
+# Running tests
 
 Tests require access to a FLAME Hub instance.
 There are two ways of accomplishing this: by using testcontainers or by deploying your own instance.
 
-### Using testcontainers
+## Using testcontainers
 
 Running `pytest` will spin up all necessary testcontainers.
 This process can take about a minute.
@@ -105,11 +164,14 @@ necessary every time you want to run tests.
 On the other hand, you can rest assured that all tests are always run against a fresh Hub instance.
 For quick development, it is highly recommended to set up your own Hub instance instead.
 
-### Deploying your own Hub instance
+## Deploying your own Hub instance
 
-[Grab the Docker Compose file from the Hub repository](https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml) and store it somewhere warm and comfy.
-For the `core`, `messenger`, `analysis-manager`, `storage` and `ui` services, remove the `build` property and replace it with `image: ghcr.io/privateaim/hub:0.8.5`.
-Now you can run `docker compose up -d` and, after a few minutes, you will be able to access the UI at http://localhost:3000.
+[Grab the Docker Compose file from the Hub repository](https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml)
+and store it somewhere warm and comfy.
+For the `core`, `messenger`, `analysis-manager`, `storage` and `ui` services, remove the `build` property and replace it
+with `image: ghcr.io/privateaim/hub:0.8.5`.
+Now you can run `docker compose up -d` and, after a few minutes, you will be able to access the UI
+at http://localhost:3000.
 
 In order for `pytest` to pick up on the locally deployed instance, run `cp .env.test .env` and modify the `.env` file
 such that `PYTEST_USE_TESTCONTAINERS=0`.
