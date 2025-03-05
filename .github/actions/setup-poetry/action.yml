@@ -16,8 +16,10 @@ runs:
   steps:
     - name: Install Poetry
       run: pipx install poetry==${{ inputs.poetry-version }}
+      shell: bash
     - name: Set up Python
       uses: actions/setup-python@v5
+      shell: bash
       with:
         python-version: ${{ inputs.python-version }}
         cache: "poetry"
