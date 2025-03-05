@@ -14,13 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry==${{ env.DEFAULT_POETRY_VERSION }}
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.DEFAULT_PYTHON_VERSION }}
-          cache: "poetry"
+      - name: Set up Poetry
+        uses: ./.github/actions/setup-poetry
       - name: Install dependencies
         run: poetry install
       - name: Build and publish

@@ -25,13 +25,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - name: Install Poetry
-        run: pipx install poetry==${{ env.DEFAULT_POETRY_VERSION }}
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Poetry
+        uses: ./.github/actions/setup-poetry
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
       - name: Install dependencies
         run: poetry install --with dev
       - name: Test
