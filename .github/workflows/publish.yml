@@ -1,0 +1,29 @@
+name: Publish to PyPI
+
+env:
+  DEFAULT_PYTHON_VERSION: "3.13"
+  DEFAULT_POETRY_VERSION: "2.1.0"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.DEFAULT_POETRY_VERSION }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON_VERSION }}
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install
+      - name: Build and publish
+        run: poetry publish --build --no-interaction
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
