@@ -1,8 +1,5 @@
 name: Test
 
-env:
-  DEFAULT_POETRY_VERSION: "2.1.0"
-
 on:
   push:
     branches:
