@@ -2,7 +2,6 @@ import typing as t
 import uuid
 from datetime import datetime
 
-import httpx
 import typing_extensions as te
 from pydantic import BaseModel
 
@@ -12,6 +11,7 @@ from flame_hub._base_client import (
     UpdateModel,
     _UNSET,
     FindAllKwargs,
+    ClientKwargs,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._auth_flows import RobotAuth, PasswordAuth
@@ -66,10 +66,10 @@ class AuthClient(BaseClient):
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,
-        client: httpx.Client = None,
         auth: t.Union[RobotAuth, PasswordAuth] = None,
+        **kwargs: te.Unpack[ClientKwargs],
     ):
-        super().__init__(base_url, client, auth)
+        super().__init__(base_url, auth, **kwargs)
 
     def get_realms(self) -> list[Realm]:
         return self._get_all_resources(Realm, "realms")

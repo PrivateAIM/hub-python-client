@@ -14,6 +14,7 @@ from flame_hub._base_client import (
     _UNSET,
     FindAllKwargs,
     new_error_from_response,
+    ClientKwargs,
 )
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
@@ -212,10 +213,10 @@ class CoreClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_CORE_BASE_URL,
-        client: httpx.Client = None,
         auth: t.Union[PasswordAuth, RobotAuth] = None,
+        **kwargs: te.Unpack[ClientKwargs],
     ):
-        super().__init__(base_url, client, auth)
+        super().__init__(base_url, auth, **kwargs)
 
     def get_nodes(self) -> list[Node]:
         return self._get_all_resources(Node, "nodes")

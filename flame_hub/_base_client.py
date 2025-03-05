@@ -141,6 +141,10 @@ class FindAllKwargs(te.TypedDict, total=False):
     sort: SortParams | None
 
 
+class ClientKwargs(te.TypedDict, total=False):
+    client: httpx.Client | None
+
+
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
@@ -217,8 +221,9 @@ def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
 
 class BaseClient(object):
     def __init__(
-        self, base_url: str = None, client: httpx.Client = None, auth: t.Union[PasswordAuth, RobotAuth] = None
+        self, base_url: str = None, auth: t.Union[PasswordAuth, RobotAuth] = None, **kwargs: te.Unpack[ClientKwargs]
     ):
+        client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(self, resource_type: type[ResourceT], *path: str):

@@ -7,7 +7,14 @@ import typing_extensions as te
 from pydantic import BaseModel
 
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
-from flame_hub._base_client import BaseClient, ResourceList, obtain_uuid_from, FindAllKwargs, new_error_from_response
+from flame_hub._base_client import (
+    BaseClient,
+    ResourceList,
+    obtain_uuid_from,
+    FindAllKwargs,
+    new_error_from_response,
+    ClientKwargs,
+)
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 
 
@@ -56,10 +63,10 @@ class StorageClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_STORAGE_BASE_URL,
-        client: httpx.Client = None,
         auth: t.Union[PasswordAuth, RobotAuth] = None,
+        **kwargs: te.Unpack[ClientKwargs],
     ):
-        super().__init__(base_url, client, auth)
+        super().__init__(base_url, auth, **kwargs)
 
     def create_bucket(self, name: str, region: str = None) -> Bucket:
         return self._create_resource(Bucket, CreateBucket(name=name, region=region), "buckets")
