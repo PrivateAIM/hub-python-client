@@ -121,6 +121,120 @@ There are some things to keep in mind regarding these arguments.
 - You *shouldn't* set `client` explicitly unless you know what you're doing. When providing any of the previous two
   arguments, a suitable client instance will be generated automatically.
 
+### Finding resources
+
+All clients offer functions for creating, reading, updating and deleting resources managed by the FLAME Hub.
+To find multiple resources matching certain criteria, the `find_*` functions support optional pagination, filtering and
+sorting parameters.
+In almost all scenarios, you will want to use `find_*` over `get_*` functions.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
+
+# core.find_nodes(page={"limit": 50, "offset": 0}) and core.get_nodes() are functionally equivalent.
+nodes_lst_find = core_client.find_nodes(page={"limit": 50, "offset": 0})
+nodes_lst_get = core_client.get_nodes()
+
+print(nodes_lst_find == nodes_lst_get)
+# => True
+```
+
+The `page` parameter enables control over the amount of returned results.
+You can define the limit and offset which affects pagination.
+Both default to 50 and zero respectively if unset.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
+
+# nodes_next_10 is a subset of the results in nodes_first_25.
+nodes_first_25 = core_client.find_nodes(page={"limit": 25})
+nodes_next_10 = core_client.find_nodes(page={"limit": 10, "offset": 10})
+
+print(nodes_first_25[10:20] == nodes_next_10)
+# => True
+```
+
+The `filter` parameter allows you to filter by any fields.
+You can perform exact matching, but also any other operation supported by the FLAME Hub, including "like" and "not"
+queries and numeric "greater than" and "less than" comparisons.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
+
+# Search using strict equals.
+print(core_client.find_nodes(filter={"name": "my-node-42"}).pop().model_dump(mode="json"))
+# => {
+# =>   "name": "my-node-42",
+# =>   "id": "2f8fc7df-d5ff-484c-bfed-76b8f3c43afd",
+# =>   ... shortened for brevity ...
+# => }
+
+# These two functions return the same result. One is a bit more verbose than the other.
+nodes_with_4_in_name = core_client.find_nodes(filter={"name": "~my-node-4"})
+nodes_with_4_in_name_but_different = core_client.find_nodes(filter={"name": (flame_hub.types.FilterOperator.like, "my-node-4")})
+
+print(nodes_with_4_in_name == nodes_with_4_in_name_but_different)
+# => True
+```
+
+The `sort` parameter allows you to define a field to sort by in either ascending or descending order.
+If `order` is left unset, the client will sort in ascending order by default.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
+
+nodes = core_client.find_nodes(sort={"by": "created_at"})  # Ascending order is applied by default.
+sedon = core_client.find_nodes(sort={"by": "created_at", "order": "descending"})
+
+# Reversing the second list will equal the first list.
+print(nodes == sedon[::-1])
+# => True
+```
+
+### Handling exceptions
+
+The main module exports `HubAPIError` which is a general error that is raised whenever the FLAME Hub responds with
+an unexpected status code.
+All clients will try and put as much information into the raised error as possible, including status code and
+additional information in the response body.
+
+```python
+import flame_hub
+import uuid
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
+
+try:
+    # Let's try guessing the ID of the realm.
+    core_client.create_node(name="my-new-node", realm_id=f"{uuid.uuid4()}")
+except flame_hub.HubAPIError as e:
+    # Whoops!
+    print(e)
+    # => received status code 400 (undefined): Can't find realm entity by realm_id
+
+    # If the response body contains an error, it can be accessed with the error_response property.
+    # Some errors may also add additional fields which can also be accessed like this.
+    print(e.error_response.model_dump_json(indent=2))  
+    # => {
+    # =>   "status_code": 400,
+    # =>   "code": "undefined",
+    # =>   "message": "Can't find realm entity by realm_id"
+    # => }
+```
+
 ## Module `flame_hub.auth`
 
 The `flame_hub.auth` module contains implementations of `httpx.Auth` supporting the password and robot authentication
