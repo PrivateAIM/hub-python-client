@@ -1,7 +1,7 @@
 [project]
 name = "flame-hub-client"
 version = "0.1.0"
-description = ""
+description = "HTTP client for interacting with FLAME Hub services."
 authors = [
     {name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de"}
 ]
@@ -12,6 +12,13 @@ dependencies = [
     "httpx (>=0.28.0,<0.29.0)"
 ]
 license = "Apache-2.0"
+classifiers = [
+    "Development Status :: 4 - Beta"
+]
+
+[project.urls]
+homepage = "https://privateaim.de/"
+repository = "https://github.com/PrivateAIM/hub-python-client"
 
 [tool.poetry]
 packages = [{ include = "flame_hub" }]
