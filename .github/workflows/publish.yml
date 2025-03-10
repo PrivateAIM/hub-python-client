@@ -1,0 +1,20 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Poetry
+        uses: ./.github/actions/setup-poetry
+      - name: Install dependencies
+        run: poetry install
+      - name: Build and publish
+        run: poetry publish --build --no-interaction
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}

@@ -1,26 +1,46 @@
 [project]
-name = "python-template-repo"
+name = "flame-hub-client"
 version = "0.1.0"
-description = ""
+description = "HTTP client for interacting with FLAME Hub services."
 authors = [
     {name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de"}
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4"
 dependencies = [
+    "pydantic (>=2.10.0,<3.0.0)",
+    "httpx (>=0.28.0,<0.29.0)"
 ]
 license = "Apache-2.0"
+classifiers = [
+    "Development Status :: 4 - Beta"
+]
+
+[project.urls]
+homepage = "https://privateaim.de/"
+repository = "https://github.com/PrivateAIM/hub-python-client"
 
 [tool.poetry]
-packages = [{ include = "project" }]
+packages = [{ include = "flame_hub" }]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.3.0"
 ruff = ">=0.9.0"
 pre-commit = ">=4.0.0"
+testcontainers = {extras = ["minio", "mysql", "rabbitmq", "redis", "vault"], version = ">=4.9.0"}
+pytest-dotenv = ">=0.5.0"
 
 [tool.ruff]
 line-length = 120
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: mark a test as an integration test."
+]
+env_files = [
+    ".env",
+    ".env.test"
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
