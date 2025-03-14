@@ -2,6 +2,7 @@ import typing as t
 import uuid
 from collections.abc import Iterable
 from enum import Enum
+from json import JSONDecodeError
 
 import httpx
 import typing_extensions as te
@@ -99,7 +100,7 @@ def new_error_from_response(r: httpx.Response):
             error_message += "no error message present"
         else:
             error_message += error_response.message
-    except ValidationError:
+    except (ValidationError, JSONDecodeError):
         # quietly dismiss this error
         pass
 
