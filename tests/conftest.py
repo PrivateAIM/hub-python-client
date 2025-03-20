@@ -179,7 +179,7 @@ def core(redis, vault, rabbit_mq, authup, mysql, network, use_testcontainers):
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer("ghcr.io/privateaim/hub:0.8.7")
             .with_command("cli start")
             .with_env("REDIS_CONNECTION_STRING", get_redis_connection_string(redis))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -209,7 +209,7 @@ def messenger(redis, vault, authup, network, use_testcontainers):
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer("ghcr.io/privateaim/hub:0.8.7")
             .with_command("messenger start")
             .with_env("REDIS_CONNECTION_STRING", get_redis_connection_string(redis))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -228,7 +228,7 @@ def storage(mysql, redis, minio, vault, authup, network, use_testcontainers):
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer("ghcr.io/privateaim/hub:0.8.7")
             .with_command("storage start")
             .with_env("DB_TYPE", "mysql")
             .with_env("DB_HOST", "mysql")
@@ -254,7 +254,7 @@ def analysis_manager(rabbit_mq, vault, authup, core, storage, network, use_testc
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer("ghcr.io/privateaim/hub:0.8.7")
             .with_command("analysis-manager start")
             .with_env("RABBITMQ_CONNECTION_STRING", get_rabbit_mq_connection_string(rabbit_mq))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -276,7 +276,7 @@ def ui(storage, core, authup, network, use_testcontainers):
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer("ghcr.io/privateaim/hub:0.8.7")
             .with_command("ui start")
             .with_env("NUXT_PUBLIC_COOKIE_DOMAIN", "localhost")
             .with_env("NUXT_STORAGE_URL", "http://storage:3000/")
@@ -298,7 +298,7 @@ def nginx(ui, core, authup, storage, messenger, network, analysis_manager, use_t
     if not use_testcontainers:
         yield None
     else:
-        r = httpx.get("https://raw.githubusercontent.com/PrivateAIM/hub/refs/tags/v0.8.5/nginx.conf")
+        r = httpx.get("https://raw.githubusercontent.com/PrivateAIM/hub/refs/tags/v0.8.7/nginx.conf")
         assert r.status_code == 200
 
         nginx_conf_path = tmp_path_factory.mktemp("nginx-") / "nginx.conf"
