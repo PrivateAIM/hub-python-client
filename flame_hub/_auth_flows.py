@@ -4,6 +4,7 @@ import httpx
 from pydantic import BaseModel
 
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
+from flame_hub._exceptions import new_hub_api_error_from_response
 
 
 def now():
@@ -52,7 +53,9 @@ class RobotAuth(httpx.Auth):
                 },
             )
 
-            r.raise_for_status()
+            if r.status_code != httpx.codes.OK.value:
+                raise new_hub_api_error_from_response(r)
+
             at = AccessToken(**r.json())
 
             self._current_token = at
@@ -85,10 +88,12 @@ class PasswordAuth(httpx.Auth):
                 },
             )
 
-            r.raise_for_status()
+            if r.status_code != httpx.codes.OK.value:
+                raise new_hub_api_error_from_response(r)
+
             self._update_token(RefreshToken(**r.json()))
 
-        # flow is handled using refresh token if a token was already issues
+        # flow is handled using refresh token if a token was already issued
         if now() > self._current_token_expires_at:
             r = self._client.post(
                 "token",
@@ -98,7 +103,9 @@ class PasswordAuth(httpx.Auth):
                 },
             )
 
-            r.raise_for_status()
+            if r.status_code != httpx.codes.OK.value:
+                raise new_hub_api_error_from_response(r)
+
             self._update_token(RefreshToken(**r.json()))
 
         request.headers["Authorization"] = f"Bearer {self._current_token.access_token}"

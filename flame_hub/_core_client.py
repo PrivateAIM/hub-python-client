@@ -13,9 +13,9 @@ from flame_hub._base_client import (
     UpdateModel,
     _UNSET,
     FindAllKwargs,
-    new_error_from_response,
     ClientKwargs,
 )
+from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 from flame_hub._storage_client import BucketFile
@@ -296,7 +296,7 @@ class CoreClient(BaseClient):
         r = self._client.post("master-images/command", json={"command": "sync"})
 
         if r.status_code != httpx.codes.ACCEPTED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
     def create_project(
         self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str], description: str = None
@@ -397,7 +397,7 @@ class CoreClient(BaseClient):
         r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
 
         if r.status_code != httpx.codes.ACCEPTED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
     def create_analysis_node(
         self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]

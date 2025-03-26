@@ -12,10 +12,10 @@ from flame_hub._base_client import (
     ResourceList,
     obtain_uuid_from,
     FindAllKwargs,
-    new_error_from_response,
     ClientKwargs,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
+from flame_hub._exceptions import new_hub_api_error_from_response
 
 
 class CreateBucket(BaseModel):
@@ -102,7 +102,7 @@ class StorageClient(BaseClient):
         )
 
         if r.status_code != httpx.codes.CREATED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
         return ResourceList[BucketFile](**r.json()).data
 

@@ -1,7 +1,8 @@
 import httpx
 import pytest
 
-from flame_hub.auth import RobotAuth
+from flame_hub import HubAPIError
+from flame_hub.auth import RobotAuth, PasswordAuth
 from tests.helpers import next_random_string
 
 pytestmark = pytest.mark.integration
@@ -43,3 +44,56 @@ def test_robot_auth(auth_client, auth_base_url, master_realm):
     assert r.status_code == httpx.codes.OK.value
 
     auth_client.delete_robot(robot)
+
+
+def test_password_auth_raise_error(nginx, auth_base_url):
+    # use random username and password
+    pw_auth = PasswordAuth(next_random_string(), next_random_string(), auth_base_url)
+    client = httpx.Client(auth=pw_auth)
+
+    # this call should fail
+    with pytest.raises(HubAPIError) as e:
+        client.get(auth_base_url)
+
+    assert "The user credentials are invalid" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
+
+
+def test_robot_auth_raise_error(nginx, auth_base_url):
+    # use random id and secret
+    robot_auth = RobotAuth(next_random_string(), next_random_string(), auth_base_url)
+    client = httpx.Client(auth=robot_auth)
+
+    # this call should fail
+    with pytest.raises(HubAPIError) as e:
+        client.get(auth_base_url)
+
+    assert "The robot credentials are invalid" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
+
+
+def test_password_auth_reissue_raise_error(password_auth, auth_base_url):
+    # instantiate client
+    client = httpx.Client(auth=password_auth)
+    # fetch refresh token
+    r = client.get(auth_base_url)
+    assert r.status_code == httpx.codes.OK.value
+
+    # need to create a new instance as to avoid modifying the password_auth fixture
+    # otherwise this will affect other tests
+    new_client = httpx.Client(auth=PasswordAuth(password_auth._username, password_auth._password, auth_base_url))
+
+    # copy existing token and reset expiration timestamp
+    new_client.auth._current_token = client.auth._current_token.model_copy()
+    new_client.auth._current_token_expires_at = 0
+
+    # overwrite refresh token
+    new_client.auth._current_token.refresh_token = "foobar"
+
+    # technically it would be better to have a properly signed JWT as the refresh token but
+    # that would require forging it. no clue how to feasibly do that.
+    with pytest.raises(HubAPIError) as e:
+        new_client.get(auth_base_url)
+
+    assert "The token format is not valid" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
