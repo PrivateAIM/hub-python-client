@@ -2,12 +2,12 @@ import typing as t
 import uuid
 from collections.abc import Iterable
 from enum import Enum
-from json import JSONDecodeError
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, Field, ValidationError, ConfigDict, model_validator
+from pydantic import BaseModel, model_validator
 
+from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 
 # sentinel to mark parameters as unset (as opposed to using None)
@@ -67,44 +67,6 @@ class ResourceListMeta(BaseModel):
 class ResourceList(BaseModel, t.Generic[ResourceT]):
     data: list[ResourceT]
     meta: ResourceListMeta
-
-
-class ErrorResponse(BaseModel):
-    model_config = ConfigDict(extra="allow")  # extra properties may be available
-    status_code: t.Annotated[int, Field(validation_alias="statusCode")]
-    code: str
-    message: str
-
-
-class HubAPIError(httpx.HTTPError):
-    """Base error for any unexpected response returned by the Hub API."""
-
-    def __init__(self, message: str, request: httpx.Request, error: ErrorResponse = None) -> None:
-        super().__init__(message)
-        self._request = request
-        self.error_response = error
-
-
-def new_error_from_response(r: httpx.Response):
-    """Create a new error from a response.
-    If present, this function will use the response body to add context to the error message.
-    The parsed response body is available using the error_response property of the returned error."""
-    error_response = None
-    error_message = f"received status code {r.status_code}"
-
-    try:
-        error_response = ErrorResponse(**r.json())
-        error_message = f"received status code {error_response.status_code} ({error_response.code}): "
-
-        if error_response.message.strip() == "":
-            error_message += "no error message present"
-        else:
-            error_message += error_response.message
-    except (ValidationError, JSONDecodeError):
-        # quietly dismiss this error
-        pass
-
-    return HubAPIError(error_message, r.request, error_response)
 
 
 class SortParams(te.TypedDict, total=False):
@@ -247,7 +209,7 @@ class BaseClient(object):
         r = self._client.get("/".join(path), params=request_params)
 
         if r.status_code != httpx.codes.OK.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
         return ResourceList[resource_type](**r.json()).data
 
@@ -259,7 +221,7 @@ class BaseClient(object):
         )
 
         if r.status_code != httpx.codes.CREATED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
 
@@ -273,7 +235,7 @@ class BaseClient(object):
             return None
 
         if r.status_code != httpx.codes.OK.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
 
@@ -290,7 +252,7 @@ class BaseClient(object):
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
 
@@ -299,4 +261,4 @@ class BaseClient(object):
         r = self._client.delete("/".join(convert_path(path)))
 
         if r.status_code != httpx.codes.ACCEPTED.value:
-            raise new_error_from_response(r)
+            raise new_hub_api_error_from_response(r)
