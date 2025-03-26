@@ -7,13 +7,8 @@ from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
 
 
-def now():
-    """
-    Get current Epoch time in seconds.
-
-    :return:
-    """
-    return int(time.time())
+def secs_to_nanos(seconds: int):
+    return seconds * (10**9)
 
 
 class AccessToken(BaseModel):
@@ -38,12 +33,14 @@ class RobotAuth(httpx.Auth):
         self._robot_id = robot_id
         self._robot_secret = robot_secret
         self._current_token = None
-        self._current_token_expires_at = 0
+        self._current_token_expires_at_nanos = 0
         self._client = client or httpx.Client(base_url=base_url)
 
     def auth_flow(self, request):
         # check if token is not set or current token is expired
-        if self._current_token is None or now() > self._current_token_expires_at:
+        if self._current_token is None or time.monotonic_ns() > self._current_token_expires_at_nanos:
+            request_nanos = time.monotonic_ns()
+
             r = self._client.post(
                 "token",
                 json={
@@ -59,7 +56,7 @@ class RobotAuth(httpx.Auth):
             at = AccessToken(**r.json())
 
             self._current_token = at
-            self._current_token_expires_at = now() + at.expires_in
+            self._current_token_expires_at_nanos = request_nanos + secs_to_nanos(at.expires_in)
 
         request.headers["Authorization"] = f"Bearer {self._current_token.access_token}"
         yield request
@@ -70,15 +67,17 @@ class PasswordAuth(httpx.Auth):
         self._username = username
         self._password = password
         self._current_token = None
-        self._current_token_expires_at = 0
+        self._current_token_expires_at_nanos = 0
         self._client = client or httpx.Client(base_url=base_url)
 
-    def _update_token(self, token: RefreshToken):
+    def _update_token(self, token: RefreshToken, request_nanos: int):
         self._current_token = token
-        self._current_token_expires_at = now() + token.expires_in
+        self._current_token_expires_at_nanos = request_nanos + secs_to_nanos(token.expires_in)
 
     def auth_flow(self, request):
         if self._current_token is None:
+            request_nanos = time.monotonic_ns()
+
             r = self._client.post(
                 "token",
                 json={
@@ -91,10 +90,12 @@ class PasswordAuth(httpx.Auth):
             if r.status_code != httpx.codes.OK.value:
                 raise new_hub_api_error_from_response(r)
 
-            self._update_token(RefreshToken(**r.json()))
+            self._update_token(RefreshToken(**r.json()), request_nanos)
 
         # flow is handled using refresh token if a token was already issued
-        if now() > self._current_token_expires_at:
+        if time.monotonic_ns() > self._current_token_expires_at_nanos:
+            request_nanos = time.monotonic_ns()
+
             r = self._client.post(
                 "token",
                 json={
@@ -106,7 +107,7 @@ class PasswordAuth(httpx.Auth):
             if r.status_code != httpx.codes.OK.value:
                 raise new_hub_api_error_from_response(r)
 
-            self._update_token(RefreshToken(**r.json()))
+            self._update_token(RefreshToken(**r.json()), request_nanos)
 
         request.headers["Authorization"] = f"Bearer {self._current_token.access_token}"
         yield request
