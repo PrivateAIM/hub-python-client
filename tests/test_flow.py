@@ -17,7 +17,7 @@ def test_password_auth_reissue(password_auth, auth_base_url):
     # get a copy of the current access token
     old_token = client.auth._current_token.access_token
     # reset expiration timestamp to force token request with refresh token
-    client.auth._current_token_expires_at = 0
+    client.auth._current_token_expires_at_nanos = 0
 
     r = client.get(auth_base_url)
     assert r.status_code == httpx.codes.OK.value
@@ -85,7 +85,7 @@ def test_password_auth_reissue_raise_error(password_auth, auth_base_url):
 
     # copy existing token and reset expiration timestamp
     new_client.auth._current_token = client.auth._current_token.model_copy()
-    new_client.auth._current_token_expires_at = 0
+    new_client.auth._current_token_expires_at_nanos = 0
 
     # overwrite refresh token
     new_client.auth._current_token.refresh_token = "foobar"
