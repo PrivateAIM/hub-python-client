@@ -172,6 +172,32 @@ class UpdateAnalysisNode(UpdateModel):
     approval_status: AnalysisNodeApprovalStatus | None = None
     run_status: AnalysisNodeRunStatus | None = None
 
+class CreateAnalysisNodeLog(BaseModel):
+    analysis_id: uuid.UUID
+    node_id: uuid.UUID
+    error: bool
+    error_code: str | None
+    status: str | None
+    status_message: str | None
+
+class AnalysisNodeLog(CreateAnalysisNodeLog):
+    id: uuid.UUID
+    error: bool
+    error_code: str | None
+    status: str | None
+    status_message: str | None
+    created_at: datetime
+    updated_at: datetime
+    analysis_id: uuid.UUID
+    analysis_realm_id: uuid.UUID
+    node_id: uuid.UUID
+    node_realm_id: uuid.UUID
+
+class UpdateAnalysisNodeLog(UpdateModel):
+    error: bool
+    error_code: str | None = None
+    status: str | None = None
+    status_message: str | None = None
 
 AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
 
@@ -420,6 +446,37 @@ class CoreClient(BaseClient):
             AnalysisNode,
             UpdateAnalysisNode(comment=comment, approval_status=approval_status, run_status=run_status),
             "analysis-nodes",
+            analysis_node_id,
+        )
+
+    def create_analysis_node_log(
+        self,
+            analysis_id: t.Union[Analysis, uuid.UUID, str],
+            node_id: t.Union[Node, uuid.UUID, str],
+            error: str = False,
+            error_code : str = _UNSET,
+            status : str = _UNSET,
+            status_message: str = _UNSET,
+    ):
+        return self._create_resource(
+            AnalysisNodeLog, AnalysisNodeLog(analysis_id=analysis_id, node_id=node_id, error=error, error_code=error_code, status=status, status_message=status_message), "analysis-node-logs"
+        )
+
+    def delete_analysis_node_log(self, analysis_node_log_id: t.Union[AnalysisNodeLog, uuid.UUID, str]):
+        self._delete_resource("analysis-node-logs", analysis_node_log_id)
+
+    def update_analysis_node_log(
+        self,
+        analysis_node_id: t.Union[AnalysisNodeLog, uuid.UUID, str],
+            error: str = False,
+            error_code : str = _UNSET,
+            status : str = _UNSET,
+            status_message: str = _UNSET,
+    ):
+        return self._update_resource(
+            AnalysisNodeLog,
+            UpdateAnalysisNode(error=error, error_code=error_code, status=status, status_message=status_message),
+            "analysis-node-logs",
             analysis_node_id,
         )
 
