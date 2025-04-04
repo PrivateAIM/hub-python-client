@@ -3,7 +3,7 @@ This repository contains the source code for a Python client which wraps the end
 # Installation
 
 ```
-python -m pip install flame_hub_client
+python -m pip install flame-hub-client
 ```
 
 # Example usage
