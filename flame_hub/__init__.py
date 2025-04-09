@@ -1,6 +1,6 @@
-__all__ = ["auth", "types", "AuthClient", "CoreClient", "HubAPIError", "StorageClient"]
+__all__ = ["auth", "types", "models", "AuthClient", "CoreClient", "HubAPIError", "StorageClient"]
 
-from . import auth, types
+from . import auth, types, models
 
 from ._auth_client import AuthClient
 from ._exceptions import HubAPIError
