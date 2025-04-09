@@ -259,6 +259,27 @@ These are meant for use with the clients provided by this package.
 | `base_url`     | *str*          | (Optional) Base URL of the Hub Auth service.                                         |
 | `client`       | *httpx.Client* | (Optional) Instance of `httpx.Client` to use for requests. **Overrides `base_url`.** |
 
+## Module `flame_hub.models`
+
+The `flame_hub.models` module contains all model definitions for resources emitted by the FLAME Hub.
+Use them at your own discretion. They may change at any time.
+
+Model classes whose names start with `Update` extend a special base class which needs to distinguish between
+properties being `None` and being explicitly unset.
+`flame_hub.models.UNSET` exists for this purpose, which is a sentinel value that should be used to mark
+a property as unset.
+
+```python
+from flame_hub.models import UpdateNode, UNSET
+
+print(UpdateNode(
+  hidden=False,
+  external_name=None,
+  type=UNSET
+).model_dump(mode="json", exclude_none=False, exclude_unset=True))
+# => {'hidden': False, 'external_name': None}
+```
+
 ## Module `flame_hub.types`
 
 The `flame_hub.types` module contains type annotations that you might find useful when writing your own code.
