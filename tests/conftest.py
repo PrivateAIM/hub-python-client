@@ -46,6 +46,11 @@ def use_testcontainers():
 
 
 @pytest.fixture(scope="session")
+def hub_version() -> str:
+    return os.getenv("PYTEST_HUB_VERSION", "0.8.7")
+
+
+@pytest.fixture(scope="session")
 def core_base_url() -> str:
     return os.getenv("PYTEST_CORE_BASE_URL", "http://localhost:3000/core/")
 
@@ -174,12 +179,12 @@ def authup(vault, redis, mysql, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def core(redis, vault, rabbit_mq, authup, mysql, network, use_testcontainers):
+def core(redis, vault, rabbit_mq, authup, mysql, network, use_testcontainers, hub_version):
     if not use_testcontainers:
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer(f"ghcr.io/privateaim/hub:{hub_version}")
             .with_command("cli start")
             .with_env("REDIS_CONNECTION_STRING", get_redis_connection_string(redis))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -204,12 +209,12 @@ def core(redis, vault, rabbit_mq, authup, mysql, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def messenger(redis, vault, authup, network, use_testcontainers):
+def messenger(redis, vault, authup, network, use_testcontainers, hub_version):
     if not use_testcontainers:
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer(f"ghcr.io/privateaim/hub:{hub_version}")
             .with_command("messenger start")
             .with_env("REDIS_CONNECTION_STRING", get_redis_connection_string(redis))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -223,12 +228,12 @@ def messenger(redis, vault, authup, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def storage(mysql, redis, minio, vault, authup, network, use_testcontainers):
+def storage(mysql, redis, minio, vault, authup, network, use_testcontainers, hub_version):
     if not use_testcontainers:
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer(f"ghcr.io/privateaim/hub:{hub_version}")
             .with_command("storage start")
             .with_env("DB_TYPE", "mysql")
             .with_env("DB_HOST", "mysql")
@@ -249,12 +254,12 @@ def storage(mysql, redis, minio, vault, authup, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def analysis_manager(rabbit_mq, vault, authup, core, storage, network, use_testcontainers):
+def analysis_manager(rabbit_mq, vault, authup, core, storage, network, use_testcontainers, hub_version):
     if not use_testcontainers:
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer(f"ghcr.io/privateaim/hub:{hub_version}")
             .with_command("analysis-manager start")
             .with_env("RABBITMQ_CONNECTION_STRING", get_rabbit_mq_connection_string(rabbit_mq))
             .with_env("VAULT_CONNECTION_STRING", get_vault_connection_string(vault))
@@ -271,12 +276,12 @@ def analysis_manager(rabbit_mq, vault, authup, core, storage, network, use_testc
 
 
 @pytest.fixture(scope="session")
-def ui(storage, core, authup, network, use_testcontainers):
+def ui(storage, core, authup, network, use_testcontainers, hub_version):
     if not use_testcontainers:
         yield None
     else:
         with (
-            DockerContainer("ghcr.io/privateaim/hub:0.8.5")
+            DockerContainer(f"ghcr.io/privateaim/hub:{hub_version}")
             .with_command("ui start")
             .with_env("NUXT_PUBLIC_COOKIE_DOMAIN", "localhost")
             .with_env("NUXT_STORAGE_URL", "http://storage:3000/")
@@ -294,11 +299,13 @@ def ui(storage, core, authup, network, use_testcontainers):
 
 
 @pytest.fixture(scope="session")
-def nginx(ui, core, authup, storage, messenger, network, analysis_manager, use_testcontainers, tmp_path_factory):
+def nginx(
+    ui, core, authup, storage, messenger, network, analysis_manager, use_testcontainers, tmp_path_factory, hub_version
+):
     if not use_testcontainers:
         yield None
     else:
-        r = httpx.get("https://raw.githubusercontent.com/PrivateAIM/hub/refs/tags/v0.8.5/nginx.conf")
+        r = httpx.get(f"https://raw.githubusercontent.com/PrivateAIM/hub/refs/tags/v{hub_version}/nginx.conf")
         assert r.status_code == 200
 
         nginx_conf_path = tmp_path_factory.mktemp("nginx-") / "nginx.conf"
