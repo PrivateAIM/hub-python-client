@@ -43,7 +43,7 @@ def node(core_client, master_realm):
 
 @pytest.fixture()
 def project(core_client, master_image):
-    new_project = core_client.create_project(next_random_string(), master_image)
+    new_project = core_client.create_project(next_random_string())
     yield new_project
     core_client.delete_project(new_project)
 
@@ -57,7 +57,7 @@ def project_node(core_client, node, project):
 
 @pytest.fixture()
 def analysis(core_client, project):
-    new_analysis = core_client.create_analysis(next_random_string(), project)
+    new_analysis = core_client.create_analysis(project)
     yield new_analysis
     core_client.delete_analysis(new_analysis)
 

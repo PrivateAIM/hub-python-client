@@ -25,11 +25,11 @@ NodeType = t.Literal["aggregator", "default"]
 
 class CreateNode(BaseModel):
     external_name: str | None
-    hidden: bool
+    hidden: bool | None
     name: str
-    realm_id: uuid.UUID
+    realm_id: uuid.UUID | None
     registry_id: uuid.UUID | None
-    type: NodeType
+    type: NodeType | None
 
 
 class Node(CreateNode):
@@ -72,7 +72,7 @@ class MasterImage(BaseModel):
 
 class CreateProject(BaseModel):
     description: str | None
-    master_image_id: uuid.UUID
+    master_image_id: uuid.UUID | None
     name: str
 
 
@@ -117,7 +117,7 @@ AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "sto
 
 class CreateAnalysis(BaseModel):
     description: str | None
-    name: str
+    name: str | None
     project_id: uuid.UUID
 
 
@@ -132,7 +132,7 @@ class Analysis(CreateAnalysis):
     realm_id: uuid.UUID
     user_id: uuid.UUID
     project_id: uuid.UUID
-    master_image_id: uuid.UUID
+    master_image_id: uuid.UUID | None
 
 
 class UpdateAnalysis(UpdateModel):
@@ -299,13 +299,13 @@ class CoreClient(BaseClient):
             raise new_hub_api_error_from_response(r)
 
     def create_project(
-        self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str], description: str = None
+        self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str] = None, description: str = None
     ) -> Project:
         return self._create_resource(
             Project,
             CreateProject(
                 name=name,
-                master_image_id=str(obtain_uuid_from(master_image_id)),
+                master_image_id=str(obtain_uuid_from(master_image_id)) if master_image_id is not None else None,
                 description=description,
             ),
             "projects",
@@ -363,13 +363,13 @@ class CoreClient(BaseClient):
         return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
 
     def create_analysis(
-        self, name: str, project_id: t.Union[Project, uuid.UUID, str], description: str = None
+        self, project_id: t.Union[Project, uuid.UUID, str], name: str = None, description: str = None
     ) -> Analysis:
         return self._create_resource(
             Analysis,
             CreateAnalysis(
-                name=name,
                 project_id=str(obtain_uuid_from(project_id)),
+                name=name,
                 description=description,
             ),
             "analyses",
