@@ -95,5 +95,5 @@ def test_password_auth_reissue_raise_error(password_auth, auth_base_url):
     with pytest.raises(HubAPIError) as e:
         new_client.get(auth_base_url)
 
-    assert "The token format is not valid" in str(e.value)
+    assert "The JWT is invalid" in str(e.value)
     assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
