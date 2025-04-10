@@ -154,6 +154,14 @@ def test_get_project_node(core_client, project_node):
     assert project_node == core_client.get_project_node(project_node.id)
 
 
+def test_update_project_node(core_client, project_node):
+    new_comment = next_random_string()
+    new_project_node = core_client.update_project_node(project_node.id, approval_status="rejected", comment=new_comment)
+
+    assert new_project_node.approval_status == "rejected"
+    assert new_project_node != project_node
+
+
 def test_get_project_node_not_found(core_client):
     assert core_client.get_project_node(next_uuid()) is None
 
