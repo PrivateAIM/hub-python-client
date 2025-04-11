@@ -1,4 +1,3 @@
-import collections
 import typing as t
 import uuid
 from collections.abc import Iterable
@@ -97,7 +96,7 @@ class FilterOperator(str, Enum):
 
 
 FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
-IncludeParams = t.Union[str, collections.abc.Iterable[str]]
+IncludeParams = t.Union[str, Iterable[str]]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
