@@ -96,12 +96,18 @@ class FilterOperator(str, Enum):
 
 
 FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
+IncludeParams = t.Union[str, Iterable[str]]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None
     sort: SortParams | None
+    include: IncludeParams | None
+
+
+class GetKwargs(te.TypedDict, total=False):
+    include: IncludeParams | None
 
 
 class ClientKwargs(te.TypedDict, total=False):
@@ -170,6 +176,22 @@ def build_sort_params(sort_params: SortParams = None):
     return query_params
 
 
+def build_include_params(include_params: IncludeParams = None):
+    if include_params is None:
+        include_params = ()  # empty tuple
+
+    if isinstance(include_params, str):
+        include_params = (include_params,)  # coalesce into tuple
+
+    # unravel iterable and merge into tuple
+    include_params = tuple(p for p in include_params)
+
+    if len(include_params) == 0:
+        return {}
+
+    return {"include": ",".join(include_params)}
+
+
 def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
     path_parts = []
 
@@ -201,9 +223,13 @@ class BaseClient(object):
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
+        include_params = params.get("include", None)
 
         request_params = (
-            build_page_params(page_params) | build_filter_params(filter_params) | build_sort_params(sort_params)
+            build_page_params(page_params)
+            | build_filter_params(filter_params)
+            | build_sort_params(sort_params)
+            | build_include_params(include_params)
         )
 
         r = self._client.get("/".join(path), params=request_params)
@@ -226,10 +252,13 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], *path: t.Union[str, UuidIdentifiable]
+        self, resource_type: type[ResourceT], *path: t.Union[str, UuidIdentifiable], **params: te.Unpack[GetKwargs]
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
-        r = self._client.get("/".join(convert_path(path)))
+        include_params = params.get("include", None)
+        request_params = build_include_params(include_params)
+
+        r = self._client.get("/".join(convert_path(path)), params=request_params)
 
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
