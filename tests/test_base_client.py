@@ -2,13 +2,13 @@ import pytest
 
 from flame_hub._base_client import (
     build_page_params,
-    FilterOperator,
     build_filter_params,
-    PageParams,
     build_sort_params,
     UpdateModel,
-    _UNSET,
+    build_include_params,
 )
+from flame_hub.types import FilterOperator, PageParams
+from flame_hub.models import UNSET
 
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
@@ -66,6 +66,28 @@ def test_build_sort_params(sort_params, expected):
     assert expected == build_sort_params(sort_params)
 
 
+@pytest.mark.parametrize(
+    "include_params,expected",
+    [
+        (None, {}),
+        ((), {}),
+        ([], {}),
+        ("foo", {"include": "foo"}),
+        (("foo",), {"include": "foo"}),
+        (("foo", "bar"), {"include": "foo,bar"}),
+        (
+            [
+                "foo",
+            ],
+            {"include": "foo"},
+        ),
+        (["foo", "bar"], {"include": "foo,bar"}),
+    ],
+)
+def test_build_include_params(include_params, expected):
+    assert expected == build_include_params(include_params)
+
+
 class FooUpdateModel(UpdateModel):
     foo: str | None = None
 
@@ -79,7 +101,7 @@ def test_update_model_dump_if_none_set():
 
 
 def test_update_model_dump_if_unset():
-    assert FooUpdateModel(foo=_UNSET).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
+    assert FooUpdateModel(foo=UNSET).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
 
 
 def test_update_model_dump_if_set():
