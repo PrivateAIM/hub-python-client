@@ -611,17 +611,13 @@ class CoreClient(BaseClient):
         registry_id: t.Union[Registry, uuid.UUID, str] = _UNSET,
         external_name: str = _UNSET,
     ):
-        # TODO: Is this request avoidable? At the moment all four attributes need to have values fo build a valid
-        # TODO: request.
-        registry_project = self.get_registry_project(registry_project_id)
-
         return self._update_resource(
             RegistryProject,
             UpdateRegistryProject(
-                name=name if name != _UNSET else registry_project.name,
-                type=registry_project_type if registry_project_type != _UNSET else registry_project.type,
-                registry_id=obtain_uuid_from(registry_id) if registry_id != _UNSET else registry_project.registry_id,
-                external_name=external_name if external_name != _UNSET else registry_project.external_name,
+                name=name,
+                type=registry_project_type,
+                registry_id=obtain_uuid_from(registry_id) if registry_id != _UNSET else _UNSET,
+                external_name=external_name,
             ),
             "registry-projects",
             registry_project_id,
