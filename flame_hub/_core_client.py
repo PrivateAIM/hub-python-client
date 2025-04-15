@@ -543,7 +543,7 @@ class CoreClient(BaseClient):
             analysis_bucket_file_id,
         )
 
-    def create_registry(self, name: str, host: str, account_name: str = None, account_secret: str = None):
+    def create_registry(self, name: str, host: str, account_name: str = None, account_secret: str = None) -> Registry:
         return self._create_resource(
             Registry,
             CreateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
@@ -563,7 +563,7 @@ class CoreClient(BaseClient):
         host: str = _UNSET,
         account_name: str = _UNSET,
         account_secret: str = _UNSET,
-    ):
+    ) -> Registry:
         return self._update_resource(
             Registry,
             UpdateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
@@ -583,7 +583,7 @@ class CoreClient(BaseClient):
         registry_project_type: RegistryProjectType,
         registry_id: t.Union[Registry, uuid.UUID, str],
         external_name: str,
-    ):
+    ) -> RegistryProject:
         return self._create_resource(
             RegistryProject,
             CreateRegistryProject(
@@ -610,7 +610,7 @@ class CoreClient(BaseClient):
         registry_project_type: RegistryProjectType = _UNSET,
         registry_id: t.Union[Registry, uuid.UUID, str] = _UNSET,
         external_name: str = _UNSET,
-    ):
+    ) -> RegistryProject:
         return self._update_resource(
             RegistryProject,
             UpdateRegistryProject(
