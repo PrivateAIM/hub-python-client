@@ -27,6 +27,9 @@ __all__ = [
     "CreateAnalysisBucketFile",
     "AnalysisBucketFile",
     "UpdateAnalysisBucketFile",
+    "CreateRegistry",
+    "Registry",
+    "UpdateRegistry",
     "CreateBucket",
     "BucketFile",
     "Bucket",
@@ -63,6 +66,9 @@ from ._core_client import (
     CreateAnalysisBucketFile,
     AnalysisBucketFile,
     UpdateAnalysisBucketFile,
+    CreateRegistry,
+    Registry,
+    UpdateRegistry,
 )
 
 from ._storage_client import CreateBucket, Bucket, BucketFile

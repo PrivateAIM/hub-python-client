@@ -48,6 +48,7 @@ class UpdateNode(UpdateModel):
     type: NodeType | None = None
     public_key: str | None = None
     realm_id: uuid.UUID | None = None
+    registry_id: uuid.UUID | None = None
 
 
 class MasterImageGroup(BaseModel):
@@ -207,6 +208,29 @@ class UpdateAnalysisBucketFile(UpdateModel):
     root: bool | None = None
 
 
+class CreateRegistry(BaseModel):
+    name: str
+    host: str
+    account_name: str | None
+    account_secret: str | None
+
+
+class Registry(BaseModel):
+    id: uuid.UUID
+    name: str
+    host: str
+    account_name: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistry(UpdateModel):
+    name: str | None = None
+    host: str | None = None
+    account_name: str | None = None
+    account_secret: str | None = None
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -226,10 +250,14 @@ class CoreClient(BaseClient):
         self,
         name: str,
         realm_id: t.Union[Realm, str, uuid.UUID],
+        registry_id: t.Union[Registry, uuid.UUID, str] = None,
         external_name: str | None = None,
         node_type: NodeType = "default",
         hidden: bool = False,
     ) -> Node:
+        if registry_id is not None:
+            registry_id = str(obtain_uuid_from(registry_id))
+
         return self._create_resource(
             Node,
             CreateNode(
@@ -237,7 +265,7 @@ class CoreClient(BaseClient):
                 realm_id=str(obtain_uuid_from(realm_id)),
                 external_name=external_name,
                 hidden=hidden,
-                registry_id=None,  # TODO add registries
+                registry_id=registry_id,
                 type=node_type,
             ),
             "nodes",
@@ -256,10 +284,13 @@ class CoreClient(BaseClient):
         hidden: bool = _UNSET,
         node_type: NodeType = _UNSET,
         realm_id: t.Union[Realm, str, uuid.UUID] = _UNSET,
+        registry_id: t.Union[Registry, str, uuid.UUID] = _UNSET,
         public_key: str = _UNSET,
     ) -> Node:
         if realm_id not in (None, _UNSET):
             realm_id = obtain_uuid_from(realm_id)
+        if registry_id not in (None, _UNSET):
+            registry_id = obtain_uuid_from(registry_id)
 
         return self._update_resource(
             Node,
@@ -269,6 +300,7 @@ class CoreClient(BaseClient):
                 type=node_type,
                 public_key=public_key,
                 realm_id=realm_id,
+                registry_id=registry_id,
             ),
             "nodes",
             node_id,
@@ -482,3 +514,37 @@ class CoreClient(BaseClient):
             "analysis-bucket-files",
             analysis_bucket_file_id,
         )
+
+    def create_registry(self, name: str, host: str, account_name: str = None, account_secret: str = None):
+        return self._create_resource(
+            Registry,
+            CreateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
+            "registries",
+        )
+
+    def get_registry(self, registry_id: t.Union[Registry, uuid.UUID, str]) -> Registry | None:
+        return self._get_single_resource(Registry, "registries", registry_id)
+
+    def delete_registry(self, registry_id: t.Union[Registry, uuid.UUID, str]):
+        self._delete_resource("registries", registry_id)
+
+    def update_registry(
+        self,
+        registry_id: t.Union[Registry, uuid.UUID, str],
+        name: str = _UNSET,
+        host: str = _UNSET,
+        account_name: str = _UNSET,
+        account_secret: str = _UNSET,
+    ):
+        return self._update_resource(
+            Registry,
+            UpdateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
+            "registries",
+            registry_id,
+        )
+
+    def get_registries(self) -> list[Registry]:
+        return self._get_all_resources(Registry, "registries")
+
+    def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
+        return self._find_all_resources(Registry, "registries", **params)

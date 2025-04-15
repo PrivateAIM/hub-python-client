@@ -85,6 +85,13 @@ def analysis_buckets_ready(core_client, analysis):
     assert_eventually(_check_analysis_buckets_present)
 
 
+@pytest.fixture()
+def registry(core_client):
+    new_registry = core_client.create_registry(name=next_random_string(), host=next_random_string())
+    yield new_registry
+    core_client.delete_registry(new_registry)
+
+
 def test_get_nodes(core_client, node):
     assert len(core_client.get_nodes()) > 0
 
@@ -221,3 +228,22 @@ def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_
     )
 
     assert core_client.get_analysis_bucket_file(analysis_bucket_file.id) == analysis_bucket_file
+
+
+def test_get_registry(core_client, registry):
+    assert registry == core_client.get_registry(registry.id)
+
+
+def test_get_registry_not_found(core_client):
+    assert core_client.get_registry(next_uuid()) is None
+
+
+def test_get_registries(core_client, registry):
+    assert len(core_client.get_registries()) > 0
+
+
+def test_find_registries(core_client, registry):
+    assert [registry] == core_client.find_registries(filter={"id": registry.id})
+
+
+# TODO: implement test_update_registry when hub fixes bug in updating registries
