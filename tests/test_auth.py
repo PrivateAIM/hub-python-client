@@ -19,6 +19,13 @@ def robot(auth_client, realm):
     auth_client.delete_robot(new_robot)
 
 
+@pytest.fixture()
+def permission(auth_client):
+    new_permission = auth_client.create_permission(next_random_string())
+    yield new_permission
+    auth_client.delete_permission(new_permission)
+
+
 def test_get_realm(auth_client, realm):
     assert realm == auth_client.get_realm(realm.id)
 
@@ -49,3 +56,27 @@ def test_update_robot(auth_client, robot):
 
     assert robot != new_robot
     assert new_robot.name == new_name
+
+
+def test_get_permission(auth_client, permission):
+    assert permission == auth_client.get_permission(permission.id)
+
+
+def test_get_permission_not_found(auth_client):
+    assert auth_client.get_permission(next_uuid()) is None
+
+
+def test_get_permissions(auth_client):
+    assert len(auth_client.get_permissions()) > 0
+
+
+def test_find_permissions(auth_client, permission):
+    assert [permission] == auth_client.find_permissions(filter={"id": permission.id})
+
+
+def test_update_permission(auth_client, permission):
+    new_name = next_random_string()
+    new_permission = auth_client.update_permission(permission.id, name=new_name)
+
+    assert permission != new_permission
+    assert new_permission.name == new_name

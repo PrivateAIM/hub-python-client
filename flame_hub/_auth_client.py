@@ -62,6 +62,30 @@ class UpdateRobot(UpdateModel):
     secret: str | None = None
 
 
+class CreatePermission(BaseModel):
+    name: str
+    display_name: str | None
+    description: str | None
+    realm_id: uuid.UUID | None
+    policy_id: uuid.UUID | None
+
+
+class Permission(CreatePermission):
+    id: uuid.UUID
+    built_in: bool
+    client_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdatePermission(UpdateModel):
+    name: str | None = None
+    display_name: str | None = None
+    description: str | None = None
+    realm_id: uuid.UUID | None = None
+    policy_id: uuid.UUID | None = None
+
+
 class AuthClient(BaseClient):
     def __init__(
         self,
@@ -149,3 +173,52 @@ class AuthClient(BaseClient):
             "robots",
             robot_id,
         )
+
+    def create_permission(
+        self,
+        name: str,
+        display_name: str = None,
+        description: str = None,
+        realm_id: t.Union[Realm, uuid.UUID, str] = None,
+    ) -> Permission:
+        return self._create_resource(
+            Permission,
+            CreatePermission(
+                name=name,
+                display_name=display_name,
+                description=description,
+                realm_id=obtain_uuid_from(realm_id) if realm_id is not None else None,
+                policy_id=None,  # TODO: add policies when hub implements them
+            ),
+            "permissions",
+        )
+
+    def get_permission(self, permission_id: t.Union[Permission, uuid.UUID, str]) -> Permission | None:
+        return self._get_single_resource(Permission, "permissions", permission_id)
+
+    def delete_permission(self, permission_id: t.Union[Permission, uuid.UUID, str]):
+        return self._delete_resource("permissions", permission_id)
+
+    def update_permission(
+        self,
+        permission_id: t.Union[Permission, uuid.UUID, str],
+        name: str = _UNSET,
+        display_name: str = _UNSET,
+        description: str = _UNSET,
+        realm_id: t.Union[Realm, uuid.UUID, str] = _UNSET,
+    ) -> Permission:
+        if realm_id not in (None, _UNSET):
+            realm_id = obtain_uuid_from(realm_id)
+
+        return self._update_resource(
+            Permission,
+            UpdatePermission(name=name, display_name=display_name, description=description, realm_id=realm_id),
+            "permissions",
+            permission_id,
+        )
+
+    def get_permissions(self) -> list[Permission]:
+        return self._get_all_resources(Permission, "permissions")
+
+    def find_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[Permission]:
+        return self._find_all_resources(Permission, "permissions", **params)
