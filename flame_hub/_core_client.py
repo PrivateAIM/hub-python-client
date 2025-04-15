@@ -231,6 +231,34 @@ class UpdateRegistry(UpdateModel):
     account_secret: str | None = None
 
 
+RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
+
+
+class CreateRegistryProject(BaseModel):
+    name: str
+    type: RegistryProjectType
+    registry_id: uuid.UUID
+    external_name: str
+
+
+class RegistryProject(CreateRegistryProject):
+    id: uuid.UUID
+    public: bool
+    external_id: uuid.UUID | None
+    webhook_name: str | None
+    webhook_exists: bool | None
+    realm_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistryProject(UpdateModel):
+    name: str | None = None
+    type: RegistryProjectType | None = None
+    registry_id: uuid.UUID | None = None
+    external_name: str | None = None
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -548,3 +576,59 @@ class CoreClient(BaseClient):
 
     def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
         return self._find_all_resources(Registry, "registries", **params)
+
+    def create_registry_project(
+        self,
+        name: str,
+        registry_project_type: RegistryProjectType,
+        registry_id: t.Union[Registry, uuid.UUID, str],
+        external_name: str,
+    ):
+        return self._create_resource(
+            RegistryProject,
+            CreateRegistryProject(
+                name=name,
+                type=registry_project_type,
+                registry_id=obtain_uuid_from(registry_id),
+                external_name=external_name,
+            ),
+            "registry-projects",
+        )
+
+    def get_registry_project(
+        self, registry_project_id: t.Union[RegistryProject, uuid.UUID, str]
+    ) -> RegistryProject | None:
+        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id)
+
+    def delete_registry_project(self, registry_project_id: t.Union[RegistryProject, uuid.UUID, str]):
+        self._delete_resource("registry-projects", registry_project_id)
+
+    def update_registry_project(
+        self,
+        registry_project_id: t.Union[RegistryProject, uuid.UUID, str],
+        name: str = _UNSET,
+        registry_project_type: RegistryProjectType = _UNSET,
+        registry_id: t.Union[Registry, uuid.UUID, str] = _UNSET,
+        external_name: str = _UNSET,
+    ):
+        # TODO: Is this request avoidable? At the moment all four attributes need to have values fo build a valid
+        # TODO: request.
+        registry_project = self.get_registry_project(registry_project_id)
+
+        return self._update_resource(
+            RegistryProject,
+            UpdateRegistryProject(
+                name=name if name != _UNSET else registry_project.name,
+                type=registry_project_type if registry_project_type != _UNSET else registry_project.type,
+                registry_id=obtain_uuid_from(registry_id) if registry_id != _UNSET else registry_project.registry_id,
+                external_name=external_name if external_name != _UNSET else registry_project.external_name,
+            ),
+            "registry-projects",
+            registry_project_id,
+        )
+
+    def get_registry_projects(self) -> list[RegistryProject]:
+        return self._get_all_resources(RegistryProject, "registry-projects")
+
+    def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
+        return self._find_all_resources(RegistryProject, "registry-projects", **params)

@@ -92,6 +92,18 @@ def registry(core_client):
     core_client.delete_registry(new_registry)
 
 
+@pytest.fixture()
+def registry_project(core_client, registry):
+    new_registry_project = core_client.create_registry_project(
+        name=next_random_string(),
+        registry_project_type="default",
+        registry_id=registry,
+        external_name=next_random_string(charset=string.ascii_lowercase + string.digits),
+    )
+    yield new_registry_project
+    core_client.delete_registry_project(new_registry_project)
+
+
 def test_get_nodes(core_client, node):
     assert len(core_client.get_nodes()) > 0
 
@@ -247,3 +259,27 @@ def test_find_registries(core_client, registry):
 
 
 # TODO: implement test_update_registry when hub fixes bug in updating registries
+
+
+def test_get_registry_project(core_client, registry_project):
+    assert registry_project == core_client.get_registry_project(registry_project.id)
+
+
+def test_get_registry_project_not_found(core_client, registry_project):
+    assert core_client.get_registry_project(next_uuid()) is None
+
+
+def test_get_project_registries(core_client, registry_project):
+    assert len(core_client.get_registry_projects()) > 0
+
+
+def test_find_project_registries(core_client, registry_project):
+    assert [registry_project] == core_client.find_registry_projects(filter={"id": registry_project.id})
+
+
+def test_update_project_registry(core_client, registry_project):
+    new_name = next_random_string()
+    new_registry_project = core_client.update_registry_project(registry_project.id, name=new_name)
+
+    assert registry_project != new_registry_project
+    assert new_registry_project.name == new_name
