@@ -258,7 +258,12 @@ def test_find_registries(core_client, registry):
     assert [registry] == core_client.find_registries(filter={"id": registry.id})
 
 
-# TODO: implement test_update_registry when hub fixes bug in updating registries
+def test_update_registry(core_client, registry):
+    new_name = next_random_string()
+    new_registry = core_client.update_registry(registry.id, name=new_name)
+
+    assert registry != new_registry
+    assert new_registry.name == new_name
 
 
 def test_get_registry_project(core_client, registry_project):
