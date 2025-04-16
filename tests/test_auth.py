@@ -49,3 +49,11 @@ def test_update_robot(auth_client, robot):
 
     assert robot != new_robot
     assert new_robot.name == new_name
+
+
+def test_get_robots(auth_client, robot):
+    assert len(auth_client.get_robots()) > 0
+
+
+def test_find_robots(auth_client, robot):
+    assert [robot] == auth_client.find_robots(filter={"id": robot.id})

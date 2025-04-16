@@ -148,3 +148,9 @@ class AuthClient(BaseClient):
             "robots",
             robot_id,
         )
+
+    def get_robots(self) -> list[Robot]:
+        return self._get_all_resources(Robot, "robots")
+
+    def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
+        return self._find_all_resources(Robot, "robots", **params)
