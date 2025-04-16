@@ -26,6 +26,13 @@ def permission(auth_client):
     auth_client.delete_permission(new_permission)
 
 
+@pytest.fixture()
+def role(auth_client):
+    new_role = auth_client.create_role(next_random_string())
+    yield new_role
+    auth_client.delete_role(new_role)
+
+
 def test_get_realm(auth_client, realm):
     assert realm == auth_client.get_realm(realm.id)
 
@@ -80,3 +87,27 @@ def test_update_permission(auth_client, permission):
 
     assert permission != new_permission
     assert new_permission.name == new_name
+
+
+def test_get_role(auth_client, role):
+    assert role == auth_client.get_role(role.id)
+
+
+def test_get_role_not_found(auth_client):
+    assert auth_client.get_role(next_uuid()) is None
+
+
+def test_get_roles(auth_client, role):
+    assert len(auth_client.get_roles()) > 0
+
+
+def test_find_roles(auth_client, role):
+    assert [role] == auth_client.find_roles(filter={"id": role.id})
+
+
+def test_update_role(auth_client, role):
+    new_name = next_random_string()
+    new_role = auth_client.update_role(role.id, name=new_name)
+
+    assert role != new_role
+    assert new_role.name == new_name
