@@ -41,7 +41,7 @@ class UuidModel(t.Protocol[ResourceT]):
 
 
 # union which encompasses all types where a UUID can be extracted from
-UuidIdentifiable = t.Union[UuidModel, uuid.UUID, str]
+UuidIdentifiable = UuidModel | uuid.UUID | str
 
 
 def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
@@ -95,8 +95,8 @@ class FilterOperator(str, Enum):
     ge = ">="
 
 
-FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
-IncludeParams = t.Union[str, Iterable[str]]
+FilterParams = dict[str, t.Any | tuple[FilterOperator, t.Any]]
+IncludeParams = str | Iterable[str]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
@@ -192,7 +192,7 @@ def build_include_params(include_params: IncludeParams = None) -> dict:
     return {"include": ",".join(include_params)}
 
 
-def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]) -> tuple[str, ...]:
+def convert_path(path: Iterable[str | UuidIdentifiable]) -> tuple[str, ...]:
     path_parts = []
 
     for p in path:
@@ -205,9 +205,7 @@ def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]) -> tuple[str, .
 
 
 class BaseClient(object):
-    def __init__(
-        self, base_url: str = None, auth: t.Union[PasswordAuth, RobotAuth] = None, **kwargs: te.Unpack[ClientKwargs]
-    ):
+    def __init__(self, base_url: str = None, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
@@ -254,7 +252,7 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], *path: t.Union[str, UuidIdentifiable], **params: te.Unpack[GetKwargs]
+        self, resource_type: type[ResourceT], *path: str | UuidIdentifiable, **params: te.Unpack[GetKwargs]
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
         include_params = params.get("include", None)
@@ -274,7 +272,7 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         resource: BaseModel,
-        *path: t.Union[str, UuidIdentifiable],
+        *path: str | UuidIdentifiable,
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path."""
         r = self._client.post(
@@ -287,7 +285,7 @@ class BaseClient(object):
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, *path: t.Union[str, UuidIdentifiable]):
+    def _delete_resource(self, *path: str | UuidIdentifiable):
         """Delete a resource of a certain type at the specified path."""
         r = self._client.delete("/".join(convert_path(path)))
 

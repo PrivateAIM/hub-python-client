@@ -211,7 +211,7 @@ class CoreClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_CORE_BASE_URL,
-        auth: t.Union[PasswordAuth, RobotAuth] = None,
+        auth: PasswordAuth | RobotAuth = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)
@@ -225,7 +225,7 @@ class CoreClient(BaseClient):
     def create_node(
         self,
         name: str,
-        realm_id: t.Union[Realm, str, uuid.UUID],
+        realm_id: Realm | str | uuid.UUID,
         external_name: str | None = None,
         node_type: NodeType = "default",
         hidden: bool = False,
@@ -243,19 +243,19 @@ class CoreClient(BaseClient):
             "nodes",
         )
 
-    def get_node(self, node_id: t.Union[Node, uuid.UUID, str]) -> Node | None:
+    def get_node(self, node_id: Node | uuid.UUID | str) -> Node | None:
         return self._get_single_resource(Node, "nodes", node_id)
 
-    def delete_node(self, node_id: t.Union[Node, uuid.UUID, str]):
+    def delete_node(self, node_id: Node | uuid.UUID | str):
         self._delete_resource("nodes", node_id)
 
     def update_node(
         self,
-        node_id: t.Union[Node, uuid.UUID, str],
+        node_id: Node | uuid.UUID | str,
         external_name: str = _UNSET,
         hidden: bool = _UNSET,
         node_type: NodeType = _UNSET,
-        realm_id: t.Union[Realm, str, uuid.UUID] = _UNSET,
+        realm_id: Realm | str | uuid.UUID = _UNSET,
         public_key: str = _UNSET,
     ) -> Node:
         if realm_id not in (None, _UNSET):
@@ -299,7 +299,7 @@ class CoreClient(BaseClient):
             raise new_hub_api_error_from_response(r)
 
     def create_project(
-        self, name: str, master_image_id: t.Union[MasterImage, uuid.UUID, str] = None, description: str = None
+        self, name: str, master_image_id: MasterImage | uuid.UUID | str = None, description: str = None
     ) -> Project:
         return self._create_resource(
             Project,
@@ -311,17 +311,17 @@ class CoreClient(BaseClient):
             "projects",
         )
 
-    def delete_project(self, project_id: t.Union[Project, uuid.UUID, str]):
+    def delete_project(self, project_id: Project | uuid.UUID | str):
         self._delete_resource("projects", project_id)
 
-    def get_project(self, project_id: t.Union[Project, uuid.UUID, str]) -> Project | None:
+    def get_project(self, project_id: Project | uuid.UUID | str) -> Project | None:
         return self._get_single_resource(Project, "projects", project_id)
 
     def update_project(
         self,
-        project_id: t.Union[Project, uuid.UUID, str],
+        project_id: Project | uuid.UUID | str,
         description: str = _UNSET,
-        master_image_id: t.Union[MasterImage, str, uuid.UUID] = _UNSET,
+        master_image_id: MasterImage | str | uuid.UUID = _UNSET,
         name: str = _UNSET,
     ) -> Project:
         if master_image_id not in (None, _UNSET):
@@ -339,7 +339,7 @@ class CoreClient(BaseClient):
         )
 
     def create_project_node(
-        self, project_id: t.Union[Project, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
+        self, project_id: Project | uuid.UUID | str, node_id: Node | uuid.UUID | str
     ) -> ProjectNode:
         return self._create_resource(
             ProjectNode,
@@ -350,7 +350,7 @@ class CoreClient(BaseClient):
             "project-nodes",
         )
 
-    def delete_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]):
+    def delete_project_node(self, project_node_id: ProjectNode | uuid.UUID | str):
         self._delete_resource("project-nodes", project_node_id)
 
     def get_project_nodes(self) -> list[ProjectNode]:
@@ -359,11 +359,11 @@ class CoreClient(BaseClient):
     def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[ProjectNode]:
         return self._find_all_resources(ProjectNode, "project-nodes", **params)
 
-    def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
+    def get_project_node(self, project_node_id: ProjectNode | uuid.UUID | str) -> ProjectNode | None:
         return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
 
     def create_analysis(
-        self, project_id: t.Union[Project, uuid.UUID, str], name: str = None, description: str = None
+        self, project_id: Project | uuid.UUID | str, name: str = None, description: str = None
     ) -> Analysis:
         return self._create_resource(
             Analysis,
@@ -375,7 +375,7 @@ class CoreClient(BaseClient):
             "analyses",
         )
 
-    def delete_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]):
+    def delete_analysis(self, analysis_id: Analysis | uuid.UUID | str):
         self._delete_resource("analyses", analysis_id)
 
     def get_analyses(self) -> list[Analysis]:
@@ -384,34 +384,34 @@ class CoreClient(BaseClient):
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> list[Analysis]:
         return self._find_all_resources(Analysis, "analyses", **params)
 
-    def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
+    def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
 
-    def update_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str], name: str = _UNSET) -> Analysis:
+    def update_analysis(self, analysis_id: Analysis | uuid.UUID | str, name: str = _UNSET) -> Analysis:
         if analysis_id not in (None, _UNSET):
             analysis_id = obtain_uuid_from(analysis_id)
 
         return self._update_resource(Analysis, UpdateAnalysis(name=name), "analyses", analysis_id)
 
-    def send_analysis_command(self, analysis_id: t.Union[Analysis, uuid.UUID, str], command: AnalysisCommand):
+    def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand):
         r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
 
     def create_analysis_node(
-        self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
+        self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
     ) -> AnalysisNode:
         return self._create_resource(
             AnalysisNode, CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id), "analysis-nodes"
         )
 
-    def delete_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
+    def delete_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str):
         self._delete_resource("analysis-nodes", analysis_node_id)
 
     def update_analysis_node(
         self,
-        analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str],
+        analysis_node_id: AnalysisNode | uuid.UUID | str,
         comment: str = _UNSET,
         approval_status: AnalysisNodeApprovalStatus = _UNSET,
         run_status: AnalysisNodeRunStatus = _UNSET,
@@ -423,7 +423,7 @@ class CoreClient(BaseClient):
             analysis_node_id,
         )
 
-    def get_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]) -> AnalysisNode | None:
+    def get_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str) -> AnalysisNode | None:
         return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id)
 
     def get_analysis_nodes(self) -> list[AnalysisNode]:
@@ -438,7 +438,7 @@ class CoreClient(BaseClient):
     def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucket]:
         return self._find_all_resources(AnalysisBucket, "analysis-buckets", **params)
 
-    def get_analysis_bucket(self, analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str]) -> AnalysisBucket | None:
+    def get_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str) -> AnalysisBucket | None:
         return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id)
 
     def get_analysis_bucket_files(self) -> list[AnalysisBucketFile]:
@@ -448,15 +448,15 @@ class CoreClient(BaseClient):
         return self._find_all_resources(AnalysisBucketFile, "analysis-bucket-files", **params)
 
     def get_analysis_bucket_file(
-        self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str]
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
     ) -> AnalysisBucketFile | None:
         return self._get_single_resource(AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id)
 
     def create_analysis_bucket_file(
         self,
         name: str,
-        bucket_file_id: t.Union[BucketFile, uuid.UUID, str],
-        analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str],
+        bucket_file_id: BucketFile | uuid.UUID | str,
+        analysis_bucket_id: AnalysisBucket | uuid.UUID | str,
         is_entrypoint: bool = False,
     ) -> AnalysisBucketFile:
         return self._create_resource(
@@ -471,7 +471,7 @@ class CoreClient(BaseClient):
         )
 
     def update_analysis_bucket_file(
-        self, analysis_bucket_file_id: t.Union[AnalysisBucketFile, uuid.UUID, str], is_entrypoint: bool = _UNSET
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, is_entrypoint: bool = _UNSET
     ) -> AnalysisBucketFile:
         if analysis_bucket_file_id not in (None, _UNSET):
             analysis_bucket_file_id = obtain_uuid_from(analysis_bucket_file_id)
