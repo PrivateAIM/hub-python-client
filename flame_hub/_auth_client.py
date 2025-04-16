@@ -106,6 +106,20 @@ class UpdateRole(UpdateModel):
     description: str | None = None
 
 
+class CreateRolePermission(BaseModel):
+    role_id: uuid.UUID
+    permission_id: uuid.UUID
+
+
+class RolePermission(CreateRolePermission):
+    id: uuid.UUID
+    role_realm_id: uuid.UUID | None
+    permission_realm_id: uuid.UUID | None
+    policy_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
 class AuthClient(BaseClient):
     def __init__(
         self,
@@ -275,3 +289,27 @@ class AuthClient(BaseClient):
 
     def find_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[Role]:
         return self._find_all_resources(Role, "roles", **params)
+
+    def create_role_permission(
+        self, role_id: t.Union[Role, uuid.UUID, str], permission_id: t.Union[Permission, uuid.UUID, str]
+    ) -> RolePermission:
+        return self._create_resource(
+            RolePermission,
+            CreateRolePermission(
+                role_id=obtain_uuid_from(role_id),
+                permission_id=obtain_uuid_from(permission_id),
+            ),
+            "role-permissions",
+        )
+
+    def get_role_permission(self, role_permission_id: t.Union[RolePermission, uuid.UUID, str]) -> RolePermission | None:
+        return self._get_single_resource(RolePermission, "role-permissions", role_permission_id)
+
+    def delete_role_permission(self, role_permission_id: t.Union[RolePermission, uuid.UUID, str]):
+        self._delete_resource("role-permissions", role_permission_id)
+
+    def get_role_permissions(self) -> list[RolePermission]:
+        return self._get_all_resources(RolePermission, "role-permissions")
+
+    def find_role_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RolePermission]:
+        return self._find_all_resources(RolePermission, "role-permissions", **params)
