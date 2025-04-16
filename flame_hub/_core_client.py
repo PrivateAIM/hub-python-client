@@ -387,7 +387,7 @@ class CoreClient(BaseClient):
     def get_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str]) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
 
-    def update_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str], name: str = _UNSET):
+    def update_analysis(self, analysis_id: t.Union[Analysis, uuid.UUID, str], name: str = _UNSET) -> Analysis:
         if analysis_id not in (None, _UNSET):
             analysis_id = obtain_uuid_from(analysis_id)
 
@@ -401,7 +401,7 @@ class CoreClient(BaseClient):
 
     def create_analysis_node(
         self, analysis_id: t.Union[Analysis, uuid.UUID, str], node_id: t.Union[Node, uuid.UUID, str]
-    ):
+    ) -> AnalysisNode:
         return self._create_resource(
             AnalysisNode, CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id), "analysis-nodes"
         )
@@ -415,7 +415,7 @@ class CoreClient(BaseClient):
         comment: str = _UNSET,
         approval_status: AnalysisNodeApprovalStatus = _UNSET,
         run_status: AnalysisNodeRunStatus = _UNSET,
-    ):
+    ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
             UpdateAnalysisNode(comment=comment, approval_status=approval_status, run_status=run_status),
@@ -423,13 +423,13 @@ class CoreClient(BaseClient):
             analysis_node_id,
         )
 
-    def get_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]):
+    def get_analysis_node(self, analysis_node_id: t.Union[AnalysisNode, uuid.UUID, str]) -> AnalysisNode | None:
         return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id)
 
-    def get_analysis_nodes(self):
+    def get_analysis_nodes(self) -> list[AnalysisNode]:
         return self._get_all_resources(AnalysisNode, "analysis-nodes")
 
-    def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]):
+    def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
         return self._find_all_resources(AnalysisNode, "analysis-nodes", **params)
 
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
@@ -458,7 +458,7 @@ class CoreClient(BaseClient):
         bucket_file_id: t.Union[BucketFile, uuid.UUID, str],
         analysis_bucket_id: t.Union[AnalysisBucket, uuid.UUID, str],
         is_entrypoint: bool = False,
-    ):
+    ) -> AnalysisBucketFile:
         return self._create_resource(
             AnalysisBucketFile,
             CreateAnalysisBucketFile(

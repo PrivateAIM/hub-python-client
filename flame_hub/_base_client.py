@@ -114,7 +114,7 @@ class ClientKwargs(te.TypedDict, total=False):
     client: httpx.Client | None
 
 
-def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
+def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None) -> dict:
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
     if default_page_params is None:
@@ -129,7 +129,7 @@ def build_page_params(page_params: PageParams = None, default_page_params: PageP
     return {f"page[{k}]": v for k, v in page_params.items()}
 
 
-def build_filter_params(filter_params: FilterParams = None):
+def build_filter_params(filter_params: FilterParams = None) -> dict:
     """Build a dictionary of query parameters based on provided filter parameters."""
     if filter_params is None:
         filter_params = {}
@@ -156,7 +156,7 @@ def build_filter_params(filter_params: FilterParams = None):
     return query_params
 
 
-def build_sort_params(sort_params: SortParams = None):
+def build_sort_params(sort_params: SortParams = None) -> dict:
     if sort_params is None:
         sort_params = {}
 
@@ -176,7 +176,7 @@ def build_sort_params(sort_params: SortParams = None):
     return query_params
 
 
-def build_include_params(include_params: IncludeParams = None):
+def build_include_params(include_params: IncludeParams = None) -> dict:
     if include_params is None:
         include_params = ()  # empty tuple
 
@@ -192,7 +192,7 @@ def build_include_params(include_params: IncludeParams = None):
     return {"include": ",".join(include_params)}
 
 
-def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
+def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]) -> tuple[str, ...]:
     path_parts = []
 
     for p in path:
@@ -211,12 +211,14 @@ class BaseClient(object):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
-    def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
+    def _get_all_resources(self, resource_type: type[ResourceT], *path: str) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
         return self._find_all_resources(resource_type, *path, filter=None, page=None)
 
-    def _find_all_resources(self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]):
+    def _find_all_resources(
+        self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]
+    ) -> list[ResourceT]:
         """Find all resources of a certain type at the specified path.
         Custom pagination and filter parameters can be applied."""
         # merge processed filter and page params

@@ -83,7 +83,7 @@ class StorageClient(BaseClient):
     def get_bucket(self, bucket_id: t.Union[Bucket, str, uuid.UUID]) -> Bucket | None:
         return self._get_single_resource(Bucket, "buckets", bucket_id)
 
-    def stream_bucket_tarball(self, bucket_id: t.Union[Bucket, str, uuid.UUID], chunk_size=1024):
+    def stream_bucket_tarball(self, bucket_id: t.Union[Bucket, str, uuid.UUID], chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream") as r:
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b
@@ -118,7 +118,9 @@ class StorageClient(BaseClient):
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
         return self._find_all_resources(BucketFile, "bucket-files", **params)
 
-    def stream_bucket_file(self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID], chunk_size=1024):
+    def stream_bucket_file(
+        self, bucket_file_id: t.Union[BucketFile, str, uuid.UUID], chunk_size=1024
+    ) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b
