@@ -116,7 +116,7 @@ class AuthClient(BaseClient):
     ) -> Robot:
         return self._create_resource(
             Robot,
-            CreateRobot(name=name, display_name=display_name, realm_id=str(obtain_uuid_from(realm_id)), secret=secret),
+            CreateRobot(name=name, display_name=display_name, realm_id=obtain_uuid_from(realm_id), secret=secret),
             "robots",
         )
 

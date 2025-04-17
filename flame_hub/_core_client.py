@@ -234,7 +234,7 @@ class CoreClient(BaseClient):
             Node,
             CreateNode(
                 name=name,
-                realm_id=str(obtain_uuid_from(realm_id)),
+                realm_id=obtain_uuid_from(realm_id),
                 external_name=external_name,
                 hidden=hidden,
                 registry_id=None,  # TODO add registries
@@ -344,8 +344,8 @@ class CoreClient(BaseClient):
         return self._create_resource(
             ProjectNode,
             CreateProjectNode(
-                project_id=str(obtain_uuid_from(project_id)),
-                node_id=str(obtain_uuid_from(node_id)),
+                project_id=obtain_uuid_from(project_id),
+                node_id=obtain_uuid_from(node_id),
             ),
             "project-nodes",
         )
@@ -368,7 +368,7 @@ class CoreClient(BaseClient):
         return self._create_resource(
             Analysis,
             CreateAnalysis(
-                project_id=str(obtain_uuid_from(project_id)),
+                project_id=obtain_uuid_from(project_id),
                 name=name,
                 description=description,
             ),
