@@ -61,6 +61,13 @@ def user_role(auth_client, user, role):
     auth_client.delete_user_role(new_user_role)
 
 
+@pytest.fixture()
+def robot_permission(auth_client, robot, permission):
+    new_robot_permission = auth_client.create_robot_permission(robot, permission)
+    yield new_robot_permission
+    auth_client.delete_robot_permission(new_robot_permission)
+
+
 def test_get_realm(auth_client, realm):
     assert realm == auth_client.get_realm(realm.id)
 
@@ -214,3 +221,20 @@ def test_get_user_roles(auth_client, user_role):
 def test_find_user_roles(auth_client, user_role):
     # Use user_id for filtering because there is no filter mechanism for attribute "id".
     assert [user_role] == auth_client.find_user_roles(filter={"user_id": user_role.user_id})
+
+
+def test_get_robot_permission(auth_client, robot_permission):
+    assert robot_permission == auth_client.get_robot_permission(robot_permission.id)
+
+
+def test_get_robot_permission_not_found(auth_client):
+    assert auth_client.get_permission(next_uuid()) is None
+
+
+def test_get_robot_permissions(auth_client, robot_permission):
+    assert len(auth_client.get_robot_permissions()) > 0
+
+
+def test_find_robot_permissions(auth_client, robot_permission):
+    # Use robot_id for filtering because there is no filter mechanism for attribute "id".
+    assert [robot_permission] == auth_client.find_robot_permissions(filter={"robot_id": robot_permission.robot_id})
