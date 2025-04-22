@@ -120,6 +120,43 @@ class RolePermission(CreateRolePermission):
     updated_at: datetime
 
 
+class CreateUser(BaseModel):
+    name: str
+    display_name: str | None
+    email: str | None
+    active: bool
+    name_locked: bool
+    first_name: str | None
+    last_name: str | None
+    password: str | None
+
+
+class User(BaseModel):
+    id: uuid.UUID
+    name: str
+    active: bool
+    name_locked: bool
+    display_name: str | None
+    first_name: str | None
+    last_name: str | None
+    avatar: str | None
+    cover: str | None
+    realm_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateUser(UpdateModel):
+    name: str | None = None
+    display_name: str | None = None
+    email: str | None = None
+    active: bool | None = None
+    name_locked: bool | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    password: str | None = None
+
+
 class AuthClient(BaseClient):
     def __init__(
         self,
@@ -313,3 +350,69 @@ class AuthClient(BaseClient):
 
     def find_role_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RolePermission]:
         return self._find_all_resources(RolePermission, "role-permissions", **params)
+
+    def create_user(
+        self,
+        name: str,
+        display_name: str = None,
+        email: str = None,
+        active: bool = True,
+        name_locked: bool = True,
+        first_name: str = None,
+        last_name: str = None,
+        password: str = None,
+    ) -> User:
+        return self._create_resource(
+            User,
+            CreateUser(
+                name=name,
+                display_name=display_name,
+                email=email,
+                active=active,
+                name_locked=name_locked,
+                first_name=first_name,
+                last_name=last_name,
+                password=password,
+            ),
+            "users",
+        )
+
+    def get_user(self, user_id: t.Union[User, uuid.UUID, str]) -> User | None:
+        return self._get_single_resource(User, "users", user_id)
+
+    def delete_user(self, user_id: t.Union[User, uuid.UUID, str]):
+        self._delete_resource("users", user_id)
+
+    def update_user(
+        self,
+        user_id: t.Union[User, uuid.UUID, str],
+        name: str = _UNSET,
+        display_name: str = _UNSET,
+        email: str = _UNSET,
+        active: bool = _UNSET,
+        name_locked: bool = _UNSET,
+        first_name: str = _UNSET,
+        last_name: str = _UNSET,
+        password: str = _UNSET,
+    ) -> User:
+        return self._update_resource(
+            User,
+            UpdateUser(
+                name=name,
+                display_name=display_name,
+                email=email,
+                active=active,
+                name_locked=name_locked,
+                first_name=first_name,
+                last_name=last_name,
+                password=password,
+            ),
+            "users",
+            user_id,
+        )
+
+    def get_users(self) -> list[User]:
+        return self._get_all_resources(User, "users")
+
+    def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
+        return self._find_all_resources(User, "users", **params)
