@@ -47,6 +47,20 @@ def user(auth_client):
     auth_client.delete_user(new_user)
 
 
+@pytest.fixture()
+def user_permission(auth_client, user, permission):
+    new_user_permission = auth_client.create_user_permission(user, permission)
+    yield new_user_permission
+    auth_client.delete_user_permission(new_user_permission)
+
+
+@pytest.fixture()
+def user_role(auth_client, user, role):
+    new_user_role = auth_client.create_user_role(user, role)
+    yield new_user_role
+    auth_client.delete_user_role(new_user_role)
+
+
 def test_get_realm(auth_client, realm):
     assert realm == auth_client.get_realm(realm.id)
 
@@ -140,7 +154,7 @@ def test_get_role_permissions(auth_client, role_permission):
 
 
 def test_find_role_permissions(auth_client, role_permission):
-    # Use role_id for filtering because there is no filter mechanism
+    # Use role_id for filtering because there is no filter mechanism for attribute "id".
     assert [role_permission] == auth_client.find_role_permissions(filter={"role_id": role_permission.role_id})
 
 
@@ -166,3 +180,37 @@ def test_update_user(auth_client, user):
 
     assert user != new_user
     assert new_name == new_user.name
+
+
+def test_get_user_permission(auth_client, user_permission):
+    assert user_permission == auth_client.get_user_permission(user_permission.id)
+
+
+def test_get_user_permission_not_found(auth_client):
+    assert auth_client.get_user_permission(next_uuid()) is None
+
+
+def test_get_user_permissions(auth_client, user_permission):
+    assert len(auth_client.get_user_permissions()) > 0
+
+
+def test_find_user_permissions(auth_client, user_permission):
+    # Use user_id for filtering because there is no filter mechanism for attribute "id".
+    assert [user_permission] == auth_client.find_user_permissions(filter={"user_id": user_permission.user_id})
+
+
+def test_get_user_role(auth_client, user_role):
+    assert user_role == auth_client.get_user_role(user_role.id)
+
+
+def test_get_user_role_not_found(auth_client):
+    assert auth_client.get_user_role(next_uuid()) is None
+
+
+def test_get_user_roles(auth_client, user_role):
+    assert len(auth_client.get_user_roles()) > 0
+
+
+def test_find_user_roles(auth_client, user_role):
+    # Use user_id for filtering because there is no filter mechanism for attribute "id".
+    assert [user_role] == auth_client.find_user_roles(filter={"user_id": user_role.user_id})
