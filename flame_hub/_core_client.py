@@ -111,6 +111,11 @@ class ProjectNode(CreateProjectNode):
     node_realm_id: uuid.UUID
 
 
+class UpdateProjectNode(UpdateModel):
+    comment: str | None = None
+    approval_status: ProjectNodeApprovalStatus | None = None
+
+
 AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
 AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "stopped", "finished", "failed"]
 
@@ -361,6 +366,19 @@ class CoreClient(BaseClient):
 
     def get_project_node(self, project_node_id: t.Union[ProjectNode, uuid.UUID, str]) -> ProjectNode | None:
         return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
+
+    def update_project_node(
+        self,
+        project_node_id: t.Union[ProjectNode, uuid.UUID, str],
+        comment: str = _UNSET,
+        approval_status: ProjectNodeApprovalStatus = _UNSET,
+    ):
+        return self._update_resource(
+            ProjectNode,
+            UpdateProjectNode(comment=comment, approval_status=approval_status),
+            "project-nodes",
+            project_node_id,
+        )
 
     def create_analysis(
         self, project_id: t.Union[Project, uuid.UUID, str], name: str = None, description: str = None
