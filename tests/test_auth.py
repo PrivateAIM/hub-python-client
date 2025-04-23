@@ -68,6 +68,13 @@ def robot_permission(auth_client, robot, permission):
     auth_client.delete_robot_permission(new_robot_permission)
 
 
+@pytest.fixture()
+def robot_role(auth_client, robot, role):
+    new_robot_role = auth_client.create_robot_role(robot, role)
+    yield new_robot_role
+    auth_client.delete_robot_role(new_robot_role)
+
+
 def test_get_realm(auth_client, realm):
     assert realm == auth_client.get_realm(realm.id)
 
@@ -161,7 +168,7 @@ def test_get_role_permissions(auth_client, role_permission):
 
 
 def test_find_role_permissions(auth_client, role_permission):
-    # Use role_id for filtering because there is no filter mechanism for attribute "id".
+    # Use "role_id" for filtering because there is no filter mechanism for attribute "id".
     assert [role_permission] == auth_client.find_role_permissions(filter={"role_id": role_permission.role_id})
 
 
@@ -202,7 +209,7 @@ def test_get_user_permissions(auth_client, user_permission):
 
 
 def test_find_user_permissions(auth_client, user_permission):
-    # Use user_id for filtering because there is no filter mechanism for attribute "id".
+    # Use "user_id" for filtering because there is no filter mechanism for attribute "id".
     assert [user_permission] == auth_client.find_user_permissions(filter={"user_id": user_permission.user_id})
 
 
@@ -219,7 +226,7 @@ def test_get_user_roles(auth_client, user_role):
 
 
 def test_find_user_roles(auth_client, user_role):
-    # Use user_id for filtering because there is no filter mechanism for attribute "id".
+    # Use "user_id" for filtering because there is no filter mechanism for attribute "id".
     assert [user_role] == auth_client.find_user_roles(filter={"user_id": user_role.user_id})
 
 
@@ -236,5 +243,22 @@ def test_get_robot_permissions(auth_client, robot_permission):
 
 
 def test_find_robot_permissions(auth_client, robot_permission):
-    # Use robot_id for filtering because there is no filter mechanism for attribute "id".
+    # Use "robot_id" for filtering because there is no filter mechanism for attribute "id".
     assert [robot_permission] == auth_client.find_robot_permissions(filter={"robot_id": robot_permission.robot_id})
+
+
+def test_get_robot_role(auth_client, robot_role):
+    assert robot_role == auth_client.get_robot_role(robot_role.id)
+
+
+def test_get_robot_role_not_found(auth_client):
+    assert auth_client.get_robot_role(next_uuid()) is None
+
+
+def test_get_robot_roles(auth_client, robot_role):
+    assert len(auth_client.get_robot_roles()) > 0
+
+
+def test_find_robot_roles(auth_client, robot_role):
+    # Use "robot_id" for filtering because there is no filter mechanism for attribute "id".
+    assert [robot_role] == auth_client.find_robot_roles(filter={"robot_id": robot_role.robot_id})

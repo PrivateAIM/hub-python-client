@@ -198,6 +198,19 @@ class RobotPermission(CreateRobotPermission):
     updated_at: datetime
 
 
+class CreateRobotRole(BaseModel):
+    robot_id: uuid.UUID
+    role_id: uuid.UUID
+
+
+class RobotRole(CreateRobotRole):
+    id: uuid.UUID
+    robot_realm_id: uuid.UUID | None
+    role_realm_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
 class AuthClient(BaseClient):
     def __init__(
         self,
@@ -526,3 +539,24 @@ class AuthClient(BaseClient):
 
     def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
         return self._find_all_resources(RobotPermission, "robot-permissions", **params)
+
+    def create_robot_role(
+        self, robot_id: t.Union[Robot, uuid.UUID, str], role_id: t.Union[Role, uuid.UUID, str]
+    ) -> RobotRole:
+        return self._create_resource(
+            RobotRole,
+            CreateRobotRole(robot_id=obtain_uuid_from(robot_id), role_id=obtain_uuid_from(role_id)),
+            "robot-roles",
+        )
+
+    def get_robot_role(self, robot_role_id: t.Union[RobotRole, uuid.UUID, str]) -> RobotRole | None:
+        return self._get_single_resource(RobotRole, "robot-roles", robot_role_id)
+
+    def delete_robot_role(self, robot_role_id: t.Union[RobotRole, uuid.UUID, str]):
+        self._delete_resource("robot-roles", robot_role_id)
+
+    def get_robot_roles(self) -> list[RobotRole]:
+        return self._get_all_resources(RobotRole, "robot-roles")
+
+    def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
+        return self._find_all_resources(RobotRole, "robot-roles", **params)
