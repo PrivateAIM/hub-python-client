@@ -369,7 +369,7 @@ class CoreClient(BaseClient):
 
     def update_project_node(
         self,
-        project_node_id: t.Union[ProjectNode, uuid.UUID, str],
+        project_node_id: ProjectNode | uuid.UUID | str,
         comment: str = _UNSET,
         approval_status: ProjectNodeApprovalStatus = _UNSET,
     ):
