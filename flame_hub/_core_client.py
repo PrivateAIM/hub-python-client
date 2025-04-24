@@ -310,7 +310,7 @@ class CoreClient(BaseClient):
             Project,
             CreateProject(
                 name=name,
-                master_image_id=str(obtain_uuid_from(master_image_id)) if master_image_id is not None else None,
+                master_image_id=obtain_uuid_from(master_image_id) if master_image_id is not None else None,
                 description=description,
             ),
             "projects",
