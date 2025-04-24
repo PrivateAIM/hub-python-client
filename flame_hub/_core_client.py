@@ -568,15 +568,15 @@ class CoreClient(BaseClient):
             "registries",
         )
 
-    def get_registry(self, registry_id: t.Union[Registry, uuid.UUID, str]) -> Registry | None:
+    def get_registry(self, registry_id: Registry | uuid.UUID | str) -> Registry | None:
         return self._get_single_resource(Registry, "registries", registry_id)
 
-    def delete_registry(self, registry_id: t.Union[Registry, uuid.UUID, str]):
+    def delete_registry(self, registry_id: Registry | uuid.UUID | str):
         self._delete_resource("registries", registry_id)
 
     def update_registry(
         self,
-        registry_id: t.Union[Registry, uuid.UUID, str],
+        registry_id: Registry | uuid.UUID | str,
         name: str = _UNSET,
         host: str = _UNSET,
         account_name: str = _UNSET,
@@ -599,7 +599,7 @@ class CoreClient(BaseClient):
         self,
         name: str,
         registry_project_type: RegistryProjectType,
-        registry_id: t.Union[Registry, uuid.UUID, str],
+        registry_id: Registry | uuid.UUID | str,
         external_name: str,
     ) -> RegistryProject:
         return self._create_resource(
@@ -613,20 +613,18 @@ class CoreClient(BaseClient):
             "registry-projects",
         )
 
-    def get_registry_project(
-        self, registry_project_id: t.Union[RegistryProject, uuid.UUID, str]
-    ) -> RegistryProject | None:
+    def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
         return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id)
 
-    def delete_registry_project(self, registry_project_id: t.Union[RegistryProject, uuid.UUID, str]):
+    def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
         self._delete_resource("registry-projects", registry_project_id)
 
     def update_registry_project(
         self,
-        registry_project_id: t.Union[RegistryProject, uuid.UUID, str],
+        registry_project_id: RegistryProject | uuid.UUID | str,
         name: str = _UNSET,
         registry_project_type: RegistryProjectType = _UNSET,
-        registry_id: t.Union[Registry, uuid.UUID, str] = _UNSET,
+        registry_id: Registry | uuid.UUID | str = _UNSET,
         external_name: str = _UNSET,
     ) -> RegistryProject:
         return self._update_resource(
