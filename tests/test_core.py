@@ -163,9 +163,10 @@ def test_get_master_image_event_logs(core_client):
 
 
 def test_find_master_image_event_logs(core_client, master_image_event_log):
-    log = master_image_event_log
     # Use "name" for filtering because there is no filter mechanism for attribute "id".
-    assert log in core_client.find_master_image_event_logs(filter={"name": log.name})
+    assert master_image_event_log in core_client.find_master_image_event_logs(
+        filter={"name": master_image_event_log.name}
+    )
 
 
 def test_get_projects(core_client, project):
