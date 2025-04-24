@@ -44,6 +44,7 @@ class BucketFile(BaseModel):
     actor_type: str
     actor_id: uuid.UUID
     bucket_id: uuid.UUID
+    bucket: Bucket | None = None
 
 
 class UploadFile(te.TypedDict):
