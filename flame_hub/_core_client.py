@@ -289,7 +289,7 @@ class CoreClient(BaseClient):
         hidden: bool = False,
     ) -> Node:
         if registry_id is not None:
-            registry_id = str(obtain_uuid_from(registry_id))
+            registry_id = obtain_uuid_from(registry_id)
 
         return self._create_resource(
             Node,
