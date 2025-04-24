@@ -21,7 +21,7 @@ class HubAPIError(httpx.HTTPError):
         self.error_response = error
 
 
-def new_hub_api_error_from_response(r: httpx.Response):
+def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
     """Create a new error from a response.
     If present, this function will use the response body to add context to the error message.
     The parsed response body is available using the error_response property of the returned error."""

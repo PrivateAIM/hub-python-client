@@ -216,7 +216,7 @@ class AuthClient(BaseClient):
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,
-        auth: t.Union[RobotAuth, PasswordAuth] = None,
+        auth: RobotAuth | PasswordAuth = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)
@@ -238,10 +238,10 @@ class AuthClient(BaseClient):
             "realms",
         )
 
-    def delete_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]):
+    def delete_realm(self, realm_id: Realm | uuid.UUID | str):
         self._delete_resource("realms", realm_id)
 
-    def get_realm(self, realm_id: t.Union[Realm, uuid.UUID, str]) -> Realm | None:
+    def get_realm(self, realm_id: Realm | uuid.UUID | str) -> Realm | None:
         return self._get_single_resource(Realm, "realms", realm_id)
 
     def update_realm(
@@ -263,26 +263,26 @@ class AuthClient(BaseClient):
         )
 
     def create_robot(
-        self, name: str, realm_id: t.Union[Realm, str, uuid.UUID], secret: str, display_name: str = None
+        self, name: str, realm_id: Realm | str | uuid.UUID, secret: str, display_name: str = None
     ) -> Robot:
         return self._create_resource(
             Robot,
-            CreateRobot(name=name, display_name=display_name, realm_id=str(obtain_uuid_from(realm_id)), secret=secret),
+            CreateRobot(name=name, display_name=display_name, realm_id=obtain_uuid_from(realm_id), secret=secret),
             "robots",
         )
 
-    def delete_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]):
+    def delete_robot(self, robot_id: Robot | str | uuid.UUID):
         self._delete_resource("robots", robot_id)
 
-    def get_robot(self, robot_id: t.Union[Robot, str, uuid.UUID]) -> Robot | None:
+    def get_robot(self, robot_id: Robot | str | uuid.UUID) -> Robot | None:
         return self._get_single_resource(Robot, "robots", robot_id)
 
     def update_robot(
         self,
-        robot_id: t.Union[Robot, str, uuid.UUID],
+        robot_id: Robot | str | uuid.UUID,
         name: str = _UNSET,
         display_name: str = _UNSET,
-        realm_id: t.Union[Realm, str, uuid.UUID] = _UNSET,
+        realm_id: Realm | str | uuid.UUID = _UNSET,
         secret: str = _UNSET,
     ) -> Robot:
         if realm_id not in (None, _UNSET):
@@ -299,6 +299,12 @@ class AuthClient(BaseClient):
             "robots",
             robot_id,
         )
+
+    def get_robots(self) -> list[Robot]:
+        return self._get_all_resources(Robot, "robots")
+
+    def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
+        return self._find_all_resources(Robot, "robots", **params)
 
     def create_permission(
         self,

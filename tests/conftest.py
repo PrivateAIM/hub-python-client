@@ -41,13 +41,13 @@ def get_minio_connection_string(m: MinioContainer) -> str:
 
 
 @pytest.fixture(scope="session")
-def use_testcontainers():
+def use_testcontainers() -> bool:
     return os.getenv("PYTEST_USE_TESTCONTAINERS", "1").strip().lower() not in ("0", "false", "n", "no", "")
 
 
 @pytest.fixture(scope="session")
 def hub_version() -> str:
-    return os.getenv("PYTEST_HUB_VERSION", "0.8.7")
+    return os.getenv("PYTEST_HUB_VERSION", "0.8.8")
 
 
 @pytest.fixture(scope="session")
@@ -66,12 +66,12 @@ def storage_base_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def auth_admin_username():
+def auth_admin_username() -> str:
     return os.getenv("PYTEST_ADMIN_USERNAME", "admin")
 
 
 @pytest.fixture(scope="session")
-def auth_admin_password():
+def auth_admin_password() -> str:
     return os.getenv("PYTEST_ADMIN_PASSWORD", "start123")
 
 
