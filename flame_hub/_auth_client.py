@@ -1,4 +1,3 @@
-import typing as t
 import uuid
 from datetime import datetime
 
@@ -311,7 +310,7 @@ class AuthClient(BaseClient):
         name: str,
         display_name: str = None,
         description: str = None,
-        realm_id: t.Union[Realm, uuid.UUID, str] = None,
+        realm_id: Realm | uuid.UUID | str = None,
     ) -> Permission:
         return self._create_resource(
             Permission,
@@ -325,19 +324,19 @@ class AuthClient(BaseClient):
             "permissions",
         )
 
-    def get_permission(self, permission_id: t.Union[Permission, uuid.UUID, str]) -> Permission | None:
+    def get_permission(self, permission_id: Permission | uuid.UUID | str) -> Permission | None:
         return self._get_single_resource(Permission, "permissions", permission_id)
 
-    def delete_permission(self, permission_id: t.Union[Permission, uuid.UUID, str]):
+    def delete_permission(self, permission_id: Permission | uuid.UUID | str):
         return self._delete_resource("permissions", permission_id)
 
     def update_permission(
         self,
-        permission_id: t.Union[Permission, uuid.UUID, str],
+        permission_id: Permission | uuid.UUID | str,
         name: str = _UNSET,
         display_name: str = _UNSET,
         description: str = _UNSET,
-        realm_id: t.Union[Realm, uuid.UUID, str] = _UNSET,
+        realm_id: Realm | uuid.UUID | str = _UNSET,
     ) -> Permission:
         if realm_id not in (None, _UNSET):
             realm_id = obtain_uuid_from(realm_id)
@@ -362,15 +361,15 @@ class AuthClient(BaseClient):
             "roles",
         )
 
-    def get_role(self, role_id: t.Union[Role, uuid.UUID, str]) -> Role | None:
+    def get_role(self, role_id: Role | uuid.UUID | str) -> Role | None:
         return self._get_single_resource(Role, "roles", role_id)
 
-    def delete_role(self, role_id: t.Union[Role, uuid.UUID, str]):
+    def delete_role(self, role_id: Role | uuid.UUID | str):
         self._delete_resource("roles", role_id)
 
     def update_role(
         self,
-        role_id: t.Union[Role, uuid.UUID, str],
+        role_id: Role | uuid.UUID | str,
         name: str = _UNSET,
         display_name: str = _UNSET,
         description: str = _UNSET,
@@ -389,7 +388,7 @@ class AuthClient(BaseClient):
         return self._find_all_resources(Role, "roles", **params)
 
     def create_role_permission(
-        self, role_id: t.Union[Role, uuid.UUID, str], permission_id: t.Union[Permission, uuid.UUID, str]
+        self, role_id: Role | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
     ) -> RolePermission:
         return self._create_resource(
             RolePermission,
@@ -400,10 +399,10 @@ class AuthClient(BaseClient):
             "role-permissions",
         )
 
-    def get_role_permission(self, role_permission_id: t.Union[RolePermission, uuid.UUID, str]) -> RolePermission | None:
+    def get_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str) -> RolePermission | None:
         return self._get_single_resource(RolePermission, "role-permissions", role_permission_id)
 
-    def delete_role_permission(self, role_permission_id: t.Union[RolePermission, uuid.UUID, str]):
+    def delete_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str):
         self._delete_resource("role-permissions", role_permission_id)
 
     def get_role_permissions(self) -> list[RolePermission]:
@@ -438,15 +437,15 @@ class AuthClient(BaseClient):
             "users",
         )
 
-    def get_user(self, user_id: t.Union[User, uuid.UUID, str]) -> User | None:
+    def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
         return self._get_single_resource(User, "users", user_id)
 
-    def delete_user(self, user_id: t.Union[User, uuid.UUID, str]):
+    def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
 
     def update_user(
         self,
-        user_id: t.Union[User, uuid.UUID, str],
+        user_id: User | uuid.UUID | str,
         name: str = _UNSET,
         display_name: str = _UNSET,
         email: str = _UNSET,
@@ -480,8 +479,8 @@ class AuthClient(BaseClient):
 
     def create_user_permission(
         self,
-        user_id: t.Union[User, uuid.UUID, str],
-        permission_id: t.Union[Permission, uuid.UUID, str],
+        user_id: User | uuid.UUID | str,
+        permission_id: Permission | uuid.UUID | str,
     ) -> UserPermission:
         return self._create_resource(
             UserPermission,
@@ -489,10 +488,10 @@ class AuthClient(BaseClient):
             "user-permissions",
         )
 
-    def get_user_permission(self, user_permission_id: t.Union[UserPermission, uuid.UUID, str]) -> UserPermission | None:
+    def get_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str) -> UserPermission | None:
         return self._get_single_resource(UserPermission, "user-permissions", user_permission_id)
 
-    def delete_user_permission(self, user_permission_id: t.Union[UserPermission, uuid.UUID, str]):
+    def delete_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str):
         self._delete_resource("user-permissions", user_permission_id)
 
     def get_user_permissions(self) -> list[UserPermission]:
@@ -501,21 +500,17 @@ class AuthClient(BaseClient):
     def find_user_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[UserPermission]:
         return self._find_all_resources(UserPermission, "user-permissions", **params)
 
-    def create_user_role(
-        self,
-        user_id: t.Union[User, uuid.UUID, str],
-        role_id: t.Union[Role, uuid.UUID, str],
-    ) -> UserRole:
+    def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
         return self._create_resource(
             UserRole,
             CreateUserRole(user_id=obtain_uuid_from(user_id), role_id=obtain_uuid_from(role_id)),
             "user-roles",
         )
 
-    def get_user_role(self, user_role_id: t.Union[UserRole, uuid.UUID, str]) -> UserRole | None:
+    def get_user_role(self, user_role_id: UserRole | uuid.UUID | str) -> UserRole | None:
         return self._get_single_resource(UserRole, "user-roles", user_role_id)
 
-    def delete_user_role(self, user_role_id: t.Union[UserRole, uuid.UUID, str]):
+    def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str):
         self._delete_resource("user-roles", user_role_id)
 
     def get_user_roles(self) -> list[UserRole]:
@@ -525,7 +520,7 @@ class AuthClient(BaseClient):
         return self._find_all_resources(UserRole, "user-roles", **params)
 
     def create_robot_permission(
-        self, robot_id: t.Union[Robot, uuid.UUID, str], permission_id: t.Union[Permission, uuid.UUID, str]
+        self, robot_id: Robot | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
     ) -> RobotPermission:
         return self._create_resource(
             RobotPermission,
@@ -533,12 +528,10 @@ class AuthClient(BaseClient):
             "robot-permissions",
         )
 
-    def get_robot_permission(
-        self, robot_permission_id: t.Union[RobotPermission, uuid.UUID, str]
-    ) -> RobotPermission | None:
+    def get_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str) -> RobotPermission | None:
         return self._get_single_resource(RobotPermission, "robot-permissions", robot_permission_id)
 
-    def delete_robot_permission(self, robot_permission_id: t.Union[RobotPermission, uuid.UUID, str]):
+    def delete_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str):
         self._delete_resource("robot-permissions", robot_permission_id)
 
     def get_robot_permissions(self) -> list[RobotPermission]:
@@ -547,19 +540,17 @@ class AuthClient(BaseClient):
     def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
         return self._find_all_resources(RobotPermission, "robot-permissions", **params)
 
-    def create_robot_role(
-        self, robot_id: t.Union[Robot, uuid.UUID, str], role_id: t.Union[Role, uuid.UUID, str]
-    ) -> RobotRole:
+    def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
         return self._create_resource(
             RobotRole,
             CreateRobotRole(robot_id=obtain_uuid_from(robot_id), role_id=obtain_uuid_from(role_id)),
             "robot-roles",
         )
 
-    def get_robot_role(self, robot_role_id: t.Union[RobotRole, uuid.UUID, str]) -> RobotRole | None:
+    def get_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str) -> RobotRole | None:
         return self._get_single_resource(RobotRole, "robot-roles", robot_role_id)
 
-    def delete_robot_role(self, robot_role_id: t.Union[RobotRole, uuid.UUID, str]):
+    def delete_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str):
         self._delete_resource("robot-roles", robot_role_id)
 
     def get_robot_roles(self) -> list[RobotRole]:
