@@ -66,7 +66,11 @@ def test_get_bucket_file(storage_client, bucket_file):
     assert storage_client.get_bucket_file(bucket_file.id) == bucket_file
 
 
-def test_get_bucket_file_include_bucket(storage_client, bucket_file):
+def test_get_bucket_file_include_bucket(storage_client, bucket_file, bucket):
+    assert bucket == storage_client.get_bucket_file(bucket_file.id, include="bucket").bucket
+
+
+def test_find_bucket_files_include_bucket(storage_client, bucket_file):
     assert all(bf.bucket is not None for bf in storage_client.find_bucket_files(include="bucket"))
 
 

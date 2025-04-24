@@ -13,6 +13,7 @@ from flame_hub._base_client import (
     obtain_uuid_from,
     FindAllKwargs,
     ClientKwargs,
+    GetKwargs,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
@@ -108,8 +109,10 @@ class StorageClient(BaseClient):
     def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID):
         self._delete_resource("bucket-files", bucket_file_id)
 
-    def get_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID) -> BucketFile | None:
-        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id)
+    def get_bucket_file(
+        self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
+    ) -> BucketFile | None:
+        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, **params)
 
     def get_bucket_files(self) -> list[BucketFile]:
         return self._get_all_resources(BucketFile, "bucket-files")
