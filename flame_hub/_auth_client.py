@@ -328,7 +328,7 @@ class AuthClient(BaseClient):
         return self._get_single_resource(Permission, "permissions", permission_id)
 
     def delete_permission(self, permission_id: Permission | uuid.UUID | str):
-        return self._delete_resource("permissions", permission_id)
+        self._delete_resource("permissions", permission_id)
 
     def update_permission(
         self,
