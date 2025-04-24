@@ -27,6 +27,12 @@ __all__ = [
     "CreateAnalysisBucketFile",
     "AnalysisBucketFile",
     "UpdateAnalysisBucketFile",
+    "CreateRegistry",
+    "Registry",
+    "UpdateRegistry",
+    "CreateRegistryProject",
+    "RegistryProject",
+    "UpdateRegistryProject",
     "CreateBucket",
     "BucketFile",
     "Bucket",
@@ -88,6 +94,12 @@ from ._core_client import (
     CreateAnalysisBucketFile,
     AnalysisBucketFile,
     UpdateAnalysisBucketFile,
+    CreateRegistry,
+    Registry,
+    UpdateRegistry,
+    CreateRegistryProject,
+    RegistryProject,
+    UpdateRegistryProject,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UpdateModel
