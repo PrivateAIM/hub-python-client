@@ -209,10 +209,12 @@ class BaseClient(object):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
-    def _get_all_resources(self, resource_type: type[ResourceT], *path: str) -> list[ResourceT]:
+    def _get_all_resources(
+        self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[GetKwargs]
+    ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, *path, filter=None, page=None)
+        return self._find_all_resources(resource_type, *path, **params)
 
     def _find_all_resources(
         self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]
