@@ -48,6 +48,7 @@ class UpdateNode(UpdateModel):
     type: NodeType | None = None
     public_key: str | None = None
     realm_id: uuid.UUID | None = None
+    registry_id: uuid.UUID | None = None
 
 
 class MasterImageGroup(BaseModel):
@@ -223,6 +224,57 @@ class UpdateAnalysisBucketFile(UpdateModel):
     root: bool | None = None
 
 
+class CreateRegistry(BaseModel):
+    name: str
+    host: str
+    account_name: str | None
+    account_secret: str | None
+
+
+class Registry(BaseModel):
+    id: uuid.UUID
+    name: str
+    host: str
+    account_name: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistry(UpdateModel):
+    name: str | None = None
+    host: str | None = None
+    account_name: str | None = None
+    account_secret: str | None = None
+
+
+RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
+
+
+class CreateRegistryProject(BaseModel):
+    name: str
+    type: RegistryProjectType
+    registry_id: uuid.UUID
+    external_name: str
+
+
+class RegistryProject(CreateRegistryProject):
+    id: uuid.UUID
+    public: bool
+    external_id: uuid.UUID | None
+    webhook_name: str | None
+    webhook_exists: bool | None
+    realm_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistryProject(UpdateModel):
+    name: str | None = None
+    type: RegistryProjectType | None = None
+    registry_id: uuid.UUID | None = None
+    external_name: str | None = None
+
+
 class CoreClient(BaseClient):
     def __init__(
         self,
@@ -242,10 +294,14 @@ class CoreClient(BaseClient):
         self,
         name: str,
         realm_id: Realm | str | uuid.UUID,
+        registry_id: Registry | uuid.UUID | str = None,
         external_name: str | None = None,
         node_type: NodeType = "default",
         hidden: bool = False,
     ) -> Node:
+        if registry_id is not None:
+            registry_id = obtain_uuid_from(registry_id)
+
         return self._create_resource(
             Node,
             CreateNode(
@@ -253,7 +309,7 @@ class CoreClient(BaseClient):
                 realm_id=obtain_uuid_from(realm_id),
                 external_name=external_name,
                 hidden=hidden,
-                registry_id=None,  # TODO add registries
+                registry_id=registry_id,
                 type=node_type,
             ),
             "nodes",
@@ -272,10 +328,13 @@ class CoreClient(BaseClient):
         hidden: bool = _UNSET,
         node_type: NodeType = _UNSET,
         realm_id: Realm | str | uuid.UUID = _UNSET,
+        registry_id: Registry | str | uuid.UUID = _UNSET,
         public_key: str = _UNSET,
     ) -> Node:
         if realm_id not in (None, _UNSET):
             realm_id = obtain_uuid_from(realm_id)
+        if registry_id not in (None, _UNSET):
+            registry_id = obtain_uuid_from(registry_id)
 
         return self._update_resource(
             Node,
@@ -285,6 +344,7 @@ class CoreClient(BaseClient):
                 type=node_type,
                 public_key=public_key,
                 realm_id=realm_id,
+                registry_id=registry_id,
             ),
             "nodes",
             node_id,
@@ -522,3 +582,87 @@ class CoreClient(BaseClient):
             "analysis-bucket-files",
             analysis_bucket_file_id,
         )
+
+    def create_registry(self, name: str, host: str, account_name: str = None, account_secret: str = None) -> Registry:
+        return self._create_resource(
+            Registry,
+            CreateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
+            "registries",
+        )
+
+    def get_registry(self, registry_id: Registry | uuid.UUID | str) -> Registry | None:
+        return self._get_single_resource(Registry, "registries", registry_id)
+
+    def delete_registry(self, registry_id: Registry | uuid.UUID | str):
+        self._delete_resource("registries", registry_id)
+
+    def update_registry(
+        self,
+        registry_id: Registry | uuid.UUID | str,
+        name: str = _UNSET,
+        host: str = _UNSET,
+        account_name: str = _UNSET,
+        account_secret: str = _UNSET,
+    ) -> Registry:
+        return self._update_resource(
+            Registry,
+            UpdateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
+            "registries",
+            registry_id,
+        )
+
+    def get_registries(self) -> list[Registry]:
+        return self._get_all_resources(Registry, "registries")
+
+    def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
+        return self._find_all_resources(Registry, "registries", **params)
+
+    def create_registry_project(
+        self,
+        name: str,
+        registry_project_type: RegistryProjectType,
+        registry_id: Registry | uuid.UUID | str,
+        external_name: str,
+    ) -> RegistryProject:
+        return self._create_resource(
+            RegistryProject,
+            CreateRegistryProject(
+                name=name,
+                type=registry_project_type,
+                registry_id=obtain_uuid_from(registry_id),
+                external_name=external_name,
+            ),
+            "registry-projects",
+        )
+
+    def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
+        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id)
+
+    def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
+        self._delete_resource("registry-projects", registry_project_id)
+
+    def update_registry_project(
+        self,
+        registry_project_id: RegistryProject | uuid.UUID | str,
+        name: str = _UNSET,
+        registry_project_type: RegistryProjectType = _UNSET,
+        registry_id: Registry | uuid.UUID | str = _UNSET,
+        external_name: str = _UNSET,
+    ) -> RegistryProject:
+        return self._update_resource(
+            RegistryProject,
+            UpdateRegistryProject(
+                name=name,
+                type=registry_project_type,
+                registry_id=obtain_uuid_from(registry_id) if registry_id != _UNSET else _UNSET,
+                external_name=external_name,
+            ),
+            "registry-projects",
+            registry_project_id,
+        )
+
+    def get_registry_projects(self) -> list[RegistryProject]:
+        return self._get_all_resources(RegistryProject, "registry-projects")
+
+    def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
+        return self._find_all_resources(RegistryProject, "registry-projects", **params)
