@@ -41,7 +41,7 @@ class UuidModel(t.Protocol[ResourceT]):
 
 
 # union which encompasses all types where a UUID can be extracted from
-UuidIdentifiable = t.Union[UuidModel, uuid.UUID, str]
+UuidIdentifiable = UuidModel | uuid.UUID | str
 
 
 def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
@@ -95,8 +95,8 @@ class FilterOperator(str, Enum):
     ge = ">="
 
 
-FilterParams = dict[str, t.Union[t.Any, tuple[FilterOperator, t.Any]]]
-IncludeParams = t.Union[str, Iterable[str]]
+FilterParams = dict[str, t.Any | tuple[FilterOperator, t.Any]]
+IncludeParams = str | Iterable[str]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
@@ -114,7 +114,7 @@ class ClientKwargs(te.TypedDict, total=False):
     client: httpx.Client | None
 
 
-def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None):
+def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None) -> dict:
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
     if default_page_params is None:
@@ -129,7 +129,7 @@ def build_page_params(page_params: PageParams = None, default_page_params: PageP
     return {f"page[{k}]": v for k, v in page_params.items()}
 
 
-def build_filter_params(filter_params: FilterParams = None):
+def build_filter_params(filter_params: FilterParams = None) -> dict:
     """Build a dictionary of query parameters based on provided filter parameters."""
     if filter_params is None:
         filter_params = {}
@@ -156,7 +156,7 @@ def build_filter_params(filter_params: FilterParams = None):
     return query_params
 
 
-def build_sort_params(sort_params: SortParams = None):
+def build_sort_params(sort_params: SortParams = None) -> dict:
     if sort_params is None:
         sort_params = {}
 
@@ -176,7 +176,7 @@ def build_sort_params(sort_params: SortParams = None):
     return query_params
 
 
-def build_include_params(include_params: IncludeParams = None):
+def build_include_params(include_params: IncludeParams = None) -> dict:
     if include_params is None:
         include_params = ()  # empty tuple
 
@@ -192,7 +192,7 @@ def build_include_params(include_params: IncludeParams = None):
     return {"include": ",".join(include_params)}
 
 
-def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
+def convert_path(path: Iterable[str | UuidIdentifiable]) -> tuple[str, ...]:
     path_parts = []
 
     for p in path:
@@ -205,18 +205,18 @@ def convert_path(path: Iterable[t.Union[str, UuidIdentifiable]]):
 
 
 class BaseClient(object):
-    def __init__(
-        self, base_url: str = None, auth: t.Union[PasswordAuth, RobotAuth] = None, **kwargs: te.Unpack[ClientKwargs]
-    ):
+    def __init__(self, base_url: str = None, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
-    def _get_all_resources(self, resource_type: type[ResourceT], *path: str):
+    def _get_all_resources(self, resource_type: type[ResourceT], *path: str) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
         return self._find_all_resources(resource_type, *path, filter=None, page=None)
 
-    def _find_all_resources(self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]):
+    def _find_all_resources(
+        self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]
+    ) -> list[ResourceT]:
         """Find all resources of a certain type at the specified path.
         Custom pagination and filter parameters can be applied."""
         # merge processed filter and page params
@@ -252,7 +252,7 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], *path: t.Union[str, UuidIdentifiable], **params: te.Unpack[GetKwargs]
+        self, resource_type: type[ResourceT], *path: str | UuidIdentifiable, **params: te.Unpack[GetKwargs]
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
         include_params = params.get("include", None)
@@ -272,7 +272,7 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         resource: BaseModel,
-        *path: t.Union[str, UuidIdentifiable],
+        *path: str | UuidIdentifiable,
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path."""
         r = self._client.post(
@@ -285,7 +285,7 @@ class BaseClient(object):
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, *path: t.Union[str, UuidIdentifiable]):
+    def _delete_resource(self, *path: str | UuidIdentifiable):
         """Delete a resource of a certain type at the specified path."""
         r = self._client.delete("/".join(convert_path(path)))
 

@@ -35,6 +35,14 @@ def test_update_realm(auth_client, realm):
     assert new_realm.name == new_name
 
 
+def test_get_realms(auth_client, realm):
+    assert len(auth_client.get_realms()) > 0
+
+
+def test_find_realms(auth_client, realm):
+    assert [realm] == auth_client.find_realms(filter={"id": realm.id})
+
+
 def test_get_robot(auth_client, robot):
     assert robot == auth_client.get_robot(robot.id)
 
@@ -49,3 +57,11 @@ def test_update_robot(auth_client, robot):
 
     assert robot != new_robot
     assert new_robot.name == new_name
+
+
+def test_get_robots(auth_client, robot):
+    assert len(auth_client.get_robots()) > 0
+
+
+def test_find_robots(auth_client, robot):
+    assert [robot] == auth_client.find_robots(filter={"id": robot.id})

@@ -1,4 +1,5 @@
 import time
+import typing as t
 
 import httpx
 from pydantic import BaseModel
@@ -7,7 +8,7 @@ from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
 
 
-def secs_to_nanos(seconds: int):
+def secs_to_nanos(seconds: int) -> int:
     return seconds * (10**9)
 
 
@@ -36,7 +37,7 @@ class RobotAuth(httpx.Auth):
         self._current_token_expires_at_nanos = 0
         self._client = client or httpx.Client(base_url=base_url)
 
-    def auth_flow(self, request):
+    def auth_flow(self, request) -> t.Iterator[httpx.Request]:
         # check if token is not set or current token is expired
         if self._current_token is None or time.monotonic_ns() > self._current_token_expires_at_nanos:
             request_nanos = time.monotonic_ns()
@@ -74,7 +75,7 @@ class PasswordAuth(httpx.Auth):
         self._current_token = token
         self._current_token_expires_at_nanos = request_nanos + secs_to_nanos(token.expires_in)
 
-    def auth_flow(self, request):
+    def auth_flow(self, request) -> t.Iterator[httpx.Request]:
         if self._current_token is None:
             request_nanos = time.monotonic_ns()
 

@@ -304,7 +304,7 @@ For quick development, it is highly recommended to set up your own Hub instance 
 [Grab the Docker Compose file from the Hub repository](https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml)
 and store it somewhere warm and comfy.
 For the `core`, `messenger`, `analysis-manager`, `storage` and `ui` services, remove the `build` property and replace it
-with `image: ghcr.io/privateaim/hub:0.8.7`.
+with `image: ghcr.io/privateaim/hub:0.8.8`.
 Now you can run `docker compose up -d` and, after a few minutes, you will be able to access the UI
 at http://localhost:3000.
 
