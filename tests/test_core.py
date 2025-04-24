@@ -9,16 +9,20 @@ from tests.helpers import next_random_string, next_uuid, assert_eventually
 pytestmark = pytest.mark.integration
 
 
+def sync_master_images(core_client):
+    try:
+        core_client.sync_master_images()
+    except HubAPIError as e:
+        # ignore if command is locked, means the hub is probably syncing right now
+        if not e.error_response.message.startswith("The command is locked"):
+            # otherwise this is an unknown error and should be raised
+            raise e
+
+
 @pytest.fixture(scope="module")
 def master_image(core_client):
     if len(core_client.get_master_images()) == 0:
-        try:
-            core_client.sync_master_images()
-        except HubAPIError as e:
-            # ignore if command is locked, means the hub is probably syncing right now
-            if not e.error_response.message.startswith("The command is locked"):
-                # otherwise this is an unknown error and should be raised
-                raise e
+        sync_master_images(core_client)
 
         def _check_master_images_available():
             assert len(core_client.get_master_images()) > 0
@@ -32,6 +36,19 @@ def master_image(core_client):
         raise ValueError(f"expected single master image named {default_master_image}, found {len(master_images)}")
 
     return master_images[0]
+
+
+@pytest.fixture(scope="module")
+def master_image_event_log(core_client):
+    if len(core_client.get_master_image_event_logs()) == 0:
+        sync_master_images(core_client)
+
+        def _check_master_image_event_logs_available():
+            assert len(core_client.get_master_image_event_logs()) > 0
+
+        assert_eventually(_check_master_image_event_logs_available, max_retries=10, delay_millis=1000)
+
+    return core_client.get_master_image_event_logs()[0]
 
 
 @pytest.fixture()
@@ -135,6 +152,21 @@ def test_get_master_images(core_client):
 
 def test_get_master_image_groups(core_client):
     _ = core_client.get_master_image_groups()
+
+
+def test_get_master_image_event_log(core_client, master_image_event_log):
+    assert master_image_event_log == core_client.get_master_image_event_log(master_image_event_log.id)
+
+
+def test_get_master_image_event_logs(core_client):
+    _ = core_client.get_master_image_event_logs()
+
+
+def test_find_master_image_event_logs(core_client, master_image_event_log):
+    # Use "name" for filtering because there is no filter mechanism for attribute "id".
+    assert master_image_event_log in core_client.find_master_image_event_logs(
+        filter={"name": master_image_event_log.name}
+    )
 
 
 def test_get_projects(core_client, project):

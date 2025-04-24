@@ -33,6 +33,7 @@ __all__ = [
     "CreateRegistryProject",
     "RegistryProject",
     "UpdateRegistryProject",
+    "MasterImageEventLog",
     "CreateBucket",
     "BucketFile",
     "Bucket",
@@ -100,6 +101,7 @@ from ._core_client import (
     CreateRegistryProject,
     RegistryProject,
     UpdateRegistryProject,
+    MasterImageEventLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UpdateModel
