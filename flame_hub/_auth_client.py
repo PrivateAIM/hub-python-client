@@ -136,6 +136,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
+    # TODO: add email attribute
     display_name: str | None
     first_name: str | None
     last_name: str | None
