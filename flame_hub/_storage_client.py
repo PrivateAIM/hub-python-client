@@ -76,8 +76,8 @@ class StorageClient(BaseClient):
     def delete_bucket(self, bucket_id: Bucket | str | uuid.UUID):
         self._delete_resource("buckets", bucket_id)
 
-    def get_buckets(self) -> list[Bucket]:
-        return self._get_all_resources(Bucket, "buckets")
+    def get_buckets(self, **params: te.Unpack[GetKwargs]) -> list[Bucket]:
+        return self._get_all_resources(Bucket, "buckets", **params)
 
     def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[Bucket]:
         return self._find_all_resources(Bucket, "buckets", **params)
@@ -114,8 +114,8 @@ class StorageClient(BaseClient):
     ) -> BucketFile | None:
         return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, **params)
 
-    def get_bucket_files(self) -> list[BucketFile]:
-        return self._get_all_resources(BucketFile, "bucket-files")
+    def get_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[BucketFile]:
+        return self._get_all_resources(BucketFile, "bucket-files", **params)
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
         return self._find_all_resources(BucketFile, "bucket-files", **params)

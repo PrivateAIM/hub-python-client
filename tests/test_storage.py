@@ -82,6 +82,10 @@ def test_get_bucket_files(storage_client, bucket_file):
     assert len(storage_client.get_bucket_files()) > 0
 
 
+def test_get_bucket_files_include_bucket(storage_client, bucket_file):
+    assert all(bf.bucket is not None for bf in storage_client.get_bucket_files(include="bucket"))
+
+
 def test_find_bucket_files(storage_client, bucket_file):
     assert storage_client.find_bucket_files(filter={"id": bucket_file.id}) == [bucket_file]
 
