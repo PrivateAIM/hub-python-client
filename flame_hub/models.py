@@ -27,6 +27,7 @@ __all__ = [
     "CreateAnalysisBucketFile",
     "AnalysisBucketFile",
     "UpdateAnalysisBucketFile",
+    "MasterImageEventLog",
     "CreateBucket",
     "BucketFile",
     "Bucket",
@@ -63,6 +64,7 @@ from ._core_client import (
     CreateAnalysisBucketFile,
     AnalysisBucketFile,
     UpdateAnalysisBucketFile,
+    MasterImageEventLog,
 )
 
 from ._storage_client import CreateBucket, Bucket, BucketFile

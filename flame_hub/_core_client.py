@@ -70,6 +70,17 @@ class MasterImage(BaseModel):
     updated_at: datetime
 
 
+class MasterImageEventLog(BaseModel):
+    id: uuid.UUID
+    name: str
+    data: dict | None = None  # Hub resource does not have a "data" key if there is no data.
+    expiring: bool
+    expires_at: datetime
+    master_image_id: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
 class CreateProject(BaseModel):
     description: str | None
     master_image_id: uuid.UUID | None
@@ -290,6 +301,17 @@ class CoreClient(BaseClient):
 
     def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImage]:
         return self._find_all_resources(MasterImage, "master-images", **params)
+
+    def get_master_image_event_log(
+        self, master_image_event_log_id: MasterImageEventLog | uuid.UUID | str
+    ) -> MasterImageEventLog | None:
+        return self._get_single_resource(MasterImageEventLog, "master-image-event-logs", master_image_event_log_id)
+
+    def get_master_image_event_logs(self) -> list[MasterImageEventLog]:
+        return self._get_all_resources(MasterImageEventLog, "master-image-event-logs")
+
+    def find_master_image_event_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageEventLog]:
+        return self._find_all_resources(MasterImageEventLog, "master-image-event-logs", **params)
 
     def get_projects(self) -> list[Project]:
         return self._get_all_resources(Project, "projects")
