@@ -178,9 +178,7 @@ class AnalysisNode(CreateAnalysisNode):
     artifact_digest: str | None
     created_at: datetime
     updated_at: datetime
-    analysis_id: uuid.UUID
     analysis_realm_id: uuid.UUID
-    node_id: uuid.UUID
     node_realm_id: uuid.UUID
 
 
