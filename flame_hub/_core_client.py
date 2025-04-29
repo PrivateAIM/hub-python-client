@@ -60,6 +60,11 @@ class MasterImageGroup(BaseModel):
     updated_at: datetime
 
 
+class MasterImageCommandArgument(te.TypedDict):
+    value: str
+    position: t.Literal["before", "after"] | None
+
+
 class MasterImage(BaseModel):
     id: uuid.UUID
     path: str | None
@@ -67,6 +72,7 @@ class MasterImage(BaseModel):
     group_virtual_path: str
     name: str
     command: str | None
+    command_arguments: list[MasterImageCommandArgument] | None
     created_at: datetime
     updated_at: datetime
 
@@ -138,6 +144,7 @@ class CreateAnalysis(BaseModel):
     project_id: uuid.UUID
     master_image_id: uuid.UUID | None
     registry_id: uuid.UUID | None
+    image_command_arguments: list[MasterImageCommandArgument] = []
 
 
 class Analysis(CreateAnalysis):
@@ -159,6 +166,7 @@ class UpdateAnalysis(UpdateModel):
     description: str | None = None
     name: str | None = None
     master_image_id: uuid.UUID | None = None
+    image_command_arguments: list[MasterImageCommandArgument] | None = None
 
 
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
@@ -472,6 +480,7 @@ class CoreClient(BaseClient):
         description: str = None,
         master_image_id: MasterImage | uuid.UUID | str = None,
         registry_id: Registry | uuid.UUID | str = None,
+        image_command_arguments: list[MasterImageCommandArgument] = (),
     ) -> Analysis:
         if master_image_id is not None:
             master_image_id = obtain_uuid_from(master_image_id)
@@ -486,6 +495,7 @@ class CoreClient(BaseClient):
                 description=description,
                 master_image_id=master_image_id,
                 registry_id=registry_id,
+                image_command_arguments=image_command_arguments,
             ),
             "analyses",
         )
@@ -508,13 +518,19 @@ class CoreClient(BaseClient):
         name: str = _UNSET,
         description: str = _UNSET,
         master_image_id: MasterImage | uuid.UUID | str = _UNSET,
+        image_command_arguments: list[MasterImageCommandArgument] = _UNSET,
     ) -> Analysis:
         if master_image_id not in (None, _UNSET):
             master_image_id = obtain_uuid_from(master_image_id)
 
         return self._update_resource(
             Analysis,
-            UpdateAnalysis(name=name, description=description, master_image_id=master_image_id),
+            UpdateAnalysis(
+                name=name,
+                description=description,
+                master_image_id=master_image_id,
+                image_command_arguments=image_command_arguments,
+            ),
             "analyses",
             analysis_id,
         )
