@@ -596,6 +596,11 @@ class CoreClient(BaseClient):
     ) -> AnalysisBucketFile | None:
         return self._get_single_resource(AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id)
 
+    def delete_analysis_bucket_file(
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
+    ) -> AnalysisBucketFile | None:
+        self._delete_resource("analysis-bucket-files", analysis_bucket_file_id)
+
     def create_analysis_bucket_file(
         self,
         name: str,
