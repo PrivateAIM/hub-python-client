@@ -136,11 +136,14 @@ class CreateAnalysis(BaseModel):
     description: str | None
     name: str | None
     project_id: uuid.UUID
+    master_image_id: uuid.UUID | None
+    registry_id: uuid.UUID | None
 
 
 class Analysis(CreateAnalysis):
     id: uuid.UUID
     configuration_locked: bool
+    nodes: int
     build_status: AnalysisBuildStatus | None
     run_status: AnalysisRunStatus | None
     created_at: datetime
@@ -153,7 +156,9 @@ class Analysis(CreateAnalysis):
 
 
 class UpdateAnalysis(UpdateModel):
-    name: str | None
+    description: str | None = None
+    name: str | None = None
+    master_image_id: uuid.UUID | None = None
 
 
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
@@ -461,14 +466,26 @@ class CoreClient(BaseClient):
         )
 
     def create_analysis(
-        self, project_id: Project | uuid.UUID | str, name: str = None, description: str = None
+        self,
+        project_id: Project | uuid.UUID | str,
+        name: str = None,
+        description: str = None,
+        master_image_id: MasterImage | uuid.UUID | str = None,
+        registry_id: Registry | uuid.UUID | str = None,
     ) -> Analysis:
+        if master_image_id is not None:
+            master_image_id = obtain_uuid_from(master_image_id)
+        if registry_id is not None:
+            registry_id = obtain_uuid_from(registry_id)
+
         return self._create_resource(
             Analysis,
             CreateAnalysis(
                 project_id=obtain_uuid_from(project_id),
                 name=name,
                 description=description,
+                master_image_id=master_image_id,
+                registry_id=registry_id,
             ),
             "analyses",
         )
@@ -485,8 +502,22 @@ class CoreClient(BaseClient):
     def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
 
-    def update_analysis(self, analysis_id: Analysis | uuid.UUID | str, name: str = _UNSET) -> Analysis:
-        return self._update_resource(Analysis, UpdateAnalysis(name=name), "analyses", analysis_id)
+    def update_analysis(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        name: str = _UNSET,
+        description: str = _UNSET,
+        master_image_id: MasterImage | uuid.UUID | str = _UNSET,
+    ) -> Analysis:
+        if master_image_id not in (None, _UNSET):
+            master_image_id = obtain_uuid_from(master_image_id)
+
+        return self._update_resource(
+            Analysis,
+            UpdateAnalysis(name=name, description=description, master_image_id=master_image_id),
+            "analyses",
+            analysis_id,
+        )
 
     def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand):
         r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
