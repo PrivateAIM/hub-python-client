@@ -27,7 +27,7 @@ class CreateNode(BaseModel):
     external_name: str | None
     hidden: bool | None
     name: str
-    realm_id: uuid.UUID | None
+    realm_id: uuid.UUID
     registry_id: uuid.UUID | None
     type: NodeType | None
 
