@@ -500,7 +500,9 @@ class CoreClient(BaseClient):
         self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
     ) -> AnalysisNode:
         return self._create_resource(
-            AnalysisNode, CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id), "analysis-nodes"
+            AnalysisNode,
+            CreateAnalysisNode(analysis_id=obtain_uuid_from(analysis_id), node_id=obtain_uuid_from(node_id)),
+            "analysis-nodes",
         )
 
     def delete_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str):
