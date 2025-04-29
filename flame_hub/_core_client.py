@@ -271,7 +271,7 @@ class CreateRegistryProject(BaseModel):
 class RegistryProject(CreateRegistryProject):
     id: uuid.UUID
     public: bool
-    external_id: uuid.UUID | None
+    external_id: str | None
     webhook_name: str | None
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
