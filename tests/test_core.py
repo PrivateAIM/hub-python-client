@@ -1,9 +1,11 @@
 import os
 import string
+import typing as t
 
 import pytest
 
 from flame_hub import HubAPIError
+from flame_hub.types import NodeType
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
@@ -73,8 +75,8 @@ def project_node(core_client, node, project):
 
 
 @pytest.fixture()
-def analysis(core_client, project):
-    new_analysis = core_client.create_analysis(project)
+def analysis(core_client, project, master_image):
+    new_analysis = core_client.create_analysis(project, master_image_id=master_image.id)
     yield new_analysis
     core_client.delete_analysis(new_analysis)
 
@@ -109,7 +111,8 @@ def analysis_buckets(core_client, analysis):
 
 @pytest.fixture()
 def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_bytes):
-    # Type was chosen arbitrarily.
+    # Use the analysis bucket for code files so that the created bucket file can be used as an entrypoint to be able
+    # to generate analysis logs.
     analysis_bucket = analysis_buckets["CODE"]
 
     # Upload example file to referenced bucket.
@@ -119,10 +122,35 @@ def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_byte
 
     # Link uploaded file to analysis bucket.
     new_analysis_bucket_file = core_client.create_analysis_bucket_file(
-        next_random_string(), bucket_files.pop(), analysis_bucket
+        next_random_string(), bucket_files.pop(), analysis_bucket, is_entrypoint=True
     )
     yield new_analysis_bucket_file
     core_client.delete_analysis_bucket_file(new_analysis_bucket_file)
+
+
+@pytest.fixture()
+def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, registry):
+    # An analysis needs at least one default and one aggregator node.
+    for node_type in t.get_args(NodeType):
+        new_node = core_client.create_node(
+            name=next_random_string(),
+            realm_id=master_realm,
+            node_type=node_type,
+            registry_id=registry.id,
+        )
+        core_client.create_project_node(analysis.project_id, new_node)
+        core_client.create_analysis_node(analysis, new_node)
+    core_client.send_analysis_command(analysis, "configurationLock")
+    core_client.send_analysis_command(analysis, "buildStart")
+
+    if len(core_client.get_analysis_logs()) == 0:
+
+        def _check_analysis_logs_present():
+            assert len(core_client.get_analysis_logs()) > 0
+
+        assert_eventually(_check_analysis_logs_present)
+
+    return core_client.get_analysis_logs()[0]
 
 
 @pytest.fixture()
@@ -309,10 +337,12 @@ def test_find_analysis_bucket_files(core_client, analysis_bucket_file):
 
 
 def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
-    new_analysis_bucket_file = core_client.update_analysis_bucket_file(analysis_bucket_file.id, is_entrypoint=True)
+    new_analysis_bucket_file = core_client.update_analysis_bucket_file(
+        analysis_bucket_file.id, is_entrypoint=not analysis_bucket_file.root
+    )
 
     assert new_analysis_bucket_file != analysis_bucket_file
-    assert new_analysis_bucket_file.root is True
+    assert new_analysis_bucket_file.root is not analysis_bucket_file.root
 
 
 def test_get_registry(core_client, registry):
@@ -361,3 +391,20 @@ def test_update_project_registry(core_client, registry_project):
 
     assert registry_project != new_registry_project
     assert new_registry_project.name == new_name
+
+
+def test_get_analysis_log(core_client, analysis_log):
+    assert analysis_log == core_client.get_analysis_log(analysis_log.id)
+
+
+def test_get_analysis_log_not_found(core_client):
+    assert core_client.get_analysis_log(next_uuid()) is None
+
+
+def test_find_analysis_log(core_client, analysis_log):
+    assert analysis_log in core_client.find_analysis_logs(filter={"command": analysis_log.command})
+
+
+def test_delete_analysis_log(core_client, analysis_log):
+    core_client.delete_analysis_log(analysis_log.id)
+    assert core_client.get_analysis_log(analysis_log.id) is None
