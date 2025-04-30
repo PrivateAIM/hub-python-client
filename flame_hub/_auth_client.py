@@ -1,16 +1,17 @@
 import uuid
 from datetime import datetime
+import typing as t
 
 import typing_extensions as te
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, WrapValidator
 
 from flame_hub._base_client import (
     BaseClient,
-    obtain_uuid_from,
     UpdateModel,
     _UNSET,
     FindAllKwargs,
     ClientKwargs,
+    uuid_validator,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._auth_flows import RobotAuth, PasswordAuth
@@ -37,7 +38,7 @@ class Realm(CreateRealm):
 
 class CreateRobot(BaseModel):
     name: str
-    realm_id: uuid.UUID
+    realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     secret: str
     display_name: str | None
 
@@ -57,7 +58,7 @@ class Robot(BaseModel):
 class UpdateRobot(UpdateModel):
     display_name: str | None = None
     name: str | None = None
-    realm_id: uuid.UUID | None = None
+    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
     secret: str | None = None
 
 
@@ -65,8 +66,8 @@ class CreatePermission(BaseModel):
     name: str
     display_name: str | None
     description: str | None
-    realm_id: uuid.UUID | None
-    policy_id: uuid.UUID | None
+    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
+    policy_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
 
 
 class Permission(CreatePermission):
@@ -81,8 +82,8 @@ class UpdatePermission(UpdateModel):
     name: str | None = None
     display_name: str | None = None
     description: str | None = None
-    realm_id: uuid.UUID | None = None
-    policy_id: uuid.UUID | None = None
+    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
+    policy_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
 
 
 class CreateRole(BaseModel):
@@ -106,8 +107,8 @@ class UpdateRole(UpdateModel):
 
 
 class CreateRolePermission(BaseModel):
-    role_id: uuid.UUID
-    permission_id: uuid.UUID
+    role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class RolePermission(CreateRolePermission):
@@ -158,8 +159,8 @@ class UpdateUser(UpdateModel):
 
 
 class CreateUserPermission(BaseModel):
-    user_id: uuid.UUID
-    permission_id: uuid.UUID
+    user_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class UserPermission(CreateUserPermission):
@@ -172,8 +173,8 @@ class UserPermission(CreateUserPermission):
 
 
 class CreateUserRole(BaseModel):
-    user_id: uuid.UUID
-    role_id: uuid.UUID
+    user_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class UserRole(CreateUserRole):
@@ -185,8 +186,8 @@ class UserRole(CreateUserRole):
 
 
 class CreateRobotPermission(BaseModel):
-    robot_id: uuid.UUID
-    permission_id: uuid.UUID
+    robot_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class RobotPermission(CreateRobotPermission):
@@ -199,8 +200,8 @@ class RobotPermission(CreateRobotPermission):
 
 
 class CreateRobotRole(BaseModel):
-    robot_id: uuid.UUID
-    role_id: uuid.UUID
+    robot_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class RobotRole(CreateRobotRole):
@@ -266,7 +267,7 @@ class AuthClient(BaseClient):
     ) -> Robot:
         return self._create_resource(
             Robot,
-            CreateRobot(name=name, display_name=display_name, realm_id=obtain_uuid_from(realm_id), secret=secret),
+            CreateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
             "robots",
         )
 
@@ -284,17 +285,9 @@ class AuthClient(BaseClient):
         realm_id: Realm | str | uuid.UUID = _UNSET,
         secret: str = _UNSET,
     ) -> Robot:
-        if realm_id not in (None, _UNSET):
-            realm_id = obtain_uuid_from(realm_id)
-
         return self._update_resource(
             Robot,
-            UpdateRobot(
-                name=name,
-                display_name=display_name,
-                realm_id=realm_id,
-                secret=secret,
-            ),
+            UpdateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
             "robots",
             robot_id,
         )
@@ -318,7 +311,7 @@ class AuthClient(BaseClient):
                 name=name,
                 display_name=display_name,
                 description=description,
-                realm_id=obtain_uuid_from(realm_id) if realm_id is not None else None,
+                realm_id=realm_id,
                 policy_id=None,  # TODO: add policies when hub implements them
             ),
             "permissions",
@@ -338,9 +331,6 @@ class AuthClient(BaseClient):
         description: str = _UNSET,
         realm_id: Realm | uuid.UUID | str = _UNSET,
     ) -> Permission:
-        if realm_id not in (None, _UNSET):
-            realm_id = obtain_uuid_from(realm_id)
-
         return self._update_resource(
             Permission,
             UpdatePermission(name=name, display_name=display_name, description=description, realm_id=realm_id),
@@ -392,10 +382,7 @@ class AuthClient(BaseClient):
     ) -> RolePermission:
         return self._create_resource(
             RolePermission,
-            CreateRolePermission(
-                role_id=obtain_uuid_from(role_id),
-                permission_id=obtain_uuid_from(permission_id),
-            ),
+            CreateRolePermission(role_id=role_id, permission_id=permission_id),
             "role-permissions",
         )
 
@@ -484,7 +471,7 @@ class AuthClient(BaseClient):
     ) -> UserPermission:
         return self._create_resource(
             UserPermission,
-            CreateUserPermission(user_id=obtain_uuid_from(user_id), permission_id=obtain_uuid_from(permission_id)),
+            CreateUserPermission(user_id=user_id, permission_id=permission_id),
             "user-permissions",
         )
 
@@ -503,7 +490,7 @@ class AuthClient(BaseClient):
     def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
         return self._create_resource(
             UserRole,
-            CreateUserRole(user_id=obtain_uuid_from(user_id), role_id=obtain_uuid_from(role_id)),
+            CreateUserRole(user_id=user_id, role_id=role_id),
             "user-roles",
         )
 
@@ -524,7 +511,7 @@ class AuthClient(BaseClient):
     ) -> RobotPermission:
         return self._create_resource(
             RobotPermission,
-            CreateRobotPermission(robot_id=obtain_uuid_from(robot_id), permission_id=obtain_uuid_from(permission_id)),
+            CreateRobotPermission(robot_id=robot_id, permission_id=permission_id),
             "robot-permissions",
         )
 
@@ -543,7 +530,7 @@ class AuthClient(BaseClient):
     def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
         return self._create_resource(
             RobotRole,
-            CreateRobotRole(robot_id=obtain_uuid_from(robot_id), role_id=obtain_uuid_from(role_id)),
+            CreateRobotRole(robot_id=robot_id, role_id=role_id),
             "robot-roles",
         )
 
