@@ -136,7 +136,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    # TODO: add email attribute
+    email: str | None
     display_name: str | None
     first_name: str | None
     last_name: str | None
@@ -425,7 +425,7 @@ class AuthClient(BaseClient):
         )
 
     def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
-        return self._get_single_resource(User, "users", user_id)
+        return self._get_single_resource(User, "users", user_id, field_params="email")
 
     def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
@@ -459,10 +459,10 @@ class AuthClient(BaseClient):
         )
 
     def get_users(self) -> list[User]:
-        return self._get_all_resources(User, "users")
+        return self._get_all_resources(User, "users", field_params="email")
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", **params)
+        return self._find_all_resources(User, "users", field_params="email", **params)
 
     def create_user_permission(
         self,
