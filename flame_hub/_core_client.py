@@ -4,7 +4,7 @@ from datetime import datetime
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -166,7 +166,7 @@ class UpdateAnalysis(UpdateModel):
     description: str | None = None
     name: str | None = None
     master_image_id: uuid.UUID | None = None
-    image_command_arguments: list[MasterImageCommandArgument] | None = None
+    image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
 
 
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
