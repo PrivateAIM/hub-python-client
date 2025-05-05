@@ -87,19 +87,42 @@ def analysis_node(core_client, analysis, project_node):
 
 
 @pytest.fixture()
-def analysis_buckets_ready(core_client, analysis):
+def analysis_buckets(core_client, analysis):
     def _check_analysis_buckets_present():
         all_analysis_bucket_types = {"CODE", "RESULT", "TEMP"}
 
-        # constrain to buckets created for this analysis
+        # Constrain to buckets created for this analysis.
         analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
         assert len(analysis_buckets) == len(all_analysis_bucket_types)
 
-        # check that a bucket for each type exists
+        # Check that a bucket for each type exists.
         analysis_bucket_types = set(a.type for a in analysis_buckets)
         assert all_analysis_bucket_types == analysis_bucket_types
 
     assert_eventually(_check_analysis_buckets_present)
+
+    return {
+        analysis_bucket.type: analysis_bucket
+        for analysis_bucket in core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
+    }
+
+
+@pytest.fixture()
+def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_bytes):
+    # Type was chosen arbitrarily.
+    analysis_bucket = analysis_buckets["CODE"]
+
+    # Upload example file to referenced bucket.
+    bucket_files = storage_client.upload_to_bucket(
+        analysis_bucket.external_id, {"file_name": next_random_string(), "content": rng_bytes}
+    )
+
+    # Link uploaded file to analysis bucket.
+    new_analysis_bucket_file = core_client.create_analysis_bucket_file(
+        next_random_string(), bucket_files.pop(), analysis_bucket
+    )
+    yield new_analysis_bucket_file
+    core_client.delete_analysis_bucket_file(new_analysis_bucket_file)
 
 
 @pytest.fixture()
@@ -260,26 +283,36 @@ def test_get_analysis_node(core_client, analysis_node):
     assert analysis_node == core_client.get_analysis_node(analysis_node.id)
 
 
-def test_create_analysis_bucket_file(core_client, storage_client, analysis, rng_bytes, analysis_buckets_ready):
-    # retrieve the code bucket file for this analysis (type was chosen arbitrarily)
-    analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id, "type": "CODE"})
+def test_get_analysis_bucket(core_client, analysis_buckets):
+    assert analysis_buckets["CODE"] == core_client.get_analysis_bucket(analysis_buckets["CODE"])
 
-    # check that this exact bucket was found
-    assert len(analysis_buckets) == 1
-    analysis_bucket = analysis_buckets[0]
 
-    # upload example file to referenced bucket
-    bucket_files = storage_client.upload_to_bucket(
-        analysis_bucket.external_id, {"file_name": next_random_string(), "content": rng_bytes}
-    )
+def test_get_analysis_buckets(core_client, analysis_buckets):
+    assert len(core_client.get_analysis_buckets()) > 0
 
-    # link uploaded file to analysis bucket
-    analysis_bucket_file_name = next_random_string()
-    analysis_bucket_file = core_client.create_analysis_bucket_file(
-        analysis_bucket_file_name, bucket_files.pop(), analysis_bucket
-    )
 
-    assert core_client.get_analysis_bucket_file(analysis_bucket_file.id) == analysis_bucket_file
+def test_get_analysis_bucket_file(core_client, analysis_bucket_file):
+    assert analysis_bucket_file == core_client.get_analysis_bucket_file(analysis_bucket_file.id)
+
+
+# TODO: Uncomment this when hub fixes requests for non-existent analysis bucket files.
+# def test_get_analysis_bucket_file_not_found(core_client):
+#    assert core_client.get_analysis_bucket_file(next_uuid()) is None
+
+
+def test_get_analysis_bucket_files(core_client, analysis_bucket_file):
+    assert len(core_client.get_analysis_bucket_files()) > 0
+
+
+def test_find_analysis_bucket_files(core_client, analysis_bucket_file):
+    assert [analysis_bucket_file] == core_client.find_analysis_bucket_files(filter={"id": analysis_bucket_file.id})
+
+
+def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
+    new_analysis_bucket_file = core_client.update_analysis_bucket_file(analysis_bucket_file.id, is_entrypoint=True)
+
+    assert new_analysis_bucket_file != analysis_bucket_file
+    assert new_analysis_bucket_file.root is True
 
 
 def test_get_registry(core_client, registry):

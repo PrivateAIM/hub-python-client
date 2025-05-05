@@ -4,7 +4,7 @@ from datetime import datetime
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -60,6 +60,11 @@ class MasterImageGroup(BaseModel):
     updated_at: datetime
 
 
+class MasterImageCommandArgument(te.TypedDict):
+    value: str
+    position: t.Literal["before", "after"] | None
+
+
 class MasterImage(BaseModel):
     id: uuid.UUID
     path: str | None
@@ -67,6 +72,7 @@ class MasterImage(BaseModel):
     group_virtual_path: str
     name: str
     command: str | None
+    command_arguments: list[MasterImageCommandArgument] | None
     created_at: datetime
     updated_at: datetime
 
@@ -136,11 +142,15 @@ class CreateAnalysis(BaseModel):
     description: str | None
     name: str | None
     project_id: uuid.UUID
+    master_image_id: uuid.UUID | None
+    registry_id: uuid.UUID | None
+    image_command_arguments: list[MasterImageCommandArgument] = []
 
 
 class Analysis(CreateAnalysis):
     id: uuid.UUID
     configuration_locked: bool
+    nodes: int
     build_status: AnalysisBuildStatus | None
     run_status: AnalysisRunStatus | None
     created_at: datetime
@@ -153,7 +163,10 @@ class Analysis(CreateAnalysis):
 
 
 class UpdateAnalysis(UpdateModel):
-    name: str | None
+    description: str | None = None
+    name: str | None = None
+    master_image_id: uuid.UUID | None = None
+    image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
 
 
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
@@ -178,9 +191,7 @@ class AnalysisNode(CreateAnalysisNode):
     artifact_digest: str | None
     created_at: datetime
     updated_at: datetime
-    analysis_id: uuid.UUID
     analysis_realm_id: uuid.UUID
-    node_id: uuid.UUID
     node_realm_id: uuid.UUID
 
 
@@ -260,7 +271,7 @@ class CreateRegistryProject(BaseModel):
 class RegistryProject(CreateRegistryProject):
     id: uuid.UUID
     public: bool
-    external_id: uuid.UUID | None
+    external_id: str | None
     webhook_name: str | None
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
@@ -463,14 +474,28 @@ class CoreClient(BaseClient):
         )
 
     def create_analysis(
-        self, project_id: Project | uuid.UUID | str, name: str = None, description: str = None
+        self,
+        project_id: Project | uuid.UUID | str,
+        name: str = None,
+        description: str = None,
+        master_image_id: MasterImage | uuid.UUID | str = None,
+        registry_id: Registry | uuid.UUID | str = None,
+        image_command_arguments: list[MasterImageCommandArgument] = (),
     ) -> Analysis:
+        if master_image_id is not None:
+            master_image_id = obtain_uuid_from(master_image_id)
+        if registry_id is not None:
+            registry_id = obtain_uuid_from(registry_id)
+
         return self._create_resource(
             Analysis,
             CreateAnalysis(
                 project_id=obtain_uuid_from(project_id),
                 name=name,
                 description=description,
+                master_image_id=master_image_id,
+                registry_id=registry_id,
+                image_command_arguments=image_command_arguments,
             ),
             "analyses",
         )
@@ -487,11 +512,28 @@ class CoreClient(BaseClient):
     def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
         return self._get_single_resource(Analysis, "analyses", analysis_id)
 
-    def update_analysis(self, analysis_id: Analysis | uuid.UUID | str, name: str = _UNSET) -> Analysis:
-        if analysis_id not in (None, _UNSET):
-            analysis_id = obtain_uuid_from(analysis_id)
+    def update_analysis(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        name: str = _UNSET,
+        description: str = _UNSET,
+        master_image_id: MasterImage | uuid.UUID | str = _UNSET,
+        image_command_arguments: list[MasterImageCommandArgument] = _UNSET,
+    ) -> Analysis:
+        if master_image_id not in (None, _UNSET):
+            master_image_id = obtain_uuid_from(master_image_id)
 
-        return self._update_resource(Analysis, UpdateAnalysis(name=name), "analyses", analysis_id)
+        return self._update_resource(
+            Analysis,
+            UpdateAnalysis(
+                name=name,
+                description=description,
+                master_image_id=master_image_id,
+                image_command_arguments=image_command_arguments,
+            ),
+            "analyses",
+            analysis_id,
+        )
 
     def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand):
         r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
@@ -503,7 +545,9 @@ class CoreClient(BaseClient):
         self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
     ) -> AnalysisNode:
         return self._create_resource(
-            AnalysisNode, CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id), "analysis-nodes"
+            AnalysisNode,
+            CreateAnalysisNode(analysis_id=obtain_uuid_from(analysis_id), node_id=obtain_uuid_from(node_id)),
+            "analysis-nodes",
         )
 
     def delete_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str):
@@ -552,6 +596,11 @@ class CoreClient(BaseClient):
     ) -> AnalysisBucketFile | None:
         return self._get_single_resource(AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id)
 
+    def delete_analysis_bucket_file(
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
+    ) -> AnalysisBucketFile | None:
+        self._delete_resource("analysis-bucket-files", analysis_bucket_file_id)
+
     def create_analysis_bucket_file(
         self,
         name: str,
@@ -573,9 +622,6 @@ class CoreClient(BaseClient):
     def update_analysis_bucket_file(
         self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, is_entrypoint: bool = _UNSET
     ) -> AnalysisBucketFile:
-        if analysis_bucket_file_id not in (None, _UNSET):
-            analysis_bucket_file_id = obtain_uuid_from(analysis_bucket_file_id)
-
         return self._update_resource(
             AnalysisBucketFile,
             UpdateAnalysisBucketFile(root=is_entrypoint),
