@@ -35,6 +35,45 @@ class Realm(CreateRealm):
     updated_at: datetime
 
 
+class CreateUser(BaseModel):
+    name: str
+    display_name: str | None
+    email: str | None
+    active: bool
+    name_locked: bool
+    first_name: str | None
+    last_name: str | None
+    password: str | None
+
+
+class User(BaseModel):
+    id: uuid.UUID
+    name: str
+    active: bool
+    name_locked: bool
+    # TODO: add email attribute
+    display_name: str | None
+    first_name: str | None
+    last_name: str | None
+    avatar: str | None
+    cover: str | None
+    realm_id: uuid.UUID | None
+    realm: Realm | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateUser(UpdateModel):
+    name: str | None = None
+    display_name: str | None = None
+    email: str | None = None
+    active: bool | None = None
+    name_locked: bool | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    password: str | None = None
+
+
 class CreateRobot(BaseModel):
     name: str
     realm_id: uuid.UUID
@@ -117,44 +156,6 @@ class RolePermission(CreateRolePermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-
-
-class CreateUser(BaseModel):
-    name: str
-    display_name: str | None
-    email: str | None
-    active: bool
-    name_locked: bool
-    first_name: str | None
-    last_name: str | None
-    password: str | None
-
-
-class User(BaseModel):
-    id: uuid.UUID
-    name: str
-    active: bool
-    name_locked: bool
-    # TODO: add email attribute
-    display_name: str | None
-    first_name: str | None
-    last_name: str | None
-    avatar: str | None
-    cover: str | None
-    realm_id: uuid.UUID | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class UpdateUser(UpdateModel):
-    name: str | None = None
-    display_name: str | None = None
-    email: str | None = None
-    active: bool | None = None
-    name_locked: bool | None = None
-    first_name: str | None = None
-    last_name: str | None = None
-    password: str | None = None
 
 
 class CreateUserPermission(BaseModel):
@@ -438,7 +439,7 @@ class AuthClient(BaseClient):
         )
 
     def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
-        return self._get_single_resource(User, "users", user_id)
+        return self._get_single_resource(User, "users", user_id, include="realm")
 
     def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
@@ -472,10 +473,10 @@ class AuthClient(BaseClient):
         )
 
     def get_users(self) -> list[User]:
-        return self._get_all_resources(User, "users")
+        return self._get_all_resources(User, "users", include="realm")
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", **params)
+        return self._find_all_resources(User, "users", **(params | {"include": "realm"}))
 
     def create_user_permission(
         self,
