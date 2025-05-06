@@ -100,7 +100,10 @@ def test_find_realms(auth_client, realm):
 
 
 def test_get_robot(auth_client, robot):
-    assert robot == auth_client.get_robot(robot.id)
+    robot_get = auth_client.get_robot(robot)
+
+    assert robot_get.id == robot.id
+    assert robot_get.realm is not None  # realm should be included
 
 
 def test_get_robot_not_found(auth_client, robot):
@@ -116,11 +119,17 @@ def test_update_robot(auth_client, robot):
 
 
 def test_get_robots(auth_client, robot):
-    assert len(auth_client.get_robots()) > 0
+    robots_get = auth_client.get_robots()
+
+    assert len(robots_get) > 0
+    assert all(r.realm is not None for r in robots_get)
 
 
 def test_find_robots(auth_client, robot):
-    assert [robot] == auth_client.find_robots(filter={"id": robot.id})
+    robots_find = auth_client.find_robots(filter={"id": robot.id})
+
+    assert [robot.id] == [r.id for r in robots_find]
+    assert all(r.realm is not None for r in robots_find)
 
 
 def test_get_permission(auth_client, permission):
