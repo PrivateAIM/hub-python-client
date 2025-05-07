@@ -57,8 +57,8 @@ class User(BaseModel):
     last_name: str | None
     avatar: str | None
     cover: str | None
-    realm_id: uuid.UUID | None
-    realm: Realm | None = None
+    realm_id: uuid.UUID
+    realm: Realm = None
     created_at: datetime
     updated_at: datetime
 
