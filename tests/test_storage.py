@@ -63,31 +63,28 @@ def test_get_bucket_not_found(storage_client):
 
 
 def test_get_bucket_file(storage_client, bucket_file):
-    assert storage_client.get_bucket_file(bucket_file.id) == bucket_file
+    bucket_file_get = storage_client.get_bucket_file(bucket_file.id)
+
+    assert bucket_file_get.id == bucket_file.id
+    assert bucket_file_get.bucket is not None
 
 
-def test_get_bucket_file_include_bucket(storage_client, bucket_file, bucket):
-    assert bucket == storage_client.get_bucket_file(bucket_file.id, include="bucket").bucket
-
-
-def test_find_bucket_files_include_bucket(storage_client, bucket_file):
-    assert all(bf.bucket is not None for bf in storage_client.find_bucket_files(include="bucket"))
-
-
-def test_get_bucket_file_none(storage_client):
+def test_get_bucket_file_not_found(storage_client):
     assert storage_client.get_bucket_file(next_uuid()) is None
 
 
 def test_get_bucket_files(storage_client, bucket_file):
-    assert len(storage_client.get_bucket_files()) > 0
+    bucket_files_get = storage_client.get_bucket_files()
 
-
-def test_get_bucket_files_include_bucket(storage_client, bucket_file):
-    assert all(bf.bucket is not None for bf in storage_client.get_bucket_files(include="bucket"))
+    assert len(bucket_files_get) > 0
+    assert all(bf.bucket is not None for bf in bucket_files_get)
 
 
 def test_find_bucket_files(storage_client, bucket_file):
-    assert storage_client.find_bucket_files(filter={"id": bucket_file.id}) == [bucket_file]
+    bucket_files_find = storage_client.find_bucket_files(filter={"id": bucket_file.id})
+
+    assert [bucket_file.id] == [bf.id for bf in bucket_files_find]
+    assert all(bf.bucket is not None for bf in bucket_files_find)
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
