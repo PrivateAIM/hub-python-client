@@ -47,7 +47,7 @@ def use_testcontainers() -> bool:
 
 @pytest.fixture(scope="session")
 def hub_version() -> str:
-    return os.getenv("PYTEST_HUB_VERSION", "0.8.8")
+    return os.getenv("PYTEST_HUB_VERSION", "0.8.13")
 
 
 @pytest.fixture(scope="session")
