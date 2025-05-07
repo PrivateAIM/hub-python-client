@@ -92,7 +92,7 @@ class Robot(BaseModel):
     user_id: uuid.UUID | None
     user: User | None = None
     realm_id: uuid.UUID
-    realm: Realm | None = None
+    realm: Realm = None
 
 
 class UpdateRobot(UpdateModel):

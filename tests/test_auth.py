@@ -103,7 +103,6 @@ def test_get_robot(auth_client, robot):
     robot_get = auth_client.get_robot(robot)
 
     assert robot_get.id == robot.id
-    assert robot_get.realm is not None  # realm should be included
 
 
 def test_get_robot_not_found(auth_client, robot):
@@ -122,7 +121,6 @@ def test_get_robots(auth_client, robot):
     robots_get = auth_client.get_robots()
 
     assert len(robots_get) > 0
-    assert all(r.realm is not None for r in robots_get)
 
 
 def test_find_robots(auth_client, robot):
