@@ -338,7 +338,6 @@ def test_get_analysis_bucket_file(core_client, analysis_bucket_file):
     assert analysis_bucket_file.bucket is not None
 
 
-@pytest.mark.xfail(reason="bug in hub, see https://github.com/PrivateAIM/hub/issues/1053")
 def test_get_analysis_bucket_file_not_found(core_client):
     assert core_client.get_analysis_bucket_file(next_uuid()) is None
 
