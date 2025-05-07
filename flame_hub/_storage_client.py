@@ -45,7 +45,7 @@ class BucketFile(BaseModel):
     actor_type: str
     actor_id: uuid.UUID
     bucket_id: uuid.UUID
-    bucket: Bucket | None = None
+    bucket: Bucket = None
 
 
 class UploadFile(te.TypedDict):
@@ -109,16 +109,14 @@ class StorageClient(BaseClient):
     def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID):
         self._delete_resource("bucket-files", bucket_file_id)
 
-    def get_bucket_file(
-        self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
-    ) -> BucketFile | None:
-        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, **params)
+    def get_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID) -> BucketFile | None:
+        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, include="bucket")
 
-    def get_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[BucketFile]:
-        return self._get_all_resources(BucketFile, "bucket-files", **params)
+    def get_bucket_files(self) -> list[BucketFile]:
+        return self._get_all_resources(BucketFile, "bucket-files", include="bucket")
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
-        return self._find_all_resources(BucketFile, "bucket-files", **params)
+        return self._find_all_resources(BucketFile, "bucket-files", **(params | {"include": "bucket"}))
 
     def stream_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
