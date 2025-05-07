@@ -160,8 +160,8 @@ class RolePermission(CreateRolePermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    role: Role | None = None
-    role_realm: Realm | None = None
+    role: Role = None
+    role_realm: Realm = None
     permission: Permission | None = None
     permission_realm: Realm | None = None
 
@@ -178,8 +178,8 @@ class UserPermission(CreateUserPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    permission: Permission | None = None
-    user: User | None = None
+    permission: Permission = None
+    user: User = None
     permission_realm: Realm | None = None
     user_realm: Realm | None = None
 
@@ -195,8 +195,8 @@ class UserRole(CreateUserRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    user: User | None = None
-    role: Role | None = None
+    user: User = None
+    role: Role = None
     user_realm: Realm | None = None
     role_realm: Realm | None = None
 
@@ -213,8 +213,8 @@ class RobotPermission(CreateRobotPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    robot: Robot | None = None
-    permission: Permission | None = None
+    robot: Robot = None
+    permission: Permission = None
     robot_realm: Realm | None = None
     permission_realm: Realm | None = None
 
@@ -230,8 +230,8 @@ class RobotRole(CreateRobotRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    robot: Robot | None = None
-    role: Role | None = None
+    robot: Robot = None
+    role: Role = None
     robot_realm: Realm | None = None
     role_realm: Realm | None = None
 
