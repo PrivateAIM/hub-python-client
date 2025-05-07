@@ -213,6 +213,10 @@ class RobotPermission(CreateRobotPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
+    robot: Robot | None = None
+    permission: Permission | None = None
+    robot_realm: Realm | None = None
+    permission_realm: Realm | None = None
 
 
 class CreateRobotRole(BaseModel):
@@ -572,16 +576,27 @@ class AuthClient(BaseClient):
         )
 
     def get_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str) -> RobotPermission | None:
-        return self._get_single_resource(RobotPermission, "robot-permissions", robot_permission_id)
+        return self._get_single_resource(
+            RobotPermission,
+            "robot-permissions",
+            robot_permission_id,
+            include=("robot", "permission", "robot_realm", "permission_realm"),
+        )
 
     def delete_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str):
         self._delete_resource("robot-permissions", robot_permission_id)
 
     def get_robot_permissions(self) -> list[RobotPermission]:
-        return self._get_all_resources(RobotPermission, "robot-permissions")
+        return self._get_all_resources(
+            RobotPermission, "robot-permissions", include=("robot", "permission", "robot_realm", "permission_realm")
+        )
 
     def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
-        return self._find_all_resources(RobotPermission, "robot-permissions", **params)
+        return self._find_all_resources(
+            RobotPermission,
+            "robot-permissions",
+            **(params | {"include": ("robot", "permission", "robot_realm", "permission_realm")}),
+        )
 
     def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
         return self._create_resource(

@@ -327,8 +327,13 @@ def test_find_user_roles(auth_client, user_role):
     assert all(ur.role is not None for ur in user_roles_find)
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2647")
 def test_get_robot_permission(auth_client, robot_permission):
-    assert robot_permission == auth_client.get_robot_permission(robot_permission.id)
+    robot_perm_get = auth_client.get_robot_permission(robot_permission.id)
+
+    assert robot_perm_get.id == robot_permission.id
+    assert robot_perm_get.permission is not None
+    assert robot_perm_get.robot is not None
 
 
 def test_get_robot_permission_not_found(auth_client):
@@ -336,12 +341,20 @@ def test_get_robot_permission_not_found(auth_client):
 
 
 def test_get_robot_permissions(auth_client, robot_permission):
-    assert len(auth_client.get_robot_permissions()) > 0
+    robot_perms_get = auth_client.get_robot_permissions()
+
+    assert len(robot_perms_get) > 0
+    assert all(rp.robot is not None for rp in robot_perms_get)
+    assert all(rp.permission is not None for rp in robot_perms_get)
 
 
 def test_find_robot_permissions(auth_client, robot_permission):
     # Use "robot_id" for filtering because there is no filter mechanism for attribute "id".
-    assert [robot_permission] == auth_client.find_robot_permissions(filter={"robot_id": robot_permission.robot_id})
+    robot_perms_find = auth_client.find_robot_permissions(filter={"robot_id": robot_permission.robot_id})
+
+    assert [robot_permission.id] == [rp.id for rp in robot_perms_find]
+    assert all(rp.robot is not None for rp in robot_perms_find)
+    assert all(rp.permission is not None for rp in robot_perms_find)
 
 
 def test_get_robot_role(auth_client, robot_role):
