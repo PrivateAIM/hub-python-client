@@ -177,6 +177,10 @@ class UserPermission(CreateUserPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
+    permission: Permission | None = None
+    user: User | None = None
+    permission_realm: Realm | None = None
+    user_realm: Realm | None = None
 
 
 class CreateUserRole(BaseModel):
@@ -501,16 +505,27 @@ class AuthClient(BaseClient):
         )
 
     def get_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str) -> UserPermission | None:
-        return self._get_single_resource(UserPermission, "user-permissions", user_permission_id)
+        return self._get_single_resource(
+            UserPermission,
+            "user-permissions",
+            user_permission_id,
+            include=("user", "permission", "user_realm", "permission_realm"),
+        )
 
     def delete_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str):
         self._delete_resource("user-permissions", user_permission_id)
 
     def get_user_permissions(self) -> list[UserPermission]:
-        return self._get_all_resources(UserPermission, "user-permissions")
+        return self._get_all_resources(
+            UserPermission, "user-permissions", include=("user", "permission", "user_realm", "permission_realm")
+        )
 
     def find_user_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[UserPermission]:
-        return self._find_all_resources(UserPermission, "user-permissions", **params)
+        return self._find_all_resources(
+            UserPermission,
+            "user-permissions",
+            **(params | {"include": ("user", "permission", "user_realm", "permission_realm")}),
+        )
 
     def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
         return self._create_resource(
