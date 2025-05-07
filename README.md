@@ -180,7 +180,8 @@ print(core_client.find_nodes(filter={"name": "my-node-42"}).pop().model_dump(mod
 
 # These two functions return the same result. One is a bit more verbose than the other.
 nodes_with_4_in_name = core_client.find_nodes(filter={"name": "~my-node-4"})
-nodes_with_4_in_name_but_different = core_client.find_nodes(filter={"name": (flame_hub.types.FilterOperator.like, "my-node-4")})
+nodes_with_4_in_name_but_different = core_client.find_nodes(
+    filter={"name": (flame_hub.types.FilterOperator.like, "my-node-4")})
 
 print(nodes_with_4_in_name == nodes_with_4_in_name_but_different)
 # => True
@@ -227,7 +228,7 @@ except flame_hub.HubAPIError as e:
 
     # If the response body contains an error, it can be accessed with the error_response property.
     # Some errors may also add additional fields which can also be accessed like this.
-    print(e.error_response.model_dump_json(indent=2))  
+    print(e.error_response.model_dump_json(indent=2))
     # => {
     # =>   "status_code": 400,
     # =>   "code": "undefined",
@@ -273,9 +274,9 @@ a property as unset.
 from flame_hub.models import UpdateNode, UNSET
 
 print(UpdateNode(
-  hidden=False,
-  external_name=None,
-  type=UNSET
+    hidden=False,
+    external_name=None,
+    type=UNSET
 ).model_dump(mode="json", exclude_none=False, exclude_unset=True))
 # => {'hidden': False, 'external_name': None}
 ```
@@ -304,7 +305,7 @@ For quick development, it is highly recommended to set up your own Hub instance 
 [Grab the Docker Compose file from the Hub repository](https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml)
 and store it somewhere warm and comfy.
 For the `core`, `messenger`, `analysis-manager`, `storage` and `ui` services, remove the `build` property and replace it
-with `image: ghcr.io/privateaim/hub:0.8.8`.
+with `image: ghcr.io/privateaim/hub:0.8.13`.
 Now you can run `docker compose up -d` and, after a few minutes, you will be able to access the UI
 at http://localhost:3000.
 
