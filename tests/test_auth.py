@@ -297,8 +297,13 @@ def test_find_user_permissions(auth_client, user_permission):
     assert all(up.permission is not None for up in user_perms_find)
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2645")
 def test_get_user_role(auth_client, user_role):
-    assert user_role == auth_client.get_user_role(user_role.id)
+    user_role_get = auth_client.get_user_role(user_role.id)
+
+    assert user_role_get.id == user_role.id
+    assert user_role_get.user is not None
+    assert user_role_get.role is not None
 
 
 def test_get_user_role_not_found(auth_client):
@@ -306,12 +311,20 @@ def test_get_user_role_not_found(auth_client):
 
 
 def test_get_user_roles(auth_client, user_role):
-    assert len(auth_client.get_user_roles()) > 0
+    user_roles_get = auth_client.get_user_roles()
+
+    assert len(user_roles_get) > 0
+    assert all(ur.user is not None for ur in user_roles_get)
+    assert all(ur.role is not None for ur in user_roles_get)
 
 
 def test_find_user_roles(auth_client, user_role):
     # Use "user_id" for filtering because there is no filter mechanism for attribute "id".
-    assert [user_role] == auth_client.find_user_roles(filter={"user_id": user_role.user_id})
+    user_roles_find = auth_client.find_user_roles(filter={"user_id": user_role.user_id})
+
+    assert len(user_roles_find) > 0
+    assert all(ur.user is not None for ur in user_roles_find)
+    assert all(ur.role is not None for ur in user_roles_find)
 
 
 def test_get_robot_permission(auth_client, robot_permission):
