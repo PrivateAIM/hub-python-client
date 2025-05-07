@@ -161,8 +161,8 @@ class RolePermission(CreateRolePermission):
     created_at: datetime
     updated_at: datetime
     role: Role = None
-    role_realm: Realm = None
-    permission: Permission | None = None
+    role_realm: Realm | None = None
+    permission: Permission = None
     permission_realm: Realm | None = None
 
 
