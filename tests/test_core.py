@@ -225,7 +225,8 @@ def test_get_project_nodes(core_client, project_node):
 
 
 def test_find_project_nodes(core_client, project_node):
-    project_nodes_find = core_client.find_project_nodes(filter={"id": project_node.id})
+    # Use "project_id" instead of "id" because filtering for ids does not work.
+    project_nodes_find = core_client.find_project_nodes(filter={"project_id": project_node.project_id})
 
     assert [project_node.id] == [pn.id for pn in project_nodes_find]
     assert all(pn.project is not None for pn in project_nodes_find)
@@ -301,7 +302,8 @@ def test_get_analysis_nodes(core_client, analysis_node):
 
 
 def test_find_analysis_nodes(core_client, analysis_node):
-    analysis_nodes_find = core_client.find_analysis_nodes(filter={"id": analysis_node.id})
+    # Use "analysis_id" instead of "id" because filtering for ids does not work.
+    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysis_id": analysis_node.analysis_id})
 
     assert [analysis_node.id] == [an.id for an in analysis_nodes_find]
     assert all(an.analysis is not None for an in analysis_nodes_find)
@@ -351,7 +353,10 @@ def test_get_analysis_bucket_files(core_client, analysis_bucket_file):
 
 
 def test_find_analysis_bucket_files(core_client, analysis_bucket_file):
-    analysis_bucket_files_find = core_client.find_analysis_bucket_files(filter={"id": analysis_bucket_file.id})
+    # Use "analysis_id" instead of "id" because filtering for ids does not work.
+    analysis_bucket_files_find = core_client.find_analysis_bucket_files(
+        filter={"analysis_id": analysis_bucket_file.analysis_id}
+    )
 
     assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
     assert all(abf.analysis is not None for abf in analysis_bucket_files_find)
