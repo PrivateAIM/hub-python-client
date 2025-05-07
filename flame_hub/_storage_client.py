@@ -115,7 +115,7 @@ class StorageClient(BaseClient):
         return self._get_all_resources(BucketFile, "bucket-files", include="bucket")
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
-        return self._find_all_resources(BucketFile, "bucket-files", **(params | {"include": "bucket"}))
+        return self._find_all_resources(BucketFile, "bucket-files", include="bucket", **params)
 
     def stream_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
