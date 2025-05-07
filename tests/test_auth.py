@@ -168,20 +168,32 @@ def test_update_permission(auth_client, permission):
     assert new_permission.name == new_name
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2662")
 def test_get_role(auth_client, role):
-    assert role == auth_client.get_role(role.id)
+    role_get = auth_client.get_role(role.id)
+
+    assert role_get.id == role.id
+    assert role_get.realm is not None
 
 
 def test_get_role_not_found(auth_client):
     assert auth_client.get_role(next_uuid()) is None
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2661")
 def test_get_roles(auth_client, role):
-    assert len(auth_client.get_roles()) > 0
+    roles_get = auth_client.get_roles()
+
+    assert len(roles_get) > 0
+    assert all(r.realm is not None for r in roles_get)
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2661")
 def test_find_roles(auth_client, role):
-    assert [role] == auth_client.find_roles(filter={"id": role.id})
+    roles_find = auth_client.find_roles(filter={"id": role.id})
+
+    assert [role.id] == [r.id for r in roles_find]
+    assert all(r.realm is not None for r in roles_find)
 
 
 def test_update_role(auth_client, role):

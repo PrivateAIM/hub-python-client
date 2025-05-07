@@ -139,6 +139,7 @@ class Role(CreateRole):
     realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
+    realm: Realm | None = None
 
 
 class UpdateRole(UpdateModel):
@@ -366,7 +367,7 @@ class AuthClient(BaseClient):
         )
 
     def get_role(self, role_id: Role | uuid.UUID | str) -> Role | None:
-        return self._get_single_resource(Role, "roles", role_id)
+        return self._get_single_resource(Role, "roles", role_id, include="realm")
 
     def delete_role(self, role_id: Role | uuid.UUID | str):
         self._delete_resource("roles", role_id)
@@ -386,10 +387,10 @@ class AuthClient(BaseClient):
         )
 
     def get_roles(self) -> list[Role]:
-        return self._get_all_resources(Role, "roles")
+        return self._get_all_resources(Role, "roles", include="realm")
 
     def find_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[Role]:
-        return self._find_all_resources(Role, "roles", **params)
+        return self._find_all_resources(Role, "roles", **(params | {"include": "realm"}))
 
     def create_role_permission(
         self, role_id: Role | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
