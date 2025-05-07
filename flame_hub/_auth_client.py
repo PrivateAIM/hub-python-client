@@ -230,6 +230,10 @@ class RobotRole(CreateRobotRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
+    robot: Robot | None = None
+    role: Role | None = None
+    robot_realm: Realm | None = None
+    role_realm: Realm | None = None
 
 
 class AuthClient(BaseClient):
@@ -606,13 +610,17 @@ class AuthClient(BaseClient):
         )
 
     def get_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str) -> RobotRole | None:
-        return self._get_single_resource(RobotRole, "robot-roles", robot_role_id)
+        return self._get_single_resource(
+            RobotRole, "robot-roles", robot_role_id, include=("robot", "role", "robot_realm", "role_realm")
+        )
 
     def delete_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str):
         self._delete_resource("robot-roles", robot_role_id)
 
     def get_robot_roles(self) -> list[RobotRole]:
-        return self._get_all_resources(RobotRole, "robot-roles")
+        return self._get_all_resources(RobotRole, "robot-roles", include=("robot", "role", "robot_realm", "role_realm"))
 
     def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
-        return self._find_all_resources(RobotRole, "robot-roles", **params)
+        return self._find_all_resources(
+            RobotRole, "robot-roles", **(params | {"include": ("robot", "role", "robot_realm", "role_realm")})
+        )
