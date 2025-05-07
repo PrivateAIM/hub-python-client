@@ -132,20 +132,32 @@ def test_find_robots(auth_client, robot):
     assert all(r.realm is not None for r in robots_find)
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2660")
 def test_get_permission(auth_client, permission):
-    assert permission == auth_client.get_permission(permission.id)
+    perm_get = auth_client.get_permission(permission.id)
+
+    assert perm_get.id == permission.id
+    assert perm_get.realm is not None
 
 
 def test_get_permission_not_found(auth_client):
     assert auth_client.get_permission(next_uuid()) is None
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2659")
 def test_get_permissions(auth_client):
-    assert len(auth_client.get_permissions()) > 0
+    perms_get = auth_client.get_permissions()
+
+    assert len(perms_get) > 0
+    assert all(p.realm is not None for p in perms_get)
 
 
+@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2659")
 def test_find_permissions(auth_client, permission):
-    assert [permission] == auth_client.find_permissions(filter={"id": permission.id})
+    perms_find = auth_client.find_permissions(filter={"id": permission.id})
+
+    assert [permission.id] == [p.id for p in perms_find]
+    assert all(p.realm is not None for p in perms_find)
 
 
 def test_update_permission(auth_client, permission):
