@@ -115,11 +115,6 @@ class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None
     sort: SortParams | None
-    include: IncludeParams | None
-
-
-class GetKwargs(te.TypedDict, total=False):
-    include: IncludeParams | None
 
 
 class ClientKwargs(te.TypedDict, total=False):
@@ -245,17 +240,18 @@ class BaseClient(object):
         resource_type: type[ResourceT],
         *path: str,
         field_params: FieldParams = None,
-        **params: te.Unpack[GetKwargs],
+        include: IncludeParams = None,
     ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, *path, field_params=field_params, **params)
+        return self._find_all_resources(resource_type, *path, field_params=field_params, include=include)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
         field_params: FieldParams = None,
+        include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
         """Find all resources of a certain type at the specified path.
@@ -264,13 +260,12 @@ class BaseClient(object):
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
-        include_params = params.get("include", None)
 
         request_params = (
             build_page_params(page_params)
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
-            | build_include_params(include_params)
+            | build_include_params(include)
             | build_field_params(field_params)
         )
 
@@ -298,11 +293,10 @@ class BaseClient(object):
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
         field_params: FieldParams = None,
-        **params: te.Unpack[GetKwargs],
+        include: IncludeParams = None,
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
-        include_params = params.get("include", None)
-        request_params = build_include_params(include_params) | build_field_params(field_params)
+        request_params = build_field_params(field_params) | build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
 

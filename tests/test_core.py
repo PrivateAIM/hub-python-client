@@ -217,15 +217,28 @@ def test_update_project(core_client, project):
 
 
 def test_get_project_nodes(core_client, project_node):
-    assert len(core_client.get_project_nodes()) > 0
+    project_nodes_get = core_client.get_project_nodes()
+
+    assert len(project_nodes_get) > 0
+    assert all(pn.project is not None for pn in project_nodes_get)
+    assert all(pn.node is not None for pn in project_nodes_get)
 
 
 def test_find_project_nodes(core_client, project_node):
-    assert core_client.find_project_nodes(filter={"id": project_node.id}) == [project_node]
+    # Use "project_id" instead of "id" because filtering for ids does not work.
+    project_nodes_find = core_client.find_project_nodes(filter={"project_id": project_node.project_id})
+
+    assert [project_node.id] == [pn.id for pn in project_nodes_find]
+    assert all(pn.project is not None for pn in project_nodes_find)
+    assert all(pn.node is not None for pn in project_nodes_find)
 
 
 def test_get_project_node(core_client, project_node):
-    assert project_node == core_client.get_project_node(project_node.id)
+    project_node_get = core_client.get_project_node(project_node.id)
+
+    assert project_node_get.id == project_node.id
+    assert project_node_get.project is not None
+    assert project_node_get.node is not None
 
 
 def test_update_project_node(core_client, project_node):
@@ -241,15 +254,24 @@ def test_get_project_node_not_found(core_client):
 
 
 def test_get_analyses(core_client, analysis):
-    assert len(core_client.get_analyses()) > 0
+    analyses_get = core_client.get_analyses()
+
+    assert len(analyses_get) > 0
+    assert all(a.project is not None for a in analyses_get)
 
 
 def test_find_analyses(core_client, analysis):
-    assert core_client.find_analyses(filter={"id": analysis.id}) == [analysis]
+    analyses_find = core_client.find_analyses(filter={"id": analysis.id})
+
+    assert [analysis.id] == [a.id for a in analyses_find]
+    assert all(a.project is not None for a in analyses_find)
 
 
 def test_get_analysis(core_client, analysis):
-    assert analysis == core_client.get_analysis(analysis.id)
+    analysis_get = core_client.get_analysis(analysis.id)
+
+    assert analysis_get.id == analysis.id
+    assert analysis_get.project is not None
 
 
 def test_get_analysis_not_found(core_client):
@@ -272,40 +294,73 @@ def test_analysis_node_update(core_client, analysis_node):
 
 
 def test_get_analysis_nodes(core_client, analysis_node):
-    assert len(core_client.get_analysis_nodes()) > 0
+    analysis_nodes_get = core_client.get_analysis_nodes()
+
+    assert len(analysis_nodes_get) > 0
+    assert all(an.analysis is not None for an in analysis_nodes_get)
+    assert all(an.node is not None for an in analysis_nodes_get)
 
 
 def test_find_analysis_nodes(core_client, analysis_node):
-    assert core_client.find_analysis_nodes(filter={"id": analysis_node.id}) == [analysis_node]
+    # Use "analysis_id" instead of "id" because filtering for ids does not work.
+    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysis_id": analysis_node.analysis_id})
+
+    assert [analysis_node.id] == [an.id for an in analysis_nodes_find]
+    assert all(an.analysis is not None for an in analysis_nodes_find)
+    assert all(an.node is not None for an in analysis_nodes_find)
 
 
 def test_get_analysis_node(core_client, analysis_node):
-    assert analysis_node == core_client.get_analysis_node(analysis_node.id)
+    analysis_node_get = core_client.get_analysis_node(analysis_node.id)
+
+    assert analysis_node_get.id == analysis_node.id
+    assert analysis_node_get.analysis is not None
+    assert analysis_node.node is not None
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets):
-    assert analysis_buckets["CODE"] == core_client.get_analysis_bucket(analysis_buckets["CODE"])
+    analysis_bucket_get = core_client.get_analysis_bucket(analysis_buckets["CODE"].id)
+
+    assert analysis_bucket_get.id == analysis_buckets["CODE"].id
+    assert analysis_bucket_get.analysis is not None
 
 
 def test_get_analysis_buckets(core_client, analysis_buckets):
-    assert len(core_client.get_analysis_buckets()) > 0
+    analysis_buckets_get = core_client.get_analysis_buckets()
+
+    assert len(analysis_buckets_get) > 0
+    assert all(ab.analysis is not None for ab in analysis_buckets_get)
 
 
 def test_get_analysis_bucket_file(core_client, analysis_bucket_file):
-    assert analysis_bucket_file == core_client.get_analysis_bucket_file(analysis_bucket_file.id)
+    analysis_bucket_file_get = core_client.get_analysis_bucket_file(analysis_bucket_file.id)
+
+    assert analysis_bucket_file_get.id == analysis_bucket_file.id
+    assert analysis_bucket_file_get.analysis is not None
+    assert analysis_bucket_file.bucket is not None
 
 
-# TODO: Uncomment this when hub fixes requests for non-existent analysis bucket files.
-# def test_get_analysis_bucket_file_not_found(core_client):
-#    assert core_client.get_analysis_bucket_file(next_uuid()) is None
+def test_get_analysis_bucket_file_not_found(core_client):
+    assert core_client.get_analysis_bucket_file(next_uuid()) is None
 
 
 def test_get_analysis_bucket_files(core_client, analysis_bucket_file):
-    assert len(core_client.get_analysis_bucket_files()) > 0
+    analysis_bucket_files_get = core_client.get_analysis_bucket_files()
+
+    assert len(analysis_bucket_files_get) > 0
+    assert all(abf.analysis is not None for abf in analysis_bucket_files_get)
+    assert all(abf.bucket is not None for abf in analysis_bucket_files_get)
 
 
 def test_find_analysis_bucket_files(core_client, analysis_bucket_file):
-    assert [analysis_bucket_file] == core_client.find_analysis_bucket_files(filter={"id": analysis_bucket_file.id})
+    # Use "analysis_id" instead of "id" because filtering for ids does not work.
+    analysis_bucket_files_find = core_client.find_analysis_bucket_files(
+        filter={"analysis_id": analysis_bucket_file.analysis_id}
+    )
+
+    assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
+    assert all(abf.analysis is not None for abf in analysis_bucket_files_find)
+    assert all(abf.bucket is not None for abf in analysis_bucket_files_find)
 
 
 def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
@@ -340,7 +395,10 @@ def test_update_registry(core_client, registry):
 
 
 def test_get_registry_project(core_client, registry_project):
-    assert registry_project == core_client.get_registry_project(registry_project.id)
+    registry_project_get = core_client.get_registry_project(registry_project.id)
+
+    assert registry_project.id == registry_project_get.id
+    assert registry_project_get.registry is not None
 
 
 def test_get_registry_project_not_found(core_client, registry_project):
@@ -348,11 +406,17 @@ def test_get_registry_project_not_found(core_client, registry_project):
 
 
 def test_get_project_registries(core_client, registry_project):
-    assert len(core_client.get_registry_projects()) > 0
+    registry_project_gets = core_client.get_registry_projects()
+
+    assert len(registry_project_gets) > 0
+    assert all(rp.registry is not None for rp in registry_project_gets)
 
 
 def test_find_project_registries(core_client, registry_project):
-    assert [registry_project] == core_client.find_registry_projects(filter={"id": registry_project.id})
+    registry_projects_find = core_client.find_registry_projects(filter={"id": registry_project.id})
+
+    assert [registry_project.id] == [rp.id for rp in registry_projects_find]
+    assert all(rp.registry is not None for rp in registry_projects_find)
 
 
 def test_update_project_registry(core_client, registry_project):
