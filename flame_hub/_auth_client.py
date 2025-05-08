@@ -52,7 +52,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    email: str | None
+    email: str | None = None
     display_name: str | None
     first_name: str | None
     last_name: str | None
