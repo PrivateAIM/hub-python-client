@@ -458,7 +458,10 @@ def test_update_project_registry(core_client, registry_project):
 
 
 def test_get_analysis_log(core_client, analysis_log):
-    assert analysis_log == core_client.get_analysis_log(analysis_log.id)
+    analysis_log_get = core_client.get_analysis_log(analysis_log.id)
+
+    assert analysis_log_get.id == analysis_log.id
+    assert analysis_log_get.analysis is not None
 
 
 def test_get_analysis_log_not_found(core_client):
@@ -466,7 +469,10 @@ def test_get_analysis_log_not_found(core_client):
 
 
 def test_get_analysis_logs(core_client, analysis_log):
-    assert len(core_client.get_analysis_logs()) > 0
+    analysis_logs_get = core_client.get_analysis_logs()
+
+    assert len(analysis_logs_get) > 0
+    assert all(al.analysis is not None for al in analysis_logs_get)
 
 
 def test_delete_analysis_log(core_client, analysis_log):
