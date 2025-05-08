@@ -313,7 +313,7 @@ class CoreClient(BaseClient):
         return self._get_all_resources(Node, "nodes", include=("registry", "registry_project"))
 
     def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[Node]:
-        return self._find_all_resources(Node, "nodes", **(params | {"include": ("registry", "registry_project")}))
+        return self._find_all_resources(Node, "nodes", include=("registry", "registry_project"), **params)
 
     def create_node(
         self,
@@ -402,7 +402,7 @@ class CoreClient(BaseClient):
         return self._get_all_resources(Project, "projects", include="master_image")
 
     def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[Project]:
-        return self._find_all_resources(Project, "projects", **(params | {"include": "master_image"}))
+        return self._find_all_resources(Project, "projects", include="master_image", **params)
 
     def sync_master_images(self):
         r = self._client.post("master-images/command", json={"command": "sync"})
@@ -469,7 +469,7 @@ class CoreClient(BaseClient):
         return self._get_all_resources(ProjectNode, "project-nodes", include=("node", "project"))
 
     def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[ProjectNode]:
-        return self._find_all_resources(ProjectNode, "project-nodes", **(params | {"include": ("node", "project")}))
+        return self._find_all_resources(ProjectNode, "project-nodes", include=("node", "project"), **params)
 
     def get_project_node(self, project_node_id: ProjectNode | uuid.UUID | str) -> ProjectNode | None:
         return self._get_single_resource(ProjectNode, "project-nodes", project_node_id, include=("node", "project"))
@@ -521,9 +521,7 @@ class CoreClient(BaseClient):
         return self._get_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"))
 
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> list[Analysis]:
-        return self._find_all_resources(
-            Analysis, "analyses", **(params | {"include": ("registry", "project", "master_image")})
-        )
+        return self._find_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"), **params)
 
     def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
         return self._get_single_resource(
@@ -592,13 +590,13 @@ class CoreClient(BaseClient):
         return self._get_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"))
 
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
-        return self._find_all_resources(AnalysisNode, "analysis-nodes", **(params | {"include": ("analysis", "node")}))
+        return self._find_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
 
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis")
 
     def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucket]:
-        return self._find_all_resources(AnalysisBucket, "analysis-buckets", **(params | {"include": "analysis"}))
+        return self._find_all_resources(AnalysisBucket, "analysis-buckets", include="analysis", **params)
 
     def get_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str) -> AnalysisBucket | None:
         return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id, include="analysis")
@@ -608,7 +606,7 @@ class CoreClient(BaseClient):
 
     def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucketFile]:
         return self._find_all_resources(
-            AnalysisBucketFile, "analysis-bucket-files", **(params | {"include": ("analysis", "bucket")})
+            AnalysisBucketFile, "analysis-bucket-files", include=("analysis", "bucket"), **params
         )
 
     def get_analysis_bucket_file(
@@ -733,4 +731,4 @@ class CoreClient(BaseClient):
         return self._get_all_resources(RegistryProject, "registry-projects", include="registry")
 
     def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
-        return self._find_all_resources(RegistryProject, "registry-projects", **(params | {"include": "registry"}))
+        return self._find_all_resources(RegistryProject, "registry-projects", include="registry", **params)

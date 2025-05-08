@@ -328,7 +328,7 @@ class AuthClient(BaseClient):
         return self._get_all_resources(Robot, "robots", include=("user", "realm"))
 
     def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", **(params | {"include": ("user", "realm")}))
+        return self._find_all_resources(Robot, "robots", include=("user", "realm"), **params)
 
     def create_permission(
         self,
@@ -377,7 +377,7 @@ class AuthClient(BaseClient):
         return self._get_all_resources(Permission, "permissions", include="realm")
 
     def find_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[Permission]:
-        return self._find_all_resources(Permission, "permissions", **(params | {"include": "realm"}))
+        return self._find_all_resources(Permission, "permissions", include="realm", **params)
 
     def create_role(self, name: str, display_name: str = None, description: str = None) -> Role:
         return self._create_resource(
@@ -410,7 +410,7 @@ class AuthClient(BaseClient):
         return self._get_all_resources(Role, "roles", include="realm")
 
     def find_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[Role]:
-        return self._find_all_resources(Role, "roles", **(params | {"include": "realm"}))
+        return self._find_all_resources(Role, "roles", include="realm", **params)
 
     def create_role_permission(
         self, role_id: Role | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
@@ -444,7 +444,8 @@ class AuthClient(BaseClient):
         return self._find_all_resources(
             RolePermission,
             "role-permissions",
-            **(params | {"include": ("role", "role_realm", "permission", "permission_realm")}),
+            include=("role", "role_realm", "permission", "permission_realm"),
+            **params,
         )
 
     def create_user(
@@ -511,7 +512,7 @@ class AuthClient(BaseClient):
         return self._get_all_resources(User, "users", include="realm")
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", **(params | {"include": "realm"}))
+        return self._find_all_resources(User, "users", include="realm", **params)
 
     def create_user_permission(
         self,
@@ -544,7 +545,8 @@ class AuthClient(BaseClient):
         return self._find_all_resources(
             UserPermission,
             "user-permissions",
-            **(params | {"include": ("user", "permission", "user_realm", "permission_realm")}),
+            include=("user", "permission", "user_realm", "permission_realm"),
+            **params,
         )
 
     def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
@@ -567,7 +569,7 @@ class AuthClient(BaseClient):
 
     def find_user_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[UserRole]:
         return self._find_all_resources(
-            UserRole, "user-roles", **(params | {"include": ("user", "role", "user_realm", "role_realm")})
+            UserRole, "user-roles", include=("user", "role", "user_realm", "role_realm"), **params
         )
 
     def create_robot_permission(
@@ -599,7 +601,8 @@ class AuthClient(BaseClient):
         return self._find_all_resources(
             RobotPermission,
             "robot-permissions",
-            **(params | {"include": ("robot", "permission", "robot_realm", "permission_realm")}),
+            include=("robot", "permission", "robot_realm", "permission_realm"),
+            **params,
         )
 
     def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
@@ -622,5 +625,5 @@ class AuthClient(BaseClient):
 
     def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
         return self._find_all_resources(
-            RobotRole, "robot-roles", **(params | {"include": ("robot", "role", "robot_realm", "role_realm")})
+            RobotRole, "robot-roles", include=("robot", "role", "robot_realm", "role_realm"), **params
         )

@@ -13,7 +13,6 @@ from flame_hub._base_client import (
     obtain_uuid_from,
     FindAllKwargs,
     ClientKwargs,
-    GetKwargs,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
@@ -76,14 +75,14 @@ class StorageClient(BaseClient):
     def delete_bucket(self, bucket_id: Bucket | str | uuid.UUID):
         self._delete_resource("buckets", bucket_id)
 
-    def get_buckets(self, **params: te.Unpack[GetKwargs]) -> list[Bucket]:
-        return self._get_all_resources(Bucket, "buckets", **params)
+    def get_buckets(self) -> list[Bucket]:
+        return self._get_all_resources(Bucket, "buckets")
 
     def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[Bucket]:
         return self._find_all_resources(Bucket, "buckets", **params)
 
-    def get_bucket(self, bucket_id: Bucket | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Bucket | None:
-        return self._get_single_resource(Bucket, "buckets", bucket_id, **params)
+    def get_bucket(self, bucket_id: Bucket | str | uuid.UUID) -> Bucket | None:
+        return self._get_single_resource(Bucket, "buckets", bucket_id)
 
     def stream_bucket_tarball(self, bucket_id: Bucket | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream") as r:
@@ -116,7 +115,7 @@ class StorageClient(BaseClient):
         return self._get_all_resources(BucketFile, "bucket-files", include="bucket")
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
-        return self._find_all_resources(BucketFile, "bucket-files", **(params | {"include": "bucket"}))
+        return self._find_all_resources(BucketFile, "bucket-files", include="bucket", **params)
 
     def stream_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
