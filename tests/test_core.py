@@ -143,14 +143,14 @@ def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, regi
     core_client.send_analysis_command(analysis, "configurationLock")
     core_client.send_analysis_command(analysis, "buildStart")
 
-    if len(core_client.get_analysis_logs()) == 0:
+    if len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) == 0:
 
         def _check_analysis_logs_present():
-            assert len(core_client.get_analysis_logs()) > 0
+            assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) > 0
 
         assert_eventually(_check_analysis_logs_present)
 
-    return core_client.get_analysis_logs()[0]
+    return core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
 
 
 @pytest.fixture()
@@ -465,8 +465,8 @@ def test_get_analysis_log_not_found(core_client):
     assert core_client.get_analysis_log(next_uuid()) is None
 
 
-def test_find_analysis_log(core_client, analysis_log):
-    assert analysis_log in core_client.find_analysis_logs(filter={"command": analysis_log.command})
+def test_get_analysis_logs(core_client, analysis_log):
+    assert len(core_client.get_analysis_logs()) > 0
 
 
 def test_delete_analysis_log(core_client, analysis_log):
