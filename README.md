@@ -204,6 +204,37 @@ print(nodes == sedon[::-1])
 # => True
 ```
 
+### Nested resources
+
+Some resources refer to other resources.
+For example, users are tied to a realm which is usually not sent back automatically.
+This applies to any other nested resources.
+
+All clients will automatically fetch all nested resources if they are available.
+This means that you can usually save yourself extra API calls.
+Be aware that the client is not capable of fetching nested resources on any level deeper than the resource you
+are requesting.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
+
+admin_user = auth_client.find_users(filter={"name": "admin"}).pop()
+
+# Realm ID is present, therefore you can use the realm property too.
+print(admin_user.realm_id)  
+# => "6d92a2df-df0f-42ef-bb64-6a8c63c3a61b"
+print(admin_user.realm)
+# => '{"name":"master","display_name":null,"description":null,"id":"6d92a2df-df0f-42ef-bb64-6a8c63c3a61b","built_in":true,"created_at":"2025-05-07T11:11:19.831000Z","updated_at":"2025-05-07T11:11:19.831000Z"}'
+
+# And just to be extremely sure...
+master_realm = auth_client.find_realms(filter={"name": "master"}).pop()
+print(admin_user.realm == master_realm)
+# => True
+```
+
 ### Handling exceptions
 
 The main module exports `HubAPIError` which is a general error that is raised whenever the FLAME Hub responds with
