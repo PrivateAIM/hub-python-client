@@ -114,11 +114,6 @@ class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None
     sort: SortParams | None
-    include: IncludeParams | None
-
-
-class GetKwargs(te.TypedDict, total=False):
-    include: IncludeParams | None
 
 
 class ClientKwargs(te.TypedDict, total=False):
@@ -221,14 +216,18 @@ class BaseClient(object):
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(
-        self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[GetKwargs]
+        self, resource_type: type[ResourceT], *path: str, include: IncludeParams = None
     ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, *path, **params)
+        return self._find_all_resources(resource_type, *path, include=include)
 
     def _find_all_resources(
-        self, resource_type: type[ResourceT], *path: str, **params: te.Unpack[FindAllKwargs]
+        self,
+        resource_type: type[ResourceT],
+        *path: str,
+        include: IncludeParams = None,
+        **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
         """Find all resources of a certain type at the specified path.
         Custom pagination and filter parameters can be applied."""
@@ -236,13 +235,12 @@ class BaseClient(object):
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
-        include_params = params.get("include", None)
 
         request_params = (
             build_page_params(page_params)
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
-            | build_include_params(include_params)
+            | build_include_params(include)
         )
 
         r = self._client.get("/".join(path), params=request_params)
@@ -265,11 +263,10 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], *path: str | UuidIdentifiable, **params: te.Unpack[GetKwargs]
+        self, resource_type: type[ResourceT], *path: str | UuidIdentifiable, include: IncludeParams = None
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
-        include_params = params.get("include", None)
-        request_params = build_include_params(include_params)
+        request_params = build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
 

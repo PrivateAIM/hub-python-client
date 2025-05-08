@@ -24,6 +24,58 @@ from flame_hub._storage_client import BucketFile
 NodeType = t.Literal["aggregator", "default"]
 
 
+class CreateRegistry(BaseModel):
+    name: str
+    host: str
+    account_name: str | None
+    account_secret: str | None
+
+
+class Registry(BaseModel):
+    id: uuid.UUID
+    name: str
+    host: str
+    account_name: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistry(UpdateModel):
+    name: str | None = None
+    host: str | None = None
+    account_name: str | None = None
+    account_secret: str | None = None
+
+
+RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
+
+
+class CreateRegistryProject(BaseModel):
+    name: str
+    type: RegistryProjectType
+    registry_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    external_name: str
+
+
+class RegistryProject(CreateRegistryProject):
+    id: uuid.UUID
+    public: bool
+    external_id: str | None
+    webhook_name: str | None
+    webhook_exists: bool | None
+    realm_id: uuid.UUID | None
+    registry: Registry = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class UpdateRegistryProject(UpdateModel):
+    name: str | None = None
+    type: RegistryProjectType | None = None
+    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
+    external_name: str | None = None
+
+
 class CreateNode(BaseModel):
     external_name: str | None
     hidden: bool | None
@@ -37,7 +89,9 @@ class Node(CreateNode):
     id: uuid.UUID
     public_key: str | None
     online: bool
+    registry: Registry | None = None
     registry_project_id: uuid.UUID | None
+    registry_project: RegistryProject | None = None
     robot_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -99,6 +153,7 @@ class Project(CreateProject):
     id: uuid.UUID
     analyses: int
     nodes: int
+    master_image: MasterImage | None = None
     created_at: datetime
     updated_at: datetime
     realm_id: uuid.UUID
@@ -126,6 +181,8 @@ class ProjectNode(CreateProjectNode):
     comment: str | None
     created_at: datetime
     updated_at: datetime
+    node: Node = None
+    project: Project = None
     project_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -157,17 +214,20 @@ class Analysis(CreateAnalysis):
     created_at: datetime
     updated_at: datetime
     registry_id: uuid.UUID | None
+    registry: Registry | None = None
     realm_id: uuid.UUID
     user_id: uuid.UUID
     project_id: uuid.UUID
+    project: Project = None
     master_image_id: uuid.UUID | None
+    master_image: MasterImage | None = None
 
 
 class UpdateAnalysis(UpdateModel):
     description: str | None = None
     name: str | None = None
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    image_command_arguments: list[MasterImageCommandArgument] | None = None
+    image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
 
 
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
@@ -192,6 +252,8 @@ class AnalysisNode(CreateAnalysisNode):
     artifact_digest: str | None
     created_at: datetime
     updated_at: datetime
+    analysis: Analysis = None
+    node: Node = None
     analysis_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -212,6 +274,7 @@ class AnalysisBucket(BaseModel):
     created_at: datetime
     updated_at: datetime
     analysis_id: uuid.UUID
+    analysis: Analysis = None
     realm_id: uuid.UUID
 
 
@@ -230,61 +293,12 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     user_id: uuid.UUID | None
     robot_id: uuid.UUID | None
     analysis_id: uuid.UUID
+    analysis: Analysis = None
+    bucket: AnalysisBucket = None
 
 
 class UpdateAnalysisBucketFile(UpdateModel):
     root: bool | None = None
-
-
-class CreateRegistry(BaseModel):
-    name: str
-    host: str
-    account_name: str | None
-    account_secret: str | None
-
-
-class Registry(BaseModel):
-    id: uuid.UUID
-    name: str
-    host: str
-    account_name: str | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class UpdateRegistry(UpdateModel):
-    name: str | None = None
-    host: str | None = None
-    account_name: str | None = None
-    account_secret: str | None = None
-
-
-RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
-
-
-class CreateRegistryProject(BaseModel):
-    name: str
-    type: RegistryProjectType
-    registry_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    external_name: str
-
-
-class RegistryProject(CreateRegistryProject):
-    id: uuid.UUID
-    public: bool
-    external_id: str | None
-    webhook_name: str | None
-    webhook_exists: bool | None
-    realm_id: uuid.UUID | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class UpdateRegistryProject(UpdateModel):
-    name: str | None = None
-    type: RegistryProjectType | None = None
-    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    external_name: str | None = None
 
 
 class CoreClient(BaseClient):
@@ -297,10 +311,10 @@ class CoreClient(BaseClient):
         super().__init__(base_url, auth, **kwargs)
 
     def get_nodes(self) -> list[Node]:
-        return self._get_all_resources(Node, "nodes")
+        return self._get_all_resources(Node, "nodes", include=("registry", "registry_project"))
 
     def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[Node]:
-        return self._find_all_resources(Node, "nodes", **params)
+        return self._find_all_resources(Node, "nodes", include=("registry", "registry_project"), **params)
 
     def create_node(
         self,
@@ -325,7 +339,7 @@ class CoreClient(BaseClient):
         )
 
     def get_node(self, node_id: Node | uuid.UUID | str) -> Node | None:
-        return self._get_single_resource(Node, "nodes", node_id)
+        return self._get_single_resource(Node, "nodes", node_id, include=("registry", "registry_project"))
 
     def delete_node(self, node_id: Node | uuid.UUID | str):
         self._delete_resource("nodes", node_id)
@@ -378,10 +392,10 @@ class CoreClient(BaseClient):
         return self._find_all_resources(MasterImageEventLog, "master-image-event-logs", **params)
 
     def get_projects(self) -> list[Project]:
-        return self._get_all_resources(Project, "projects")
+        return self._get_all_resources(Project, "projects", include="master_image")
 
     def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[Project]:
-        return self._find_all_resources(Project, "projects", **params)
+        return self._find_all_resources(Project, "projects", include="master_image", **params)
 
     def sync_master_images(self):
         r = self._client.post("master-images/command", json={"command": "sync"})
@@ -402,7 +416,7 @@ class CoreClient(BaseClient):
         self._delete_resource("projects", project_id)
 
     def get_project(self, project_id: Project | uuid.UUID | str) -> Project | None:
-        return self._get_single_resource(Project, "projects", project_id)
+        return self._get_single_resource(Project, "projects", project_id, include="master_image")
 
     def update_project(
         self,
@@ -431,13 +445,13 @@ class CoreClient(BaseClient):
         self._delete_resource("project-nodes", project_node_id)
 
     def get_project_nodes(self) -> list[ProjectNode]:
-        return self._get_all_resources(ProjectNode, "project-nodes")
+        return self._get_all_resources(ProjectNode, "project-nodes", include=("node", "project"))
 
     def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[ProjectNode]:
-        return self._find_all_resources(ProjectNode, "project-nodes", **params)
+        return self._find_all_resources(ProjectNode, "project-nodes", include=("node", "project"), **params)
 
     def get_project_node(self, project_node_id: ProjectNode | uuid.UUID | str) -> ProjectNode | None:
-        return self._get_single_resource(ProjectNode, "project-nodes", project_node_id)
+        return self._get_single_resource(ProjectNode, "project-nodes", project_node_id, include=("node", "project"))
 
     def update_project_node(
         self,
@@ -478,13 +492,15 @@ class CoreClient(BaseClient):
         self._delete_resource("analyses", analysis_id)
 
     def get_analyses(self) -> list[Analysis]:
-        return self._get_all_resources(Analysis, "analyses")
+        return self._get_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"))
 
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> list[Analysis]:
-        return self._find_all_resources(Analysis, "analyses", **params)
+        return self._find_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"), **params)
 
     def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
-        return self._get_single_resource(Analysis, "analyses", analysis_id)
+        return self._get_single_resource(
+            Analysis, "analyses", analysis_id, include=("registry", "project", "master_image")
+        )
 
     def update_analysis(
         self,
@@ -539,33 +555,37 @@ class CoreClient(BaseClient):
         )
 
     def get_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str) -> AnalysisNode | None:
-        return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id)
+        return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id, include=("analysis", "node"))
 
     def get_analysis_nodes(self) -> list[AnalysisNode]:
-        return self._get_all_resources(AnalysisNode, "analysis-nodes")
+        return self._get_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"))
 
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
-        return self._find_all_resources(AnalysisNode, "analysis-nodes", **params)
+        return self._find_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
 
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
-        return self._get_all_resources(AnalysisBucket, "analysis-buckets")
+        return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis")
 
     def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucket]:
-        return self._find_all_resources(AnalysisBucket, "analysis-buckets", **params)
+        return self._find_all_resources(AnalysisBucket, "analysis-buckets", include="analysis", **params)
 
     def get_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str) -> AnalysisBucket | None:
-        return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id)
+        return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id, include="analysis")
 
     def get_analysis_bucket_files(self) -> list[AnalysisBucketFile]:
-        return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files")
+        return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files", include=("analysis", "bucket"))
 
     def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucketFile]:
-        return self._find_all_resources(AnalysisBucketFile, "analysis-bucket-files", **params)
+        return self._find_all_resources(
+            AnalysisBucketFile, "analysis-bucket-files", include=("analysis", "bucket"), **params
+        )
 
     def get_analysis_bucket_file(
         self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
     ) -> AnalysisBucketFile | None:
-        return self._get_single_resource(AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id)
+        return self._get_single_resource(
+            AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id, include=("analysis", "bucket")
+        )
 
     def delete_analysis_bucket_file(
         self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
@@ -653,7 +673,7 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
-        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id)
+        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id, include="registry")
 
     def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
         self._delete_resource("registry-projects", registry_project_id)
@@ -679,7 +699,7 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_projects(self) -> list[RegistryProject]:
-        return self._get_all_resources(RegistryProject, "registry-projects")
+        return self._get_all_resources(RegistryProject, "registry-projects", include="registry")
 
     def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
-        return self._find_all_resources(RegistryProject, "registry-projects", **params)
+        return self._find_all_resources(RegistryProject, "registry-projects", include="registry", **params)
