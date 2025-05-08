@@ -65,6 +65,9 @@ class RegistryProject(CreateRegistryProject):
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
     registry: Registry = None
+    account_id: str | None = None
+    account_name: str | None = None
+    account_secret: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -673,7 +676,13 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
-        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id, include="registry")
+        return self._get_single_resource(
+            RegistryProject,
+            "registry-projects",
+            registry_project_id,
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+        )
 
     def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
         self._delete_resource("registry-projects", registry_project_id)
@@ -699,7 +708,18 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_projects(self) -> list[RegistryProject]:
-        return self._get_all_resources(RegistryProject, "registry-projects", include="registry")
+        return self._get_all_resources(
+            RegistryProject,
+            "registry-projects",
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+        )
 
     def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
-        return self._find_all_resources(RegistryProject, "registry-projects", include="registry", **params)
+        return self._find_all_resources(
+            RegistryProject,
+            "registry-projects",
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+            **params,
+        )
