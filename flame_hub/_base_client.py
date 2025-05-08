@@ -239,18 +239,18 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str,
-        field_params: FieldParams = None,
+        fields: FieldParams = None,
         include: IncludeParams = None,
     ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, *path, field_params=field_params, include=include)
+        return self._find_all_resources(resource_type, *path, fields=fields, include=include)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
-        field_params: FieldParams = None,
+        fields: FieldParams = None,
         include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
@@ -266,7 +266,7 @@ class BaseClient(object):
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
             | build_include_params(include)
-            | build_field_params(field_params)
+            | build_field_params(fields)
         )
 
         r = self._client.get("/".join(path), params=request_params)
@@ -292,11 +292,11 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
-        field_params: FieldParams = None,
+        fields: FieldParams = None,
         include: IncludeParams = None,
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
-        request_params = build_field_params(field_params) | build_include_params(include)
+        request_params = build_field_params(fields) | build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
 

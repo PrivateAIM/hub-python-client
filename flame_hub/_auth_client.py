@@ -462,7 +462,7 @@ class AuthClient(BaseClient):
         )
 
     def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
-        return self._get_single_resource(User, "users", user_id, field_params="email", include="realm")
+        return self._get_single_resource(User, "users", user_id, fields="email", include="realm")
 
     def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
@@ -496,10 +496,10 @@ class AuthClient(BaseClient):
         )
 
     def get_users(self) -> list[User]:
-        return self._get_all_resources(User, "users", field_params="email", include="realm")
+        return self._get_all_resources(User, "users", fields="email", include="realm")
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", field_params="email", include="realm", **params)
+        return self._find_all_resources(User, "users", fields="email", include="realm", **params)
 
     def create_user_permission(
         self,
