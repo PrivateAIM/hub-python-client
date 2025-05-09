@@ -5,7 +5,7 @@ from enum import Enum
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, ValidatorFunctionWrapHandler, ValidationError
 
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
@@ -56,6 +56,17 @@ def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
         return uuid_identifiable
 
     raise ValueError(f"{uuid_identifiable} cannot be converted into a UUID")
+
+
+def uuid_validator(value: t.Any, handler: ValidatorFunctionWrapHandler) -> uuid.UUID:
+    """Callable for Pydantic's wrap validators to cast resource type instances and strings to UUIDs."""
+    try:
+        return handler(value)
+    except ValidationError as e:
+        try:
+            return obtain_uuid_from(value)
+        except ValueError:
+            raise e
 
 
 # resource for meta information on list responses
