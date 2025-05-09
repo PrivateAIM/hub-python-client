@@ -131,6 +131,7 @@ def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_byte
 @pytest.fixture()
 def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, registry):
     # An analysis needs at least one default and one aggregator node.
+    nodes = []
     for node_type in t.get_args(NodeType):
         new_node = core_client.create_node(
             name=next_random_string(),
@@ -138,6 +139,7 @@ def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, regi
             node_type=node_type,
             registry_id=registry.id,
         )
+        nodes.append(new_node)
         core_client.create_project_node(analysis.project_id, new_node)
         core_client.create_analysis_node(analysis, new_node)
     core_client.send_analysis_command(analysis, "configurationLock")
@@ -150,7 +152,10 @@ def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, regi
 
         assert_eventually(_check_analysis_logs_present)
 
-    return core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
+    yield core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
+
+    for node in nodes:
+        core_client.delete_node(node)
 
 
 @pytest.fixture()
