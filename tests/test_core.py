@@ -145,12 +145,10 @@ def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, regi
     core_client.send_analysis_command(analysis, "configurationLock")
     core_client.send_analysis_command(analysis, "buildStart")
 
-    if len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) == 0:
+    def _check_analysis_logs_present():
+        assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) > 0
 
-        def _check_analysis_logs_present():
-            assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) > 0
-
-        assert_eventually(_check_analysis_logs_present)
+    assert_eventually(_check_analysis_logs_present)
 
     yield core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
 
