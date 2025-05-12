@@ -129,7 +129,7 @@ def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_byte
 
 
 @pytest.fixture()
-def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, registry):
+def analysis_log(core_client, registry, analysis, master_realm, analysis_bucket_file):
     # An analysis needs at least one default and one aggregator node.
     nodes = []
     for node_type in t.get_args(NodeType):
@@ -150,10 +150,7 @@ def analysis_log(core_client, analysis, master_realm, analysis_bucket_file, regi
 
     assert_eventually(_check_analysis_logs_present)
 
-    yield core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
-
-    for node in nodes:
-        core_client.delete_node(node)
+    return core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
 
 
 @pytest.fixture()
