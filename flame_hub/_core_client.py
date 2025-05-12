@@ -281,6 +281,32 @@ class UpdateAnalysisNode(UpdateModel):
     run_status: AnalysisNodeRunStatus | None = None
 
 
+class CreateAnalysisNodeLog(BaseModel):
+    analysis_id: uuid.UUID
+    node_id: uuid.UUID
+    error: bool
+    error_code: str | None
+    status: str
+    status_message: str | None
+
+
+class AnalysisNodeLog(CreateAnalysisNodeLog):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+    analysis: Analysis = None
+    node: Node = None
+    analysis_realm_id: uuid.UUID
+    node_realm_id: uuid.UUID
+
+
+class UpdateAnalysisNodeLog(UpdateModel):
+    error: bool | None = None
+    error_code: str | None = None
+    status: str | None = None
+    status_message: str | None = None
+
+
 AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
 
 
@@ -579,6 +605,57 @@ class CoreClient(BaseClient):
 
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
         return self._find_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
+
+    def create_analysis_node_log(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        node_id: Node | uuid.UUID | str,
+        error: bool,
+        error_code: str = None,
+        status: str = "",
+        status_message: str = None,
+    ) -> AnalysisNodeLog:
+        return self._create_resource(
+            AnalysisNodeLog,
+            CreateAnalysisNodeLog(
+                analysis_id=obtain_uuid_from(analysis_id),
+                node_id=obtain_uuid_from(node_id),
+                error=error,
+                error_code=error_code,
+                status=status,
+                status_message=status_message,
+            ),
+            "analysis-node-logs",
+        )
+
+    def get_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str) -> AnalysisNodeLog | None:
+        return self._get_single_resource(
+            AnalysisNodeLog, "analysis-node-logs", analysis_node_log_id, include=("analysis", "node")
+        )
+
+    def delete_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str):
+        self._delete_resource("analysis-node-logs", analysis_node_log_id)
+
+    def get_analysis_node_logs(self) -> list[AnalysisNodeLog]:
+        return self._get_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"))
+
+    def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNodeLog]:
+        return self._find_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"), **params)
+
+    def update_analysis_node_log(
+        self,
+        analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str,
+        error: bool = _UNSET,
+        error_code: str = _UNSET,
+        status: str = _UNSET,
+        status_message: str = _UNSET,
+    ) -> AnalysisNodeLog:
+        return self._update_resource(
+            AnalysisNodeLog,
+            UpdateAnalysisNodeLog(error=error, error_code=error_code, status=status, status_message=status_message),
+            "analysis-node-logs",
+            analysis_node_log_id,
+        )
 
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis")
