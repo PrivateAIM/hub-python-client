@@ -88,6 +88,7 @@ class Robot(BaseModel):
     display_name: str | None
     description: str | None
     active: bool
+    secret: str = None
     created_at: datetime
     updated_at: datetime
     user_id: uuid.UUID | None
@@ -300,7 +301,7 @@ class AuthClient(BaseClient):
         self._delete_resource("robots", robot_id)
 
     def get_robot(self, robot_id: Robot | str | uuid.UUID) -> Robot | None:
-        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"))
+        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"), fields="secret")
 
     def update_robot(
         self,
@@ -318,10 +319,10 @@ class AuthClient(BaseClient):
         )
 
     def get_robots(self) -> list[Robot]:
-        return self._get_all_resources(Robot, "robots", include=("user", "realm"))
+        return self._get_all_resources(Robot, "robots", include=("user", "realm"), fields="secret")
 
     def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", include=("user", "realm"), **params)
+        return self._find_all_resources(Robot, "robots", include=("user", "realm"), fields="secret", **params)
 
     def create_permission(
         self,
