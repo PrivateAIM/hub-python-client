@@ -236,6 +236,23 @@ class UpdateAnalysis(UpdateModel):
 AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
 
 
+class AnalysisLog(BaseModel):
+    id: uuid.UUID
+    component: str | None
+    command: str | None
+    event: str | None
+    error: bool
+    error_code: str | None
+    status: str | None
+    status_message: str | None
+    meta: str | None
+    created_at: datetime
+    updated_at: datetime
+    analysis_id: uuid.UUID
+    analysis: Analysis = None
+    realm_id: uuid.UUID
+
+
 class CreateAnalysisNode(BaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
@@ -723,3 +740,15 @@ class CoreClient(BaseClient):
             include="registry",
             **params,
         )
+
+    def get_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str) -> AnalysisLog | None:
+        return self._get_single_resource(AnalysisLog, "analysis-logs", analysis_log_id, include="analysis")
+
+    def delete_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str):
+        self._delete_resource("analysis-logs", analysis_log_id)
+
+    def get_analysis_logs(self) -> list[AnalysisLog]:
+        return self._get_all_resources(AnalysisLog, "analysis-logs", include="analysis")
+
+    def find_analysis_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisLog]:
+        return self._find_all_resources(AnalysisLog, "analysis-logs", include="analysis", **params)
