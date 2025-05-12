@@ -23,21 +23,32 @@ def sync_master_images(core_client):
 
 @pytest.fixture(scope="module")
 def master_image(core_client):
-    if len(core_client.get_master_images()) == 0:
+    default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
+
+    if len(core_client.find_master_images(filter={"path": default_master_image})) != 1:
         sync_master_images(core_client)
 
-        def _check_master_images_available():
-            assert len(core_client.get_master_images()) > 0
+        def _check_default_master_image_available():
+            assert len(core_client.find_master_images(filter={"path": default_master_image})) == 1
 
-        assert_eventually(_check_master_images_available, max_retries=10, delay_millis=1000)
+        assert_eventually(_check_default_master_image_available, max_retries=10, delay_millis=1000)
 
-    default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
-    master_images = core_client.find_master_images(filter={"path": default_master_image})
+    return core_client.find_master_images(filter={"path": default_master_image})[0]
 
-    if len(master_images) != 1:
-        raise ValueError(f"expected single master image named {default_master_image}, found {len(master_images)}")
 
-    return master_images[0]
+@pytest.fixture(scope="module")
+def master_image_group(core_client, master_image):
+    if len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) != 1:
+        sync_master_images(core_client)
+
+        def _check_default_master_image_group_available():
+            assert (
+                len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) == 1
+            )
+
+        assert_eventually(_check_default_master_image_group_available, max_retries=10, delay_millis=1000)
+
+    return core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})[0]
 
 
 @pytest.fixture(scope="module")
@@ -197,12 +208,20 @@ def test_update_node(core_client, node):
     assert new_node.external_name == new_name
 
 
-def test_get_master_images(core_client):
-    _ = core_client.get_master_images()
+def test_get_master_image(core_client, master_image):
+    assert master_image == core_client.get_master_image(master_image.id)
 
 
-def test_get_master_image_groups(core_client):
-    _ = core_client.get_master_image_groups()
+def test_get_master_images(core_client, master_image):
+    assert len(core_client.get_master_images()) > 0
+
+
+def test_get_master_image_group(core_client, master_image_group):
+    assert master_image_group == core_client.get_master_image_group(master_image_group.id)
+
+
+def test_get_master_image_groups(core_client, master_image_group):
+    assert len(core_client.get_master_image_groups()) > 0
 
 
 def test_get_master_image_event_log(core_client, master_image_event_log):
