@@ -28,14 +28,11 @@ class CreateRegistry(BaseModel):
     name: str
     host: str
     account_name: str | None
-    account_secret: str | None
+    account_secret: str | None = None
 
 
-class Registry(BaseModel):
+class Registry(CreateRegistry):
     id: uuid.UUID
-    name: str
-    host: str
-    account_name: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -648,7 +645,7 @@ class CoreClient(BaseClient):
         )
 
     def get_registry(self, registry_id: Registry | uuid.UUID | str) -> Registry | None:
-        return self._get_single_resource(Registry, "registries", registry_id)
+        return self._get_single_resource(Registry, "registries", registry_id, fields="account_secret")
 
     def delete_registry(self, registry_id: Registry | uuid.UUID | str):
         self._delete_resource("registries", registry_id)
@@ -669,10 +666,10 @@ class CoreClient(BaseClient):
         )
 
     def get_registries(self) -> list[Registry]:
-        return self._get_all_resources(Registry, "registries")
+        return self._get_all_resources(Registry, "registries", fields="account_secret")
 
     def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
-        return self._find_all_resources(Registry, "registries", **params)
+        return self._find_all_resources(Registry, "registries", fields="account_secret", **params)
 
     def create_registry_project(
         self,
