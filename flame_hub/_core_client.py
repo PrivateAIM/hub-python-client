@@ -4,7 +4,7 @@ from datetime import datetime
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, WrapValidator, Field
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -14,6 +14,7 @@ from flame_hub._base_client import (
     _UNSET,
     FindAllKwargs,
     ClientKwargs,
+    uuid_validator,
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
@@ -52,7 +53,7 @@ RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing",
 class CreateRegistryProject(BaseModel):
     name: str
     type: RegistryProjectType
-    registry_id: uuid.UUID
+    registry_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     external_name: str
 
 
@@ -71,7 +72,7 @@ class RegistryProject(CreateRegistryProject):
 class UpdateRegistryProject(UpdateModel):
     name: str | None = None
     type: RegistryProjectType | None = None
-    registry_id: uuid.UUID | None = None
+    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
     external_name: str | None = None
 
 
@@ -79,8 +80,8 @@ class CreateNode(BaseModel):
     external_name: str | None
     hidden: bool | None
     name: str
-    realm_id: uuid.UUID | None
-    registry_id: uuid.UUID | None
+    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
+    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     type: NodeType | None
 
 
@@ -101,8 +102,8 @@ class UpdateNode(UpdateModel):
     external_name: str | None = None
     type: NodeType | None = None
     public_key: str | None = None
-    realm_id: uuid.UUID | None = None
-    registry_id: uuid.UUID | None = None
+    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
+    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
 
 
 class MasterImageGroup(BaseModel):
@@ -144,7 +145,7 @@ class MasterImageEventLog(BaseModel):
 
 class CreateProject(BaseModel):
     description: str | None
-    master_image_id: uuid.UUID | None
+    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     name: str
 
 
@@ -162,7 +163,7 @@ class Project(CreateProject):
 
 class UpdateProject(UpdateModel):
     description: str | None = None
-    master_image_id: uuid.UUID | None = None
+    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
     name: str | None = None
 
 
@@ -170,8 +171,8 @@ ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
 
 
 class CreateProjectNode(BaseModel):
-    node_id: uuid.UUID
-    project_id: uuid.UUID
+    node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    project_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 class ProjectNode(CreateProjectNode):
@@ -198,9 +199,9 @@ AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "sto
 class CreateAnalysis(BaseModel):
     description: str | None
     name: str | None
-    project_id: uuid.UUID
-    master_image_id: uuid.UUID | None
-    registry_id: uuid.UUID | None
+    project_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
+    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     image_command_arguments: list[MasterImageCommandArgument] = []
 
 
@@ -225,7 +226,7 @@ class Analysis(CreateAnalysis):
 class UpdateAnalysis(UpdateModel):
     description: str | None = None
     name: str | None = None
-    master_image_id: uuid.UUID | None = None
+    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
     image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
 
 
@@ -250,8 +251,8 @@ class AnalysisLog(BaseModel):
 
 
 class CreateAnalysisNode(BaseModel):
-    analysis_id: uuid.UUID
-    node_id: uuid.UUID
+    analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
 AnalysisNodeApprovalStatus = t.Literal["rejected", "approved"]
@@ -296,8 +297,8 @@ class AnalysisBucket(BaseModel):
 
 class CreateAnalysisBucketFile(BaseModel):
     name: str
-    external_id: uuid.UUID
-    bucket_id: uuid.UUID
+    external_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     root: bool
 
 
@@ -341,14 +342,11 @@ class CoreClient(BaseClient):
         node_type: NodeType = "default",
         hidden: bool = False,
     ) -> Node:
-        if registry_id is not None:
-            registry_id = obtain_uuid_from(registry_id)
-
         return self._create_resource(
             Node,
             CreateNode(
                 name=name,
-                realm_id=obtain_uuid_from(realm_id),
+                realm_id=realm_id,
                 external_name=external_name,
                 hidden=hidden,
                 registry_id=registry_id,
@@ -373,11 +371,6 @@ class CoreClient(BaseClient):
         registry_id: Registry | str | uuid.UUID = _UNSET,
         public_key: str = _UNSET,
     ) -> Node:
-        if realm_id not in (None, _UNSET):
-            realm_id = obtain_uuid_from(realm_id)
-        if registry_id not in (None, _UNSET):
-            registry_id = obtain_uuid_from(registry_id)
-
         return self._update_resource(
             Node,
             UpdateNode(
@@ -432,11 +425,7 @@ class CoreClient(BaseClient):
     ) -> Project:
         return self._create_resource(
             Project,
-            CreateProject(
-                name=name,
-                master_image_id=obtain_uuid_from(master_image_id) if master_image_id is not None else None,
-                description=description,
-            ),
+            CreateProject(name=name, master_image_id=master_image_id, description=description),
             "projects",
         )
 
@@ -453,16 +442,9 @@ class CoreClient(BaseClient):
         master_image_id: MasterImage | str | uuid.UUID = _UNSET,
         name: str = _UNSET,
     ) -> Project:
-        if master_image_id not in (None, _UNSET):
-            master_image_id = obtain_uuid_from(master_image_id)
-
         return self._update_resource(
             Project,
-            UpdateProject(
-                description=description,
-                master_image_id=master_image_id,
-                name=name,
-            ),
+            UpdateProject(description=description, master_image_id=master_image_id, name=name),
             "projects",
             project_id,
         )
@@ -472,10 +454,7 @@ class CoreClient(BaseClient):
     ) -> ProjectNode:
         return self._create_resource(
             ProjectNode,
-            CreateProjectNode(
-                project_id=obtain_uuid_from(project_id),
-                node_id=obtain_uuid_from(node_id),
-            ),
+            CreateProjectNode(project_id=project_id, node_id=node_id),
             "project-nodes",
         )
 
@@ -513,15 +492,10 @@ class CoreClient(BaseClient):
         registry_id: Registry | uuid.UUID | str = None,
         image_command_arguments: list[MasterImageCommandArgument] = (),
     ) -> Analysis:
-        if master_image_id is not None:
-            master_image_id = obtain_uuid_from(master_image_id)
-        if registry_id is not None:
-            registry_id = obtain_uuid_from(registry_id)
-
         return self._create_resource(
             Analysis,
             CreateAnalysis(
-                project_id=obtain_uuid_from(project_id),
+                project_id=project_id,
                 name=name,
                 description=description,
                 master_image_id=master_image_id,
@@ -553,9 +527,6 @@ class CoreClient(BaseClient):
         master_image_id: MasterImage | uuid.UUID | str = _UNSET,
         image_command_arguments: list[MasterImageCommandArgument] = _UNSET,
     ) -> Analysis:
-        if master_image_id not in (None, _UNSET):
-            master_image_id = obtain_uuid_from(master_image_id)
-
         return self._update_resource(
             Analysis,
             UpdateAnalysis(
@@ -579,7 +550,7 @@ class CoreClient(BaseClient):
     ) -> AnalysisNode:
         return self._create_resource(
             AnalysisNode,
-            CreateAnalysisNode(analysis_id=obtain_uuid_from(analysis_id), node_id=obtain_uuid_from(node_id)),
+            CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id),
             "analysis-nodes",
         )
 
@@ -648,8 +619,8 @@ class CoreClient(BaseClient):
         return self._create_resource(
             AnalysisBucketFile,
             CreateAnalysisBucketFile(
-                external_id=obtain_uuid_from(bucket_file_id),
-                bucket_id=obtain_uuid_from(analysis_bucket_id),
+                external_id=bucket_file_id,
+                bucket_id=analysis_bucket_id,
                 name=name,
                 root=is_entrypoint,
             ),
@@ -712,7 +683,7 @@ class CoreClient(BaseClient):
             CreateRegistryProject(
                 name=name,
                 type=registry_project_type,
-                registry_id=obtain_uuid_from(registry_id),
+                registry_id=registry_id,
                 external_name=external_name,
             ),
             "registry-projects",
@@ -737,7 +708,7 @@ class CoreClient(BaseClient):
             UpdateRegistryProject(
                 name=name,
                 type=registry_project_type,
-                registry_id=obtain_uuid_from(registry_id) if registry_id != _UNSET else _UNSET,
+                registry_id=registry_id,
                 external_name=external_name,
             ),
             "registry-projects",

@@ -1,3 +1,7 @@
+import typing as t
+import uuid
+
+from pydantic import BaseModel, WrapValidator, Field, ValidationError
 import pytest
 
 from flame_hub._base_client import (
@@ -6,6 +10,7 @@ from flame_hub._base_client import (
     build_sort_params,
     UpdateModel,
     build_include_params,
+    uuid_validator,
 )
 from flame_hub.types import FilterOperator, PageParams
 from flame_hub.models import UNSET
@@ -106,3 +111,18 @@ def test_update_model_dump_if_unset():
 
 def test_update_model_dump_if_set():
     assert FooUpdateModel(foo="bar").model_dump(mode="json", exclude_unset=True, exclude_none=False) == {"foo": "bar"}
+
+
+class UUIDValidatorModel(BaseModel):
+    id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
+
+
+@pytest.mark.parametrize("input_id", [None, uuid.uuid4(), str(uuid.uuid4()), UUIDValidatorModel(id=uuid.uuid4())])
+def test_uuid_validator_with_valid_ids(input_id):
+    UUIDValidatorModel(id=input_id)
+
+
+@pytest.mark.parametrize("input_id", ["28b9959b-346b-4a85-8dd3-6bb2a29e773", 42, True])
+def test_uuid_validator_with_invalid_ids(input_id):
+    with pytest.raises(ValidationError):
+        UUIDValidatorModel(id=input_id)
