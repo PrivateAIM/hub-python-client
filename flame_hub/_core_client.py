@@ -282,7 +282,7 @@ class UpdateAnalysisNode(UpdateModel):
 
 
 class CreateAnalysisNodeLog(BaseModel):
-    analysis_id: uuid.UUID
+    analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: uuid.UUID
     error: bool
     error_code: str | None
