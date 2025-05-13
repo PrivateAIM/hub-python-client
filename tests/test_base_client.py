@@ -11,6 +11,7 @@ from flame_hub._base_client import (
     UpdateModel,
     build_include_params,
     uuid_validator,
+    build_field_params,
 )
 from flame_hub.types import FilterOperator, PageParams
 from flame_hub.models import UNSET
@@ -91,6 +92,28 @@ def test_build_sort_params(sort_params, expected):
 )
 def test_build_include_params(include_params, expected):
     assert expected == build_include_params(include_params)
+
+
+@pytest.mark.parametrize(
+    "field_params,expected",
+    [
+        (None, {}),
+        ((), {}),
+        ([], {}),
+        ("foo", {"fields": "+foo"}),
+        (("foo",), {"fields": "+foo"}),
+        (("foo", "bar"), {"fields": "+foo,+bar"}),
+        (
+            [
+                "foo",
+            ],
+            {"fields": "+foo"},
+        ),
+        (["foo", "bar"], {"fields": "+foo,+bar"}),
+    ],
+)
+def test_build_field_params(field_params, expected):
+    assert expected == build_field_params(field_params)
 
 
 class FooUpdateModel(UpdateModel):
