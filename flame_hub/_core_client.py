@@ -139,6 +139,7 @@ class MasterImageEventLog(BaseModel):
     expiring: bool
     expires_at: datetime
     master_image_id: uuid.UUID | None
+    master_image: MasterImage | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -438,13 +439,17 @@ class CoreClient(BaseClient):
     def get_master_image_event_log(
         self, master_image_event_log_id: MasterImageEventLog | uuid.UUID | str
     ) -> MasterImageEventLog | None:
-        return self._get_single_resource(MasterImageEventLog, "master-image-event-logs", master_image_event_log_id)
+        return self._get_single_resource(
+            MasterImageEventLog, "master-image-event-logs", master_image_event_log_id, include="master_image"
+        )
 
     def get_master_image_event_logs(self) -> list[MasterImageEventLog]:
-        return self._get_all_resources(MasterImageEventLog, "master-image-event-logs")
+        return self._get_all_resources(MasterImageEventLog, "master-image-event-logs", include="master_image")
 
     def find_master_image_event_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageEventLog]:
-        return self._find_all_resources(MasterImageEventLog, "master-image-event-logs", **params)
+        return self._find_all_resources(
+            MasterImageEventLog, "master-image-event-logs", include="master_image", **params
+        )
 
     def get_projects(self) -> list[Project]:
         return self._get_all_resources(Project, "projects", include="master_image")
