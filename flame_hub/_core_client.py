@@ -28,14 +28,11 @@ class CreateRegistry(BaseModel):
     name: str
     host: str
     account_name: str | None
-    account_secret: str | None
+    account_secret: str | None = None
 
 
-class Registry(BaseModel):
+class Registry(CreateRegistry):
     id: uuid.UUID
-    name: str
-    host: str
-    account_name: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -65,6 +62,9 @@ class RegistryProject(CreateRegistryProject):
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
     registry: Registry = None
+    account_id: str | None = None
+    account_name: str | None = None
+    account_secret: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -279,6 +279,32 @@ class UpdateAnalysisNode(UpdateModel):
     comment: str | None = None
     approval_status: AnalysisNodeApprovalStatus | None = None
     run_status: AnalysisNodeRunStatus | None = None
+
+
+class CreateAnalysisNodeLog(BaseModel):
+    analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    node_id: uuid.UUID
+    error: bool
+    error_code: str | None
+    status: str
+    status_message: str | None
+
+
+class AnalysisNodeLog(CreateAnalysisNodeLog):
+    id: uuid.UUID
+    created_at: datetime
+    updated_at: datetime
+    analysis: Analysis = None
+    node: Node = None
+    analysis_realm_id: uuid.UUID
+    node_realm_id: uuid.UUID
+
+
+class UpdateAnalysisNodeLog(UpdateModel):
+    error: bool | None = None
+    error_code: str | None = None
+    status: str | None = None
+    status_message: str | None = None
 
 
 AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
@@ -594,6 +620,57 @@ class CoreClient(BaseClient):
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
         return self._find_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
 
+    def create_analysis_node_log(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        node_id: Node | uuid.UUID | str,
+        error: bool,
+        error_code: str = None,
+        status: str = "",
+        status_message: str = None,
+    ) -> AnalysisNodeLog:
+        return self._create_resource(
+            AnalysisNodeLog,
+            CreateAnalysisNodeLog(
+                analysis_id=obtain_uuid_from(analysis_id),
+                node_id=obtain_uuid_from(node_id),
+                error=error,
+                error_code=error_code,
+                status=status,
+                status_message=status_message,
+            ),
+            "analysis-node-logs",
+        )
+
+    def get_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str) -> AnalysisNodeLog | None:
+        return self._get_single_resource(
+            AnalysisNodeLog, "analysis-node-logs", analysis_node_log_id, include=("analysis", "node")
+        )
+
+    def delete_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str):
+        self._delete_resource("analysis-node-logs", analysis_node_log_id)
+
+    def get_analysis_node_logs(self) -> list[AnalysisNodeLog]:
+        return self._get_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"))
+
+    def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNodeLog]:
+        return self._find_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"), **params)
+
+    def update_analysis_node_log(
+        self,
+        analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str,
+        error: bool = _UNSET,
+        error_code: str = _UNSET,
+        status: str = _UNSET,
+        status_message: str = _UNSET,
+    ) -> AnalysisNodeLog:
+        return self._update_resource(
+            AnalysisNodeLog,
+            UpdateAnalysisNodeLog(error=error, error_code=error_code, status=status, status_message=status_message),
+            "analysis-node-logs",
+            analysis_node_log_id,
+        )
+
     def get_analysis_buckets(self) -> list[AnalysisBucket]:
         return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis")
 
@@ -659,7 +736,7 @@ class CoreClient(BaseClient):
         )
 
     def get_registry(self, registry_id: Registry | uuid.UUID | str) -> Registry | None:
-        return self._get_single_resource(Registry, "registries", registry_id)
+        return self._get_single_resource(Registry, "registries", registry_id, fields="account_secret")
 
     def delete_registry(self, registry_id: Registry | uuid.UUID | str):
         self._delete_resource("registries", registry_id)
@@ -680,10 +757,10 @@ class CoreClient(BaseClient):
         )
 
     def get_registries(self) -> list[Registry]:
-        return self._get_all_resources(Registry, "registries")
+        return self._get_all_resources(Registry, "registries", fields="account_secret")
 
     def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
-        return self._find_all_resources(Registry, "registries", **params)
+        return self._find_all_resources(Registry, "registries", fields="account_secret", **params)
 
     def create_registry_project(
         self,
@@ -704,7 +781,13 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
-        return self._get_single_resource(RegistryProject, "registry-projects", registry_project_id, include="registry")
+        return self._get_single_resource(
+            RegistryProject,
+            "registry-projects",
+            registry_project_id,
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+        )
 
     def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
         self._delete_resource("registry-projects", registry_project_id)
@@ -730,10 +813,21 @@ class CoreClient(BaseClient):
         )
 
     def get_registry_projects(self) -> list[RegistryProject]:
-        return self._get_all_resources(RegistryProject, "registry-projects", include="registry")
+        return self._get_all_resources(
+            RegistryProject,
+            "registry-projects",
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+        )
 
     def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
-        return self._find_all_resources(RegistryProject, "registry-projects", include="registry", **params)
+        return self._find_all_resources(
+            RegistryProject,
+            "registry-projects",
+            fields=("account_id", "account_name", "account_secret"),
+            include="registry",
+            **params,
+        )
 
     def get_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str) -> AnalysisLog | None:
         return self._get_single_resource(AnalysisLog, "analysis-logs", analysis_log_id, include="analysis")

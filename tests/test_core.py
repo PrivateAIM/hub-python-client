@@ -165,6 +165,15 @@ def analysis_log(core_client, registry, analysis, master_realm, analysis_bucket_
 
 
 @pytest.fixture()
+def analysis_node_log(core_client, analysis_node):
+    new_analysis_node_log = core_client.create_analysis_node_log(
+        analysis_node.analysis_id, analysis_node.node_id, error=False
+    )
+    yield new_analysis_node_log
+    core_client.delete_analysis_node_log(new_analysis_node_log.id)
+
+
+@pytest.fixture()
 def registry(core_client):
     new_registry = core_client.create_registry(name=next_random_string(), host=next_random_string())
     yield new_registry
@@ -363,6 +372,31 @@ def test_get_analysis_node(core_client, analysis_node):
     assert analysis_node_get.id == analysis_node.id
     assert analysis_node_get.analysis is not None
     assert analysis_node.node is not None
+
+
+def test_get_analysis_node_log(core_client, analysis_node_log):
+    assert analysis_node_log == core_client.get_analysis_node_log(analysis_node_log.id)
+
+
+def test_get_analysis_node_log_not_found(core_client):
+    assert core_client.get_analysis_node_log(next_uuid()) is None
+
+
+def test_get_analysis_node_logs(core_client, analysis_node_log):
+    assert len(core_client.get_analysis_node_logs()) > 0
+
+
+def test_find_analysis_node_logs(core_client, analysis_node_log):
+    # Use "node_id" for filtering because there is no filter mechanism for attribute "id".
+    assert [analysis_node_log] == core_client.find_analysis_node_logs(filter={"node_id": analysis_node_log.node_id})
+
+
+def test_update_analysis_node_log(core_client, analysis_node_log):
+    new_status = next_random_string()
+    new_analysis_node_log = core_client.update_analysis_node_log(analysis_node_log.id, status=new_status)
+
+    assert new_analysis_node_log != analysis_node_log
+    assert new_status == new_analysis_node_log.status
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets):

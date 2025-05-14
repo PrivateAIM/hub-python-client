@@ -42,7 +42,7 @@ def role_permission(auth_client, role, permission):
 
 @pytest.fixture()
 def user(auth_client):
-    new_user = auth_client.create_user(next_random_string())
+    new_user = auth_client.create_user(next_random_string(), email="test@privateaim.net")
     yield new_user
     auth_client.delete_user(new_user)
 
@@ -237,6 +237,7 @@ def test_get_user(auth_client, user):
 
     assert user_get.id == user.id
     assert user_get.realm is not None
+    assert user_get.email is not None
 
 
 def test_get_user_not_found(auth_client):
@@ -248,6 +249,7 @@ def test_get_users(auth_client, user):
 
     assert len(users_get) > 0
     assert all(u.realm is not None for u in users_get)
+    assert any(u.email is not None for u in users_get)
 
 
 def test_find_users(auth_client, user):
@@ -255,6 +257,7 @@ def test_find_users(auth_client, user):
 
     assert [user.id] == [u.id for u in users_find]
     assert all(u.realm is not None for u in users_find)
+    assert all(u.email is not None for u in users_find)
 
 
 def test_update_user(auth_client, user):

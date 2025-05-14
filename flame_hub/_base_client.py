@@ -108,6 +108,7 @@ class FilterOperator(str, Enum):
 
 FilterParams = dict[str, t.Any | tuple[FilterOperator, t.Any]]
 IncludeParams = str | Iterable[str]
+FieldParams = str | Iterable[str]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
@@ -198,6 +199,25 @@ def build_include_params(include_params: IncludeParams = None) -> dict:
     return {"include": ",".join(include_params)}
 
 
+def build_field_params(field_params: FieldParams = None) -> dict:
+    if field_params is None:
+        field_params = ()  # empty tuple
+
+    if isinstance(field_params, str):
+        field_params = (field_params,)  # coalesce into tuple
+
+    # unravel iterable and merge into tuple
+    field_params = tuple(p for p in field_params)
+
+    # only allow the addition of fields
+    field_params = tuple(f"+{p}" for p in field_params)
+
+    if len(field_params) == 0:
+        return {}
+
+    return {"fields": ",".join(field_params)}
+
+
 def convert_path(path: Iterable[str | UuidIdentifiable]) -> tuple[str, ...]:
     path_parts = []
 
@@ -216,16 +236,21 @@ class BaseClient(object):
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(
-        self, resource_type: type[ResourceT], *path: str, include: IncludeParams = None
+        self,
+        resource_type: type[ResourceT],
+        *path: str,
+        fields: FieldParams = None,
+        include: IncludeParams = None,
     ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path.
         Default pagination parameters are applied."""
-        return self._find_all_resources(resource_type, *path, include=include)
+        return self._find_all_resources(resource_type, *path, fields=fields, include=include)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
+        fields: FieldParams = None,
         include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
@@ -241,6 +266,7 @@ class BaseClient(object):
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
             | build_include_params(include)
+            | build_field_params(fields)
         )
 
         r = self._client.get("/".join(path), params=request_params)
@@ -263,10 +289,14 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _get_single_resource(
-        self, resource_type: type[ResourceT], *path: str | UuidIdentifiable, include: IncludeParams = None
+        self,
+        resource_type: type[ResourceT],
+        *path: str | UuidIdentifiable,
+        fields: FieldParams = None,
+        include: IncludeParams = None,
     ) -> ResourceT | None:
         """Get a resource of a certain type at the specified path."""
-        request_params = build_include_params(include)
+        request_params = build_field_params(fields) | build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
 

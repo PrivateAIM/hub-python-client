@@ -52,7 +52,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    # TODO: add email attribute
+    email: str | None = None
     display_name: str | None
     first_name: str | None
     last_name: str | None
@@ -88,6 +88,7 @@ class Robot(BaseModel):
     display_name: str | None
     description: str | None
     active: bool
+    secret: str = None
     created_at: datetime
     updated_at: datetime
     user_id: uuid.UUID | None
@@ -300,7 +301,7 @@ class AuthClient(BaseClient):
         self._delete_resource("robots", robot_id)
 
     def get_robot(self, robot_id: Robot | str | uuid.UUID) -> Robot | None:
-        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"))
+        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"), fields="secret")
 
     def update_robot(
         self,
@@ -318,10 +319,10 @@ class AuthClient(BaseClient):
         )
 
     def get_robots(self) -> list[Robot]:
-        return self._get_all_resources(Robot, "robots", include=("user", "realm"))
+        return self._get_all_resources(Robot, "robots", include=("user", "realm"), fields="secret")
 
     def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", include=("user", "realm"), **params)
+        return self._find_all_resources(Robot, "robots", include=("user", "realm"), fields="secret", **params)
 
     def create_permission(
         self,
@@ -462,7 +463,7 @@ class AuthClient(BaseClient):
         )
 
     def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
-        return self._get_single_resource(User, "users", user_id, include="realm")
+        return self._get_single_resource(User, "users", user_id, fields="email", include="realm")
 
     def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
@@ -496,10 +497,10 @@ class AuthClient(BaseClient):
         )
 
     def get_users(self) -> list[User]:
-        return self._get_all_resources(User, "users", include="realm")
+        return self._get_all_resources(User, "users", fields="email", include="realm")
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", include="realm", **params)
+        return self._find_all_resources(User, "users", fields="email", include="realm", **params)
 
     def create_user_permission(
         self,
