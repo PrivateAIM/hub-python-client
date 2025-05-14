@@ -365,7 +365,7 @@ class CoreClient(BaseClient):
     def create_node(
         self,
         name: str,
-        realm_id: Realm | str | uuid.UUID,
+        realm_id: Realm | str | uuid.UUID = None,
         registry_id: Registry | uuid.UUID | str = None,
         external_name: str | None = None,
         node_type: NodeType = "default",
