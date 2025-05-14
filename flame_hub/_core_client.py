@@ -414,11 +414,19 @@ class CoreClient(BaseClient):
     def get_master_image_groups(self) -> list[MasterImageGroup]:
         return self._get_all_resources(MasterImageGroup, "master-image-groups")
 
+    def get_master_image_group(
+        self, master_image_group_id: MasterImageGroup | uuid.UUID | str
+    ) -> MasterImageGroup | None:
+        return self._get_single_resource(MasterImageGroup, "master-image-groups", master_image_group_id)
+
     def find_master_image_groups(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageGroup]:
         return self._find_all_resources(MasterImageGroup, "master-image-groups", **params)
 
     def get_master_images(self) -> list[MasterImage]:
         return self._get_all_resources(MasterImage, "master-images")
+
+    def get_master_image(self, master_image_id: MasterImage | uuid.UUID | str) -> MasterImage | None:
+        return self._get_single_resource(MasterImage, "master-images", master_image_id)
 
     def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImage]:
         return self._find_all_resources(MasterImage, "master-images", **params)
