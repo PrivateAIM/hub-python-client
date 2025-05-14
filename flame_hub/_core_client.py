@@ -218,13 +218,11 @@ class Analysis(CreateAnalysis):
     run_status: AnalysisRunStatus | None
     created_at: datetime
     updated_at: datetime
-    registry_id: uuid.UUID | None
     registry: Registry | None = None
     realm_id: uuid.UUID
     user_id: uuid.UUID
     project_id: uuid.UUID
     project: Project = None
-    master_image_id: uuid.UUID | None
     master_image: MasterImage | None = None
 
 
