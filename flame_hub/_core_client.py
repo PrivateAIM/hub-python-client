@@ -4,7 +4,7 @@ from datetime import datetime
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, WrapValidator, Field
+from pydantic import BaseModel, WrapValidator, Field, BeforeValidator
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -202,7 +202,11 @@ class CreateAnalysis(BaseModel):
     project_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
-    image_command_arguments: list[MasterImageCommandArgument] = []
+    image_command_arguments: t.Annotated[
+        list[MasterImageCommandArgument],
+        Field(default_factory=list),
+        BeforeValidator(lambda value: [] if value is None else value),
+    ]
 
 
 class Analysis(CreateAnalysis):
