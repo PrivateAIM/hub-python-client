@@ -374,6 +374,10 @@ def test_get_analysis_node(core_client, analysis_node):
     assert analysis_node.node is not None
 
 
+def test_get_analysis_node_not_found(core_client):
+    assert core_client.get_analysis_node(next_uuid()) is None
+
+
 def test_get_analysis_node_log(core_client, analysis_node_log):
     assert analysis_node_log == core_client.get_analysis_node_log(analysis_node_log.id)
 
