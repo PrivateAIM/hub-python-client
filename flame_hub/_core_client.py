@@ -120,6 +120,21 @@ class MasterImageCommandArgument(te.TypedDict):
     position: t.Literal["before", "after"] | None
 
 
+def ensure_position_none(value: t.Any) -> t.Any:
+    # see https://github.com/PrivateAIM/hub-python-client/issues/42
+    # `position` can be absent. if that's the case, validation fails because
+    # MasterImageCommandArgument is a TypedDict and cannot supply default values.
+    # therefore this validator checks if `position` is absent and, if so, sets it to None.
+    if not isinstance(value, list) or not all(isinstance(v_dict, dict) for v_dict in value):
+        raise ValueError("value must be a list of dicts")
+
+    for v_idx, v_dict in enumerate(value):
+        if "position" not in v_dict:
+            value[v_idx]["position"] = None
+
+    return value
+
+
 class MasterImage(BaseModel):
     id: uuid.UUID
     path: str | None
@@ -127,7 +142,7 @@ class MasterImage(BaseModel):
     group_virtual_path: str
     name: str
     command: str | None
-    command_arguments: list[MasterImageCommandArgument] | None
+    command_arguments: t.Annotated[list[MasterImageCommandArgument] | None, BeforeValidator(ensure_position_none)]
     created_at: datetime
     updated_at: datetime
 
