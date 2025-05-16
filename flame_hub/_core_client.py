@@ -21,7 +21,8 @@ from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 from flame_hub._storage_client import BucketFile
 
-NodeType = t.Literal["aggregator", "default"]
+
+RegistryCommand = t.Literal["setup", "cleanup"]
 
 
 class CreateRegistry(BaseModel):
@@ -74,6 +75,9 @@ class UpdateRegistryProject(UpdateModel):
     type: RegistryProjectType | None = None
     registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
     external_name: str | None = None
+
+
+NodeType = t.Literal["aggregator", "default"]
 
 
 class CreateNode(BaseModel):
@@ -777,6 +781,14 @@ class CoreClient(BaseClient):
 
     def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
         return self._find_all_resources(Registry, "registries", fields="account_secret", **params)
+
+    def send_registry_command(self, registry_id: Registry | uuid.UUID | str, command: RegistryCommand):
+        r = self._client.post(
+            "services/registry/command", json={"command": command, "id": str(obtain_uuid_from(registry_id))}
+        )
+
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_hub_api_error_from_response(r)
 
     def create_registry_project(
         self,
