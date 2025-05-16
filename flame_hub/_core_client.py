@@ -248,7 +248,15 @@ class UpdateAnalysis(UpdateModel):
     image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
 
 
-AnalysisCommand = t.Literal["spinUp", "tearDown", "buildStart", "buildStop", "configurationLock", "configurationUnlock"]
+AnalysisCommand = t.Literal[
+    "spinUp",
+    "tearDown",
+    "buildStart",
+    "buildStop",
+    "configurationLock",
+    "configurationUnlock",
+    "buildStatus",
+]
 
 
 class AnalysisLog(BaseModel):

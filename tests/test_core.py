@@ -355,6 +355,18 @@ def test_lock_analysis(core_client, configured_analysis):
     assert core_client.get_analysis(configured_analysis.id).configuration_locked is False
 
 
+def test_build_status_analysis(core_client, configured_analysis):
+    core_client.send_analysis_command(configured_analysis.id, command="configurationLock")
+    core_client.send_analysis_command(configured_analysis.id, command="buildStart")
+    core_client.send_analysis_command(configured_analysis.id, command="buildStatus")
+
+    def _check_checking_event_in_logs():
+        logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
+        assert "checking" in [log.event for log in logs]
+
+    assert_eventually(_check_checking_event_in_logs)
+
+
 def test_analysis_node_update(core_client, analysis_node):
     new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status="starting")
 
