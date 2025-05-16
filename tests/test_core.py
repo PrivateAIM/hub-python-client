@@ -140,7 +140,7 @@ def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_byte
 
 
 @pytest.fixture()
-def analysis_log(core_client, registry, analysis, master_realm, analysis_bucket_file):
+def configured_analysis(core_client, registry, analysis, master_realm, analysis_bucket_file):
     # An analysis needs at least one default and one aggregator node.
     nodes = []
     for node_type in t.get_args(NodeType):
@@ -153,15 +153,20 @@ def analysis_log(core_client, registry, analysis, master_realm, analysis_bucket_
         nodes.append(new_node)
         core_client.create_project_node(analysis.project_id, new_node)
         core_client.create_analysis_node(analysis, new_node)
-    core_client.send_analysis_command(analysis, "configurationLock")
-    core_client.send_analysis_command(analysis, "buildStart")
+    return analysis
+
+
+@pytest.fixture()
+def analysis_log(core_client, configured_analysis):
+    core_client.send_analysis_command(configured_analysis, "configurationLock")
+    core_client.send_analysis_command(configured_analysis, "buildStart")
 
     def _check_analysis_logs_present():
-        assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis.id})) > 0
+        assert len(core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})) > 0
 
     assert_eventually(_check_analysis_logs_present)
 
-    return core_client.find_analysis_logs(filter={"analysis_id": analysis.id})[0]
+    return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
 
 
 @pytest.fixture()
@@ -340,6 +345,14 @@ def test_update_analysis(core_client, analysis):
 
     assert analysis != new_analysis
     assert new_analysis.name == new_name
+
+
+def test_lock_analysis(core_client, configured_analysis):
+    core_client.send_analysis_command(configured_analysis.id, command="configurationLock")
+    assert core_client.get_analysis(configured_analysis.id).configuration_locked is True
+
+    core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock")
+    assert core_client.get_analysis(configured_analysis.id).configuration_locked is False
 
 
 def test_analysis_node_update(core_client, analysis_node):
