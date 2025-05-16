@@ -348,22 +348,21 @@ def test_update_analysis(core_client, analysis):
 
 
 def test_lock_analysis(core_client, configured_analysis):
-    core_client.send_analysis_command(configured_analysis.id, command="configurationLock")
-    assert core_client.get_analysis(configured_analysis.id).configuration_locked is True
-
-    core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock")
-    assert core_client.get_analysis(configured_analysis.id).configuration_locked is False
+    assert (
+        core_client.send_analysis_command(configured_analysis.id, command="configurationLock").configuration_locked
+        is True
+    )
+    assert (
+        core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock").configuration_locked
+        is False
+    )
 
 
 def test_build_analysis(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis.id, command="configurationLock")
-    core_client.send_analysis_command(configured_analysis.id, command="buildStart")
 
-    assert core_client.get_analysis(configured_analysis.id).build_status in ("starting", "started")
-
-    core_client.send_analysis_command(configured_analysis.id, command="buildStop")
-
-    assert core_client.get_analysis(configured_analysis.id).build_status in ("stopping", "stopped")
+    assert core_client.send_analysis_command(configured_analysis.id, command="buildStart").build_status == "starting"
+    assert core_client.send_analysis_command(configured_analysis.id, command="buildStop").build_status == "stopping"
 
 
 def test_build_status_analysis(core_client, configured_analysis):

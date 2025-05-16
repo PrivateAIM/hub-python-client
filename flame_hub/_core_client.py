@@ -603,11 +603,13 @@ class CoreClient(BaseClient):
             analysis_id,
         )
 
-    def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand):
+    def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand) -> Analysis:
         r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
+
+        return Analysis(**r.json())
 
     def create_analysis_node(
         self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
