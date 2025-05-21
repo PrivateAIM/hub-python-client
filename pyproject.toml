@@ -5,7 +5,7 @@ description = "HTTP client for interacting with FLAME Hub services."
 authors = [
     { name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de" }
 ]
-readme = "README.md"
+readme = "README.rst"
 requires-python = ">=3.10,<4"
 dependencies = [
     "pydantic (>=2.10.0,<3.0.0)",
