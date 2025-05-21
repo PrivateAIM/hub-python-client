@@ -1,3 +1,8 @@
+from dotenv import load_dotenv
+
+
+load_dotenv("../.env.test")
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -6,7 +11,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Flame Hub Client"
+project = "FLAME Hub Client"
 copyright = "2025, Paul Brassel, Maximilian Jugl"
 author = "Paul Brassel, Maximilian Jugl"
 version = "0.2.2"
