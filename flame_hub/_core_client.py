@@ -363,6 +363,8 @@ class UpdateAnalysisBucketFile(UpdateModel):
 
 
 class CoreClient(BaseClient):
+    """TODO"""
+
     def __init__(
         self,
         base_url: str = DEFAULT_CORE_BASE_URL,

@@ -10,8 +10,11 @@ from pydantic import BaseModel, model_validator, ValidatorFunctionWrapHandler, V
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 
-# sentinel to mark parameters as unset (as opposed to using None)
-_UNSET = object()
+
+class _UNSET(object):
+    """
+    Sentinel to mark parameters as unset as opposed to using :any:`None`.
+    """
 
 
 class UpdateModel(BaseModel):

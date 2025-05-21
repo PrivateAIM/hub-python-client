@@ -239,6 +239,8 @@ class RobotRole(CreateRobotRole):
 
 
 class AuthClient(BaseClient):
+    """TODO"""
+
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,

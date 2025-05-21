@@ -24,6 +24,8 @@ class RefreshToken(AccessToken):
 
 
 class RobotAuth(httpx.Auth):
+    """TODO"""
+
     def __init__(
         self,
         robot_id: str,
@@ -64,6 +66,8 @@ class RobotAuth(httpx.Auth):
 
 
 class PasswordAuth(httpx.Auth):
+    """TODO"""
+
     def __init__(self, username: str, password: str, base_url=DEFAULT_AUTH_BASE_URL, client: httpx.Client = None):
         self._username = username
         self._password = password
