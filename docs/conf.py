@@ -1,3 +1,5 @@
+import os
+
 from dotenv import load_dotenv
 
 
@@ -16,6 +18,13 @@ copyright = "2025, Paul Brassel, Maximilian Jugl"
 author = "Paul Brassel, Maximilian Jugl"
 version = "0.2.2"
 release = "0.2.2"
+rst_prolog = f"""
+.. |hub_version| replace:: {os.getenv("PYTEST_HUB_VERSION")}
+.. role:: console(code)
+    :language: console
+.. role:: python(code)
+    :language: python
+"""
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
