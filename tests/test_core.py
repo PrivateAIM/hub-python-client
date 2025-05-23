@@ -180,9 +180,18 @@ def analysis_node_log(core_client, analysis_node):
 
 @pytest.fixture()
 def registry(core_client):
-    new_registry = core_client.create_registry(name=next_random_string(), host=next_random_string())
+    new_registry = core_client.create_registry(
+        name=next_random_string(),
+        host=next_random_string(),
+        account_secret=next_random_string(),
+    )
     yield new_registry
     core_client.delete_registry(new_registry)
+
+
+@pytest.fixture()
+def registry_fields():
+    return ("account_secret",)
 
 
 @pytest.fixture()
@@ -195,6 +204,11 @@ def registry_project(core_client, registry):
     )
     yield new_registry_project
     core_client.delete_registry_project(new_registry_project)
+
+
+@pytest.fixture(scope="session")
+def registry_project_fields():
+    return "account_id", "account_name", "account_secret"
 
 
 def test_get_nodes(core_client, node):
@@ -489,20 +503,29 @@ def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
     assert new_analysis_bucket_file.root is not analysis_bucket_file.root
 
 
-def test_get_registry(core_client, registry):
-    assert registry == core_client.get_registry(registry.id)
+def test_get_registry(core_client, registry, registry_fields):
+    registry_get = core_client.get_registry(registry.id, fields=registry_fields)
+
+    assert registry_get.id == registry.id
+    assert all(field in registry_get.model_fields_set for field in registry_fields)
 
 
 def test_get_registry_not_found(core_client):
     assert core_client.get_registry(next_uuid()) is None
 
 
-def test_get_registries(core_client, registry):
-    assert len(core_client.get_registries()) > 0
+def test_get_registries(core_client, registry, registry_fields):
+    registries_get = core_client.get_registries(fields=registry_fields)
+
+    assert len(registries_get) > 0
+    assert all(field in r.model_fields_set for r in registries_get for field in registry_fields)
 
 
-def test_find_registries(core_client, registry):
-    assert [registry] == core_client.find_registries(filter={"id": registry.id})
+def test_find_registries(core_client, registry, registry_fields):
+    registries_find = core_client.find_registries(filter={"id": registry.id}, fields=registry_fields)
+
+    assert [registry.id] == [r.id for r in registries_find]
+    assert all(field in r.model_fields_set for r in registries_find for field in registry_fields)
 
 
 def test_update_registry(core_client, registry):
@@ -524,29 +547,34 @@ def test_registry_setup(core_client, registry):
     assert_eventually(_check_setup)
 
 
-def test_get_registry_project(core_client, registry_project):
-    registry_project_get = core_client.get_registry_project(registry_project.id)
+def test_get_registry_project(core_client, registry_project, registry_project_fields):
+    registry_project_get = core_client.get_registry_project(registry_project.id, fields=registry_project_fields)
 
     assert registry_project.id == registry_project_get.id
     assert registry_project_get.registry is not None
+    assert all(field in registry_project_get.model_fields_set for field in registry_project_fields)
 
 
 def test_get_registry_project_not_found(core_client, registry_project):
     assert core_client.get_registry_project(next_uuid()) is None
 
 
-def test_get_project_registries(core_client, registry_project):
-    registry_project_gets = core_client.get_registry_projects()
+def test_get_project_registries(core_client, registry_project, registry_project_fields):
+    registry_projects_get = core_client.get_registry_projects(fields=registry_project_fields)
 
-    assert len(registry_project_gets) > 0
-    assert all(rp.registry is not None for rp in registry_project_gets)
+    assert len(registry_projects_get) > 0
+    assert all(rp.registry is not None for rp in registry_projects_get)
+    assert all(field in rp.model_fields_set for rp in registry_projects_get for field in registry_project_fields)
 
 
-def test_find_project_registries(core_client, registry_project):
-    registry_projects_find = core_client.find_registry_projects(filter={"id": registry_project.id})
+def test_find_project_registries(core_client, registry_project, registry_project_fields):
+    registry_projects_find = core_client.find_registry_projects(
+        filter={"id": registry_project.id}, fields=registry_project_fields
+    )
 
     assert [registry_project.id] == [rp.id for rp in registry_projects_find]
     assert all(rp.registry is not None for rp in registry_projects_find)
+    assert all(field in rp.model_fields_set for rp in registry_projects_find for field in registry_project_fields)
 
 
 def test_update_project_registry(core_client, registry_project):

@@ -20,6 +20,11 @@ def robot(auth_client, realm):
 
 
 @pytest.fixture()
+def robot_fields():
+    return ("secret",)
+
+
+@pytest.fixture()
 def permission(auth_client):
     new_permission = auth_client.create_permission(next_random_string())
     yield new_permission
@@ -45,6 +50,11 @@ def user(auth_client):
     new_user = auth_client.create_user(next_random_string(), email="test@privateaim.net")
     yield new_user
     auth_client.delete_user(new_user)
+
+
+@pytest.fixture()
+def user_fields():
+    return ("email",)
 
 
 @pytest.fixture()
@@ -99,10 +109,11 @@ def test_find_realms(auth_client, realm):
     assert [realm] == auth_client.find_realms(filter={"id": realm.id})
 
 
-def test_get_robot(auth_client, robot):
-    robot_get = auth_client.get_robot(robot)
+def test_get_robot(auth_client, robot, robot_fields):
+    robot_get = auth_client.get_robot(robot, fields=robot_fields)
 
     assert robot_get.id == robot.id
+    assert all(field in robot_get.model_fields_set for field in robot_fields)
 
 
 def test_get_robot_not_found(auth_client, robot):
@@ -117,17 +128,19 @@ def test_update_robot(auth_client, robot):
     assert new_robot.name == new_name
 
 
-def test_get_robots(auth_client, robot):
-    robots_get = auth_client.get_robots()
+def test_get_robots(auth_client, robot, robot_fields):
+    robots_get = auth_client.get_robots(fields=robot_fields)
 
     assert len(robots_get) > 0
+    assert all(field in r.model_fields_set for r in robots_get for field in robot_fields)
 
 
-def test_find_robots(auth_client, robot):
-    robots_find = auth_client.find_robots(filter={"id": robot.id})
+def test_find_robots(auth_client, robot, robot_fields):
+    robots_find = auth_client.find_robots(filter={"id": robot.id}, fields=robot_fields)
 
     assert [robot.id] == [r.id for r in robots_find]
     assert all(r.realm is not None for r in robots_find)
+    assert all(field in r.model_fields_set for r in robots_find for field in robot_fields)
 
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2660")
@@ -232,32 +245,32 @@ def test_find_role_permissions(auth_client, role_permission):
     assert all(rp.permission is not None for rp in role_perms_find)
 
 
-def test_get_user(auth_client, user):
-    user_get = auth_client.get_user(user.id)
+def test_get_user(auth_client, user, user_fields):
+    user_get = auth_client.get_user(user.id, fields=user_fields)
 
     assert user_get.id == user.id
     assert user_get.realm is not None
-    assert user_get.email is not None
+    assert all(field in user_get.model_fields_set for field in user_fields)
 
 
 def test_get_user_not_found(auth_client):
     assert auth_client.get_user(next_uuid()) is None
 
 
-def test_get_users(auth_client, user):
-    users_get = auth_client.get_users()
+def test_get_users(auth_client, user, user_fields):
+    users_get = auth_client.get_users(fields=user_fields)
 
     assert len(users_get) > 0
     assert all(u.realm is not None for u in users_get)
-    assert any(u.email is not None for u in users_get)
+    assert all(field in u.model_fields_set for u in users_get for field in user_fields)
 
 
-def test_find_users(auth_client, user):
-    users_find = auth_client.find_users(filter={"id": user.id})
+def test_find_users(auth_client, user, user_fields):
+    users_find = auth_client.find_users(filter={"id": user.id}, fields=user_fields)
 
     assert [user.id] == [u.id for u in users_find]
     assert all(u.realm is not None for u in users_find)
-    assert all(u.email is not None for u in users_find)
+    assert all(field in u.model_fields_set for u in users_find for field in user_fields)
 
 
 def test_update_user(auth_client, user):
