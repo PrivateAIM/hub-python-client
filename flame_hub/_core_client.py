@@ -13,6 +13,7 @@ from flame_hub._base_client import (
     UpdateModel,
     _UNSET,
     FindAllKwargs,
+    GetKwargs,
     ClientKwargs,
     uuid_validator,
 )
@@ -383,8 +384,8 @@ class CoreClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def get_nodes(self) -> list[Node]:
-        return self._get_all_resources(Node, "nodes", include=("registry", "registry_project"))
+    def get_nodes(self, **params: te.Unpack[GetKwargs]) -> list[Node]:
+        return self._get_all_resources(Node, "nodes", include=("registry", "registry_project"), **params)
 
     def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[Node]:
         return self._find_all_resources(Node, "nodes", include=("registry", "registry_project"), **params)
@@ -411,8 +412,8 @@ class CoreClient(BaseClient):
             "nodes",
         )
 
-    def get_node(self, node_id: Node | uuid.UUID | str) -> Node | None:
-        return self._get_single_resource(Node, "nodes", node_id, include=("registry", "registry_project"))
+    def get_node(self, node_id: Node | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Node | None:
+        return self._get_single_resource(Node, "nodes", node_id, include=("registry", "registry_project"), **params)
 
     def delete_node(self, node_id: Node | uuid.UUID | str):
         self._delete_resource("nodes", node_id)
@@ -441,43 +442,45 @@ class CoreClient(BaseClient):
             node_id,
         )
 
-    def get_master_image_groups(self) -> list[MasterImageGroup]:
-        return self._get_all_resources(MasterImageGroup, "master-image-groups")
+    def get_master_image_groups(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageGroup]:
+        return self._get_all_resources(MasterImageGroup, "master-image-groups", **params)
 
     def get_master_image_group(
-        self, master_image_group_id: MasterImageGroup | uuid.UUID | str
+        self, master_image_group_id: MasterImageGroup | uuid.UUID | str, **params: te.Unpack[GetKwargs]
     ) -> MasterImageGroup | None:
-        return self._get_single_resource(MasterImageGroup, "master-image-groups", master_image_group_id)
+        return self._get_single_resource(MasterImageGroup, "master-image-groups", master_image_group_id, **params)
 
     def find_master_image_groups(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageGroup]:
         return self._find_all_resources(MasterImageGroup, "master-image-groups", **params)
 
-    def get_master_images(self) -> list[MasterImage]:
-        return self._get_all_resources(MasterImage, "master-images")
+    def get_master_images(self, **params: te.Unpack[GetKwargs]) -> list[MasterImage]:
+        return self._get_all_resources(MasterImage, "master-images", **params)
 
-    def get_master_image(self, master_image_id: MasterImage | uuid.UUID | str) -> MasterImage | None:
-        return self._get_single_resource(MasterImage, "master-images", master_image_id)
+    def get_master_image(
+        self, master_image_id: MasterImage | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> MasterImage | None:
+        return self._get_single_resource(MasterImage, "master-images", master_image_id, **params)
 
     def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImage]:
         return self._find_all_resources(MasterImage, "master-images", **params)
 
     def get_master_image_event_log(
-        self, master_image_event_log_id: MasterImageEventLog | uuid.UUID | str
+        self, master_image_event_log_id: MasterImageEventLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
     ) -> MasterImageEventLog | None:
         return self._get_single_resource(
-            MasterImageEventLog, "master-image-event-logs", master_image_event_log_id, include="master_image"
+            MasterImageEventLog, "master-image-event-logs", master_image_event_log_id, include="master_image", **params
         )
 
-    def get_master_image_event_logs(self) -> list[MasterImageEventLog]:
-        return self._get_all_resources(MasterImageEventLog, "master-image-event-logs", include="master_image")
+    def get_master_image_event_logs(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageEventLog]:
+        return self._get_all_resources(MasterImageEventLog, "master-image-event-logs", include="master_image", **params)
 
     def find_master_image_event_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageEventLog]:
         return self._find_all_resources(
             MasterImageEventLog, "master-image-event-logs", include="master_image", **params
         )
 
-    def get_projects(self) -> list[Project]:
-        return self._get_all_resources(Project, "projects", include="master_image")
+    def get_projects(self, **params: te.Unpack[GetKwargs]) -> list[Project]:
+        return self._get_all_resources(Project, "projects", include="master_image", **params)
 
     def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[Project]:
         return self._find_all_resources(Project, "projects", include="master_image", **params)
@@ -500,8 +503,8 @@ class CoreClient(BaseClient):
     def delete_project(self, project_id: Project | uuid.UUID | str):
         self._delete_resource("projects", project_id)
 
-    def get_project(self, project_id: Project | uuid.UUID | str) -> Project | None:
-        return self._get_single_resource(Project, "projects", project_id, include="master_image")
+    def get_project(self, project_id: Project | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Project | None:
+        return self._get_single_resource(Project, "projects", project_id, include="master_image", **params)
 
     def update_project(
         self,
@@ -529,14 +532,18 @@ class CoreClient(BaseClient):
     def delete_project_node(self, project_node_id: ProjectNode | uuid.UUID | str):
         self._delete_resource("project-nodes", project_node_id)
 
-    def get_project_nodes(self) -> list[ProjectNode]:
-        return self._get_all_resources(ProjectNode, "project-nodes", include=("node", "project"))
+    def get_project_nodes(self, **params: te.Unpack[GetKwargs]) -> list[ProjectNode]:
+        return self._get_all_resources(ProjectNode, "project-nodes", include=("node", "project"), **params)
 
     def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[ProjectNode]:
         return self._find_all_resources(ProjectNode, "project-nodes", include=("node", "project"), **params)
 
-    def get_project_node(self, project_node_id: ProjectNode | uuid.UUID | str) -> ProjectNode | None:
-        return self._get_single_resource(ProjectNode, "project-nodes", project_node_id, include=("node", "project"))
+    def get_project_node(
+        self, project_node_id: ProjectNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> ProjectNode | None:
+        return self._get_single_resource(
+            ProjectNode, "project-nodes", project_node_id, include=("node", "project"), **params
+        )
 
     def update_project_node(
         self,
@@ -576,15 +583,15 @@ class CoreClient(BaseClient):
     def delete_analysis(self, analysis_id: Analysis | uuid.UUID | str):
         self._delete_resource("analyses", analysis_id)
 
-    def get_analyses(self) -> list[Analysis]:
-        return self._get_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"))
+    def get_analyses(self, **params: te.Unpack[GetKwargs]) -> list[Analysis]:
+        return self._get_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"), **params)
 
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> list[Analysis]:
         return self._find_all_resources(Analysis, "analyses", include=("registry", "project", "master_image"), **params)
 
-    def get_analysis(self, analysis_id: Analysis | uuid.UUID | str) -> Analysis | None:
+    def get_analysis(self, analysis_id: Analysis | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Analysis | None:
         return self._get_single_resource(
-            Analysis, "analyses", analysis_id, include=("registry", "project", "master_image")
+            Analysis, "analyses", analysis_id, include=("registry", "project", "master_image"), **params
         )
 
     def update_analysis(
@@ -641,11 +648,15 @@ class CoreClient(BaseClient):
             analysis_node_id,
         )
 
-    def get_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str) -> AnalysisNode | None:
-        return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id, include=("analysis", "node"))
+    def get_analysis_node(
+        self, analysis_node_id: AnalysisNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> AnalysisNode | None:
+        return self._get_single_resource(
+            AnalysisNode, "analysis-nodes", analysis_node_id, include=("analysis", "node"), **params
+        )
 
-    def get_analysis_nodes(self) -> list[AnalysisNode]:
-        return self._get_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"))
+    def get_analysis_nodes(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisNode]:
+        return self._get_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
 
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
         return self._find_all_resources(AnalysisNode, "analysis-nodes", include=("analysis", "node"), **params)
@@ -672,16 +683,18 @@ class CoreClient(BaseClient):
             "analysis-node-logs",
         )
 
-    def get_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str) -> AnalysisNodeLog | None:
+    def get_analysis_node_log(
+        self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> AnalysisNodeLog | None:
         return self._get_single_resource(
-            AnalysisNodeLog, "analysis-node-logs", analysis_node_log_id, include=("analysis", "node")
+            AnalysisNodeLog, "analysis-node-logs", analysis_node_log_id, include=("analysis", "node"), **params
         )
 
     def delete_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str):
         self._delete_resource("analysis-node-logs", analysis_node_log_id)
 
-    def get_analysis_node_logs(self) -> list[AnalysisNodeLog]:
-        return self._get_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"))
+    def get_analysis_node_logs(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisNodeLog]:
+        return self._get_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"), **params)
 
     def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNodeLog]:
         return self._find_all_resources(AnalysisNodeLog, "analysis-node-logs", include=("analysis", "node"), **params)
@@ -701,17 +714,23 @@ class CoreClient(BaseClient):
             analysis_node_log_id,
         )
 
-    def get_analysis_buckets(self) -> list[AnalysisBucket]:
-        return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis")
+    def get_analysis_buckets(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucket]:
+        return self._get_all_resources(AnalysisBucket, "analysis-buckets", include="analysis", **params)
 
     def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucket]:
         return self._find_all_resources(AnalysisBucket, "analysis-buckets", include="analysis", **params)
 
-    def get_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str) -> AnalysisBucket | None:
-        return self._get_single_resource(AnalysisBucket, "analysis-buckets", analysis_bucket_id, include="analysis")
+    def get_analysis_bucket(
+        self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> AnalysisBucket | None:
+        return self._get_single_resource(
+            AnalysisBucket, "analysis-buckets", analysis_bucket_id, include="analysis", **params
+        )
 
-    def get_analysis_bucket_files(self) -> list[AnalysisBucketFile]:
-        return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files", include=("analysis", "bucket"))
+    def get_analysis_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucketFile]:
+        return self._get_all_resources(
+            AnalysisBucketFile, "analysis-bucket-files", include=("analysis", "bucket"), **params
+        )
 
     def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucketFile]:
         return self._find_all_resources(
@@ -719,10 +738,14 @@ class CoreClient(BaseClient):
         )
 
     def get_analysis_bucket_file(
-        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, **params: te.Unpack[GetKwargs]
     ) -> AnalysisBucketFile | None:
         return self._get_single_resource(
-            AnalysisBucketFile, "analysis-bucket-files", analysis_bucket_file_id, include=("analysis", "bucket")
+            AnalysisBucketFile,
+            "analysis-bucket-files",
+            analysis_bucket_file_id,
+            include=("analysis", "bucket"),
+            **params,
         )
 
     def delete_analysis_bucket_file(
@@ -765,8 +788,8 @@ class CoreClient(BaseClient):
             "registries",
         )
 
-    def get_registry(self, registry_id: Registry | uuid.UUID | str) -> Registry | None:
-        return self._get_single_resource(Registry, "registries", registry_id, fields="account_secret")
+    def get_registry(self, registry_id: Registry | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Registry | None:
+        return self._get_single_resource(Registry, "registries", registry_id, **params)
 
     def delete_registry(self, registry_id: Registry | uuid.UUID | str):
         self._delete_resource("registries", registry_id)
@@ -786,11 +809,11 @@ class CoreClient(BaseClient):
             registry_id,
         )
 
-    def get_registries(self) -> list[Registry]:
-        return self._get_all_resources(Registry, "registries", fields="account_secret")
+    def get_registries(self, **params: te.Unpack[GetKwargs]) -> list[Registry]:
+        return self._get_all_resources(Registry, "registries", **params)
 
     def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
-        return self._find_all_resources(Registry, "registries", fields="account_secret", **params)
+        return self._find_all_resources(Registry, "registries", **params)
 
     def send_registry_command(self, registry_id: Registry | uuid.UUID | str, command: RegistryCommand):
         r = self._client.post(
@@ -818,13 +841,15 @@ class CoreClient(BaseClient):
             "registry-projects",
         )
 
-    def get_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str) -> RegistryProject | None:
+    def get_registry_project(
+        self, registry_project_id: RegistryProject | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> RegistryProject | None:
         return self._get_single_resource(
             RegistryProject,
             "registry-projects",
             registry_project_id,
-            fields=("account_id", "account_name", "account_secret"),
             include="registry",
+            **params,
         )
 
     def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
@@ -850,31 +875,32 @@ class CoreClient(BaseClient):
             registry_project_id,
         )
 
-    def get_registry_projects(self) -> list[RegistryProject]:
+    def get_registry_projects(self, **params: te.Unpack[GetKwargs]) -> list[RegistryProject]:
         return self._get_all_resources(
             RegistryProject,
             "registry-projects",
-            fields=("account_id", "account_name", "account_secret"),
             include="registry",
+            **params,
         )
 
     def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
         return self._find_all_resources(
             RegistryProject,
             "registry-projects",
-            fields=("account_id", "account_name", "account_secret"),
             include="registry",
             **params,
         )
 
-    def get_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str) -> AnalysisLog | None:
-        return self._get_single_resource(AnalysisLog, "analysis-logs", analysis_log_id, include="analysis")
+    def get_analysis_log(
+        self, analysis_log_id: AnalysisLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> AnalysisLog | None:
+        return self._get_single_resource(AnalysisLog, "analysis-logs", analysis_log_id, include="analysis", **params)
 
     def delete_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str):
         self._delete_resource("analysis-logs", analysis_log_id)
 
-    def get_analysis_logs(self) -> list[AnalysisLog]:
-        return self._get_all_resources(AnalysisLog, "analysis-logs", include="analysis")
+    def get_analysis_logs(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisLog]:
+        return self._get_all_resources(AnalysisLog, "analysis-logs", include="analysis", **params)
 
     def find_analysis_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisLog]:
         return self._find_all_resources(AnalysisLog, "analysis-logs", include="analysis", **params)
