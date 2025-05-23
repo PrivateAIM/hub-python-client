@@ -5,6 +5,7 @@ __all__ = [
     "FilterParams",
     "FindAllKwargs",
     "NodeType",
+    "RegistryCommand",
     "IncludeParams",
     "FieldParams",
     "RegistryProjectType",
@@ -30,6 +31,7 @@ from ._base_client import (
 )
 from ._core_client import (
     NodeType,
+    RegistryCommand,
     RegistryProjectType,
     MasterImageCommandArgument,
     ProjectNodeApprovalStatus,

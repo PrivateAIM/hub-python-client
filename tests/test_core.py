@@ -513,6 +513,17 @@ def test_update_registry(core_client, registry):
     assert new_registry.name == new_name
 
 
+def test_registry_setup(core_client, registry):
+    core_client.send_registry_command(registry.id, command="setup")
+
+    def _check_setup():
+        registry_projects = core_client.find_registry_projects(filter={"registry_id": registry.id})
+        assert len(registry_projects) == 3
+        assert {"incoming", "outgoing", "masterImages"} == set(rp.type for rp in registry_projects)
+
+    assert_eventually(_check_setup)
+
+
 def test_get_registry_project(core_client, registry_project):
     registry_project_get = core_client.get_registry_project(registry_project.id)
 
