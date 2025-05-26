@@ -117,11 +117,14 @@ class IsField(object):
 
 def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
     fields = []
-    for name, annotation in model.__annotations__.items():
-        if t.get_origin(annotation) is t.Annotated:
-            for metadata in annotation.__metadata__:
-                if metadata is IsField:
-                    fields.append(name)
+    for cls in model.mro():
+        if not hasattr(cls, "__annotations__"):
+            continue
+        for name, annotation in cls.__annotations__.items():
+            if t.get_origin(annotation) is t.Annotated:
+                for metadata in annotation.__metadata__:
+                    if metadata is IsField:
+                        fields.append(name)
     return tuple(fields)
 
 

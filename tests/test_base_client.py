@@ -157,14 +157,11 @@ class NoFieldModel(BaseModel):
     bar: str
 
 
-class FieldModel(BaseModel):
-    bar: str
+class FieldModel(NoFieldModel):
     foo: t.Annotated[str | None, IsField]
 
 
-class ExtendedFieldModel(BaseModel):
-    bar: str
-    foo: t.Annotated[str | None, IsField] = None
+class ExtendedFieldModel(FieldModel):
     foo_bar: bool | None
     bar_foo: t.Annotated[int, IsField] = 0
 
@@ -174,7 +171,7 @@ class ExtendedFieldModel(BaseModel):
     [
         (NoFieldModel, ()),
         (FieldModel, ("foo",)),
-        (ExtendedFieldModel, ("foo", "bar_foo")),
+        (ExtendedFieldModel, ("bar_foo", "foo")),
     ],
 )
 def test_get_field_names(model, fields):
