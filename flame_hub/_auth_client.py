@@ -239,7 +239,15 @@ class RobotRole(CreateRobotRole):
 
 
 class AuthClient(BaseClient):
-    """TODO"""
+    """The client which implements all auth endpoints.
+
+    This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
+    further information. Note that ``base_url`` defaults to the auth endpoints of the publicly available Hub instance.
+
+    See Also
+    --------
+    :py:class:`.BaseClient`
+    """
 
     def __init__(
         self,

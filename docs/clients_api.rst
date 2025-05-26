@@ -7,9 +7,15 @@ Clients
         _delete_resource
 
 .. autoclass:: flame_hub.AuthClient
+    :members:
+    :undoc-members:
 
 .. autoclass:: flame_hub.CoreClient
+    :members:
+    :undoc-members:
 
 .. autoclass:: flame_hub.StorageClient
+    :members:
+    :undoc-members:
 
 .. autoclass:: flame_hub.HubAPIError

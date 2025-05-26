@@ -363,7 +363,15 @@ class UpdateAnalysisBucketFile(UpdateModel):
 
 
 class CoreClient(BaseClient):
-    """TODO"""
+    """The client which implements all core endpoints.
+
+    This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
+    further information. Note that ``base_url`` defaults to the core endpoints of the publicly available Hub instance.
+
+    See Also
+    --------
+    :py:class:`.BaseClient`
+    """
 
     def __init__(
         self,

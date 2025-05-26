@@ -61,7 +61,16 @@ def apply_upload_file_defaults(uf: UploadFile) -> UploadFile:
 
 
 class StorageClient(BaseClient):
-    """TODO"""
+    """The client which implements all storage endpoints.
+
+    This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
+    further information. Note that ``base_url`` defaults to the storage endpoints of the publicly available Hub
+    instance.
+
+    See Also
+    --------
+    :py:class:`.BaseClient`
+    """
 
     def __init__(
         self,
