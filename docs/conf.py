@@ -43,6 +43,8 @@ numpydoc_show_class_members = False
 autodoc_default_options = {
     "show-inheritance": True,
 }
+autodoc_member_order = "bysource"
+autodoc_typehints = "none"
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
