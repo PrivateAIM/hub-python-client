@@ -10,6 +10,7 @@ from flame_hub._base_client import (
     UpdateModel,
     _UNSET,
     FindAllKwargs,
+    GetKwargs,
     ClientKwargs,
     uuid_validator,
 )
@@ -247,8 +248,8 @@ class AuthClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def get_realms(self) -> list[Realm]:
-        return self._get_all_resources(Realm, "realms")
+    def get_realms(self, **params: te.Unpack[GetKwargs]) -> list[Realm]:
+        return self._get_all_resources(Realm, "realms", **params)
 
     def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> list[Realm]:
         return self._find_all_resources(Realm, "realms", **params)
@@ -267,8 +268,8 @@ class AuthClient(BaseClient):
     def delete_realm(self, realm_id: Realm | uuid.UUID | str):
         self._delete_resource("realms", realm_id)
 
-    def get_realm(self, realm_id: Realm | uuid.UUID | str) -> Realm | None:
-        return self._get_single_resource(Realm, "realms", realm_id)
+    def get_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Realm | None:
+        return self._get_single_resource(Realm, "realms", realm_id, **params)
 
     def update_realm(
         self,
@@ -300,8 +301,8 @@ class AuthClient(BaseClient):
     def delete_robot(self, robot_id: Robot | str | uuid.UUID):
         self._delete_resource("robots", robot_id)
 
-    def get_robot(self, robot_id: Robot | str | uuid.UUID) -> Robot | None:
-        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"), fields="secret")
+    def get_robot(self, robot_id: Robot | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Robot | None:
+        return self._get_single_resource(Robot, "robots", robot_id, include=("realm", "user"), **params)
 
     def update_robot(
         self,
@@ -318,11 +319,11 @@ class AuthClient(BaseClient):
             robot_id,
         )
 
-    def get_robots(self) -> list[Robot]:
-        return self._get_all_resources(Robot, "robots", include=("user", "realm"), fields="secret")
+    def get_robots(self, **params: te.Unpack[GetKwargs]) -> list[Robot]:
+        return self._get_all_resources(Robot, "robots", include=("user", "realm"), **params)
 
     def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", include=("user", "realm"), fields="secret", **params)
+        return self._find_all_resources(Robot, "robots", include=("user", "realm"), **params)
 
     def create_permission(
         self,
@@ -343,8 +344,10 @@ class AuthClient(BaseClient):
             "permissions",
         )
 
-    def get_permission(self, permission_id: Permission | uuid.UUID | str) -> Permission | None:
-        return self._get_single_resource(Permission, "permissions", permission_id, include="realm")
+    def get_permission(
+        self, permission_id: Permission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> Permission | None:
+        return self._get_single_resource(Permission, "permissions", permission_id, include="realm", **params)
 
     def delete_permission(self, permission_id: Permission | uuid.UUID | str):
         self._delete_resource("permissions", permission_id)
@@ -364,8 +367,8 @@ class AuthClient(BaseClient):
             permission_id,
         )
 
-    def get_permissions(self) -> list[Permission]:
-        return self._get_all_resources(Permission, "permissions", include="realm")
+    def get_permissions(self, **params: te.Unpack[GetKwargs]) -> list[Permission]:
+        return self._get_all_resources(Permission, "permissions", include="realm", **params)
 
     def find_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[Permission]:
         return self._find_all_resources(Permission, "permissions", include="realm", **params)
@@ -377,8 +380,8 @@ class AuthClient(BaseClient):
             "roles",
         )
 
-    def get_role(self, role_id: Role | uuid.UUID | str) -> Role | None:
-        return self._get_single_resource(Role, "roles", role_id, include="realm")
+    def get_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Role | None:
+        return self._get_single_resource(Role, "roles", role_id, include="realm", **params)
 
     def delete_role(self, role_id: Role | uuid.UUID | str):
         self._delete_resource("roles", role_id)
@@ -397,8 +400,8 @@ class AuthClient(BaseClient):
             role_id,
         )
 
-    def get_roles(self) -> list[Role]:
-        return self._get_all_resources(Role, "roles", include="realm")
+    def get_roles(self, **params: te.Unpack[GetKwargs]) -> list[Role]:
+        return self._get_all_resources(Role, "roles", include="realm", **params)
 
     def find_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[Role]:
         return self._find_all_resources(Role, "roles", include="realm", **params)
@@ -412,20 +415,26 @@ class AuthClient(BaseClient):
             "role-permissions",
         )
 
-    def get_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str) -> RolePermission | None:
+    def get_role_permission(
+        self, role_permission_id: RolePermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> RolePermission | None:
         return self._get_single_resource(
             RolePermission,
             "role-permissions",
             role_permission_id,
             include=("role", "role_realm", "permission", "permission_realm"),
+            **params,
         )
 
     def delete_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str):
         self._delete_resource("role-permissions", role_permission_id)
 
-    def get_role_permissions(self) -> list[RolePermission]:
+    def get_role_permissions(self, **params: te.Unpack[GetKwargs]) -> list[RolePermission]:
         return self._get_all_resources(
-            RolePermission, "role-permissions", include=("role", "role_realm", "permission", "permission_realm")
+            RolePermission,
+            "role-permissions",
+            include=("role", "role_realm", "permission", "permission_realm"),
+            **params,
         )
 
     def find_role_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RolePermission]:
@@ -462,8 +471,8 @@ class AuthClient(BaseClient):
             "users",
         )
 
-    def get_user(self, user_id: User | uuid.UUID | str) -> User | None:
-        return self._get_single_resource(User, "users", user_id, fields="email", include="realm")
+    def get_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> User | None:
+        return self._get_single_resource(User, "users", user_id, include="realm", **params)
 
     def delete_user(self, user_id: User | uuid.UUID | str):
         self._delete_resource("users", user_id)
@@ -496,11 +505,11 @@ class AuthClient(BaseClient):
             user_id,
         )
 
-    def get_users(self) -> list[User]:
-        return self._get_all_resources(User, "users", fields="email", include="realm")
+    def get_users(self, **params: te.Unpack[GetKwargs]) -> list[User]:
+        return self._get_all_resources(User, "users", include="realm", **params)
 
     def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", fields="email", include="realm", **params)
+        return self._find_all_resources(User, "users", include="realm", **params)
 
     def create_user_permission(
         self,
@@ -513,20 +522,26 @@ class AuthClient(BaseClient):
             "user-permissions",
         )
 
-    def get_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str) -> UserPermission | None:
+    def get_user_permission(
+        self, user_permission_id: UserPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> UserPermission | None:
         return self._get_single_resource(
             UserPermission,
             "user-permissions",
             user_permission_id,
             include=("user", "permission", "user_realm", "permission_realm"),
+            **params,
         )
 
     def delete_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str):
         self._delete_resource("user-permissions", user_permission_id)
 
-    def get_user_permissions(self) -> list[UserPermission]:
+    def get_user_permissions(self, **params: te.Unpack[GetKwargs]) -> list[UserPermission]:
         return self._get_all_resources(
-            UserPermission, "user-permissions", include=("user", "permission", "user_realm", "permission_realm")
+            UserPermission,
+            "user-permissions",
+            include=("user", "permission", "user_realm", "permission_realm"),
+            **params,
         )
 
     def find_user_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[UserPermission]:
@@ -544,16 +559,20 @@ class AuthClient(BaseClient):
             "user-roles",
         )
 
-    def get_user_role(self, user_role_id: UserRole | uuid.UUID | str) -> UserRole | None:
+    def get_user_role(
+        self, user_role_id: UserRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> UserRole | None:
         return self._get_single_resource(
-            UserRole, "user-roles", user_role_id, include=("user", "role", "user_realm", "role_realm")
+            UserRole, "user-roles", user_role_id, include=("user", "role", "user_realm", "role_realm"), **params
         )
 
     def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str):
         self._delete_resource("user-roles", user_role_id)
 
-    def get_user_roles(self) -> list[UserRole]:
-        return self._get_all_resources(UserRole, "user-roles", include=("user", "role", "user_realm", "role_realm"))
+    def get_user_roles(self, **params: te.Unpack[GetKwargs]) -> list[UserRole]:
+        return self._get_all_resources(
+            UserRole, "user-roles", include=("user", "role", "user_realm", "role_realm"), **params
+        )
 
     def find_user_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[UserRole]:
         return self._find_all_resources(
@@ -569,20 +588,26 @@ class AuthClient(BaseClient):
             "robot-permissions",
         )
 
-    def get_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str) -> RobotPermission | None:
+    def get_robot_permission(
+        self, robot_permission_id: RobotPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> RobotPermission | None:
         return self._get_single_resource(
             RobotPermission,
             "robot-permissions",
             robot_permission_id,
             include=("robot", "permission", "robot_realm", "permission_realm"),
+            **params,
         )
 
     def delete_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str):
         self._delete_resource("robot-permissions", robot_permission_id)
 
-    def get_robot_permissions(self) -> list[RobotPermission]:
+    def get_robot_permissions(self, **params: te.Unpack[GetKwargs]) -> list[RobotPermission]:
         return self._get_all_resources(
-            RobotPermission, "robot-permissions", include=("robot", "permission", "robot_realm", "permission_realm")
+            RobotPermission,
+            "robot-permissions",
+            include=("robot", "permission", "robot_realm", "permission_realm"),
+            **params,
         )
 
     def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
@@ -600,16 +625,20 @@ class AuthClient(BaseClient):
             "robot-roles",
         )
 
-    def get_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str) -> RobotRole | None:
+    def get_robot_role(
+        self, robot_role_id: RobotRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+    ) -> RobotRole | None:
         return self._get_single_resource(
-            RobotRole, "robot-roles", robot_role_id, include=("robot", "role", "robot_realm", "role_realm")
+            RobotRole, "robot-roles", robot_role_id, include=("robot", "role", "robot_realm", "role_realm"), **params
         )
 
     def delete_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str):
         self._delete_resource("robot-roles", robot_role_id)
 
-    def get_robot_roles(self) -> list[RobotRole]:
-        return self._get_all_resources(RobotRole, "robot-roles", include=("robot", "role", "robot_realm", "role_realm"))
+    def get_robot_roles(self, **params: te.Unpack[GetKwargs]) -> list[RobotRole]:
+        return self._get_all_resources(
+            RobotRole, "robot-roles", include=("robot", "role", "robot_realm", "role_realm"), **params
+        )
 
     def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
         return self._find_all_resources(
