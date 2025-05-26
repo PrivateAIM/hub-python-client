@@ -37,12 +37,7 @@ ResourceT = t.TypeVar("ResourceT", bound=BaseModel)
 
 
 class UuidModel(t.Protocol[ResourceT]):
-    """Structural subtype which expects a :py:class:`~pydantic.BaseModel` to have an ``id`` attribute.
-
-    Attributes
-    ----------
-    id : :py:class:`~uuid.UUID`
-    """
+    """Structural subtype which expects a :py:class:`~pydantic.BaseModel` to have an ``id`` attribute."""
 
     id: uuid.UUID
 
@@ -90,31 +85,19 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
 class SortParams(te.TypedDict, total=False):
     """Dict shape for specifying parameters for sorted queries.
 
-    Attributes
-    ----------
-    by : :py:class:`str`
-        Name of the attribute to sort by.
-    order : {:python:`"ascending"`, :python:`"descending"`}
-        Sort in either ascending or descending order.
-
     See Also
     --------
     :py:class:`.FindAllKwargs`, :py:meth:`._find_all_resources`
     """
 
     by: str
+    """Name of the attribute to sort by."""
     order: t.Literal["ascending", "descending"]
+    """Sort in either ascending or descending order."""
 
 
 class PageParams(te.TypedDict, total=False):
     """Dict shape for specifying limit and offset for paginated queries.
-
-    Attributes
-    ----------
-    limit : :py:class:`int`
-        Amount of returned resources.
-    offset : :py:class:`int`
-        Amount of resources to skip before resources are added to the returned list.
 
     See Also
     --------
@@ -122,7 +105,9 @@ class PageParams(te.TypedDict, total=False):
     """
 
     limit: int
+    """Amount of returned resources."""
     offset: int
+    """Amount of resources to skip before resources are added to the returned list."""
 
 
 # default limit and offset for paginated requests
@@ -131,16 +116,6 @@ _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 class FilterOperator(str, Enum):
     """Operators that are supported by the Hub API for filtering requests.
-
-    Attributes
-    ----------
-    eq : :py:class:`str`, default: :python:`"="`
-    neq : :py:class:`str`, default: :python:`"!"`
-    like : :py:class:`str`, default: :python:`"~"`
-    lt : :py:class:`str`, default: :python:`"<"`
-    le : :py:class:`str`, default: :python:`"<="`
-    gt : :py:class:`str`, default: :python:`">"`
-    ge : :py:class:`str`, default: :python:`">="`
 
     See Also
     --------
@@ -163,12 +138,6 @@ FieldParams = str | Iterable[str]
 
 class FindAllKwargs(te.TypedDict, total=False):
     """Keyword arguments that can be used for finding resources.
-
-    Attributes
-    ----------
-    filter : :py:type:`~flame_hub.types.FilterParams` | :py:obj:`None`
-    page : :py:type:`~flame_hub.types.PageParams` | :py:obj:`None`
-    sort : :py:type:`~flame_hub.types.SortParams` | :py:obj:`None`
 
     See Also
     --------

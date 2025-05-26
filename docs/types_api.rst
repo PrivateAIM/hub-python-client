@@ -10,10 +10,13 @@ Types
 
 .. automodule:: flame_hub.types
     :members:
+    :undoc-members:
 
 .. autodata:: flame_hub._base_client.ResourceT
     :annotation: = typing.TypeVar
 
 .. autoclass:: flame_hub._base_client.UuidModel
+    :members:
+    :undoc-members:
 
 .. autoclass:: flame_hub.types.UuidIdentifiable
