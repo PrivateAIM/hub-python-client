@@ -44,6 +44,9 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 autodoc_member_order = "bysource"
+autodoc_type_aliases = {
+    "FilterParams": "flame_hub.types.FilterParams",
+}
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
