@@ -1,5 +1,7 @@
 import pytest
 
+from flame_hub import get_field_names
+from flame_hub.models import User, Robot
 from tests.helpers import next_random_string, next_uuid
 
 pytestmark = pytest.mark.integration
@@ -19,9 +21,9 @@ def robot(auth_client, realm):
     auth_client.delete_robot(new_robot)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def robot_fields():
-    return ("secret",)
+    return get_field_names(Robot)
 
 
 @pytest.fixture()
@@ -47,14 +49,14 @@ def role_permission(auth_client, role, permission):
 
 @pytest.fixture()
 def user(auth_client):
-    new_user = auth_client.create_user(next_random_string(), email="test@privateaim.net")
+    new_user = auth_client.create_user(next_random_string())
     yield new_user
     auth_client.delete_user(new_user)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def user_fields():
-    return ("email",)
+    return get_field_names(User)
 
 
 @pytest.fixture()

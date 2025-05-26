@@ -4,8 +4,9 @@ import typing as t
 
 import pytest
 
-from flame_hub import HubAPIError
+from flame_hub import HubAPIError, get_field_names
 from flame_hub.types import NodeType
+from flame_hub.models import Registry, RegistryProject
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
@@ -189,9 +190,9 @@ def registry(core_client):
     core_client.delete_registry(new_registry)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def registry_fields():
-    return ("account_secret",)
+    return get_field_names(Registry)
 
 
 @pytest.fixture()
@@ -208,7 +209,7 @@ def registry_project(core_client, registry):
 
 @pytest.fixture(scope="session")
 def registry_project_fields():
-    return "account_id", "account_name", "account_secret"
+    return get_field_names(RegistryProject)
 
 
 def test_get_nodes(core_client, node):
