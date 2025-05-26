@@ -30,12 +30,15 @@ rst_prolog = f"""
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
 ]
 
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+
+numpydoc_show_class_members = False
 
 autodoc_default_options = {
     "show-inheritance": True,
