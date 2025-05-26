@@ -17,5 +17,3 @@ Clients
 .. autoclass:: flame_hub.StorageClient
     :members:
     :undoc-members:
-
-.. autoclass:: flame_hub.HubAPIError
