@@ -12,9 +12,7 @@ from flame_hub._auth_flows import PasswordAuth, RobotAuth
 
 
 class _UNSET(object):
-    """
-    Sentinel to mark parameters as unset as opposed to using :any:`None`.
-    """
+    """Sentinel to mark parameters as unset as opposed to using :any:`None`."""
 
 
 class UpdateModel(BaseModel):
@@ -34,12 +32,18 @@ class UpdateModel(BaseModel):
         return data
 
 
-# base resource type which assumes BaseModel as the base class
 ResourceT = t.TypeVar("ResourceT", bound=BaseModel)
+"""Base resource type which assumes :py:class:`~pydantic.BaseModel` as the base class."""
 
 
-# structural subtype which expects a BaseModel to have an id property
 class UuidModel(t.Protocol[ResourceT]):
+    """Structural subtype which expects a :py:class:`~pydantic.BaseModel` to have an ``id`` attribute.
+
+    Attributes
+    ----------
+    id : :py:class:`~uuid.UUID`
+    """
+
     id: uuid.UUID
 
 
@@ -84,12 +88,39 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
 
 
 class SortParams(te.TypedDict, total=False):
+    """Dict shape for specifying parameters for sorted queries.
+
+    Attributes
+    ----------
+    by : :py:class:`str`
+        Name of the attribute to sort by.
+    order : {:python:`"ascending"`, :python:`"descending"`}
+        Sort in either ascending or descending order.
+
+    See Also
+    --------
+    :py:class:`.FindAllKwargs`, :py:meth:`._find_all_resources`
+    """
+
     by: str
     order: t.Literal["ascending", "descending"]
 
 
-# dict shape for specifying limit and offset for paginated queries
 class PageParams(te.TypedDict, total=False):
+    """Dict shape for specifying limit and offset for paginated queries.
+
+    Attributes
+    ----------
+    limit : :py:class:`int`
+        Amount of returned resources.
+    offset : :py:class:`int`
+        Amount of resources to skip before resources are added to the returned list.
+
+    See Also
+    --------
+    :py:class:`.FindAllKwargs`, :py:meth:`._find_all_resources`
+    """
+
     limit: int
     offset: int
 
@@ -98,8 +129,24 @@ class PageParams(te.TypedDict, total=False):
 _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 
-# operators that are supported by the Hub API for filtering requests
 class FilterOperator(str, Enum):
+    """Operators that are supported by the Hub API for filtering requests.
+
+    Attributes
+    ----------
+    eq : :py:class:`str`, default: :python:`"="`
+    neq : :py:class:`str`, default: :python:`"!"`
+    like : :py:class:`str`, default: :python:`"~"`
+    lt : :py:class:`str`, default: :python:`"<"`
+    le : :py:class:`str`, default: :python:`"<="`
+    gt : :py:class:`str`, default: :python:`">"`
+    ge : :py:class:`str`, default: :python:`">="`
+
+    See Also
+    --------
+    :py:type:`~flame_hub.types.FilterParams`, :py:class:`.FindAllKwargs`, :py:meth:`._find_all_resources`
+    """
+
     eq = "="
     neq = "!"
     like = "~"
@@ -115,6 +162,20 @@ FieldParams = str | Iterable[str]
 
 
 class FindAllKwargs(te.TypedDict, total=False):
+    """Keyword arguments that can be used for finding resources.
+
+    Attributes
+    ----------
+    filter : :py:type:`~flame_hub.types.FilterParams` | :py:obj:`None`
+    page : :py:type:`~flame_hub.types.PageParams` | :py:obj:`None`
+    sort : :py:type:`~flame_hub.types.SortParams` | :py:obj:`None`
+
+    See Also
+    --------
+    :py:class:`.FilterOperator`, :py:type:`~flame_hub.types.FilterParams`, :py:type:`~flame_hub.types.PageParams`,\
+    :py:type:`~flame_hub.types.SortParams`, :py:meth:`._find_all_resources`
+    """
+
     filter: FilterParams | None
     page: PageParams | None
     sort: SortParams | None
@@ -234,7 +295,28 @@ def convert_path(path: Iterable[str | UuidIdentifiable]) -> tuple[str, ...]:
 
 
 class BaseClient(object):
-    def __init__(self, base_url: str = None, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
+    """The base class for other client classes.
+
+    This class implements fundamental methods to get, find, create, update and delete resources from a FLAME Hub
+    instance. If the default instantiation of the internally used HTTP client should be bypassed, pass your own
+    :py:class:`httpx.Client` via ``**kwargs`` to the class.
+
+    Parameters
+    ----------
+    base_url : :py:class:`str`
+        Base URL of the Hub service.
+    auth : :py:class:`.PasswordAuth` | :py:class:`.RobotAuth`, optional
+        Authenticator which is used to authenticate the client at the FLAME Hub instance. Defaults to :any:`None`.
+    client : :py:class:`httpx.Client`, optional
+        An already instantiated HTTP client to bypass the default instantiation. This overrides ``base_url`` and
+        ``auth``.
+
+    See Also
+    --------
+    :py:class:`.AuthClient`, :py:class:`.CoreClient`, :py:class:`.StorageClient`
+    """
+
+    def __init__(self, base_url: str, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
@@ -245,8 +327,20 @@ class BaseClient(object):
         fields: FieldParams = None,
         include: IncludeParams = None,
     ) -> list[ResourceT]:
-        """Retrieve all resources of a certain type at the specified path.
-        Default pagination parameters are applied."""
+        """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
+
+        This method passes its arguments through to :py:meth:`_find_all_resources`. Check the documentation of that
+        method for all information.
+
+        See Also
+        --------
+        :py:meth:`_find_all_resources`, :py:meth:`_get_single_resource`
+
+        Notes
+        -----
+        Default pagination parameters are applied as explained in the return section of :py:meth:`_find_all_resources`.
+        """
+
         return self._find_all_resources(resource_type, *path, fields=fields, include=include)
 
     def _find_all_resources(
@@ -257,8 +351,46 @@ class BaseClient(object):
         include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
-        """Find all resources of a certain type at the specified path.
-        Custom pagination and filter parameters can be applied."""
+        """Find all resources at the specified path on the FLAME Hub that match certain criteria.
+
+        This method accesses the endpoint ``*path`` and returns all resources of type ``resource_type`` that match
+        certain criteria defined in ``**params``. Further fields and nested resources can be added to response via the
+        ``fields`` and ``include`` argument.
+
+        Parameters
+        ----------
+        resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+            A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that
+            validates all attributes a resource can have. In other terms, do not pass one of the models that start with
+            *Create* or *Update* since this method performs a ``GET`` request.
+        *path : :py:class:`str`
+            A string or multiple strings that define the endpoint.
+        fields : :py:type:`~flame_hub.types.FieldParams`, optional
+            Extend the default resource field selection by explicitly name one or more field names.
+        include : :py:type:`~flame_hub.types.IncludeParams`, optional
+            Extend the default resource fields by explicitly list resource names to nest in the response. See the
+            :doc:`model specifications <models_api>` which resources can be included in other resources.
+        **params : :py:obj:`~typing.Unpack` [:py:class:`.FindAllKwargs`]
+            Further keyword arguments to define filtering, sorting and pagination conditions.
+
+        Returns
+        -------
+        :py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+            All resources of type ``resource_type`` that match the criteria defined in ``**params``. If no criteria are
+            defined, it returns the first 50 or all resources if there are less than 50.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match 200.
+        :py:exc:`~pydantic_core._pydantic_core.ValidationError`
+            If the resources returned by the Hub instance do not validate with the given ``resource_type``.
+
+        See Also
+        --------
+        :py:meth:`_get_all_resources`, :py:meth:`_get_single_resource`
+        """
+
         # merge processed filter and page params
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
@@ -280,7 +412,36 @@ class BaseClient(object):
         return ResourceList[resource_type](**r.json()).data
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
-        """Create a resource of a certain type at the specified path."""
+        """Create a resource of a certain type at the specified path.
+
+        The FLAME Hub responds with the created resource which is then validated with ``resource_type`` and returned by
+        this method.
+
+        Parameters
+        ----------
+        resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+            A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that
+            validates all attributes a resource can have. In other terms, do not pass one of the models that start with
+            *Create* or *Update* since this method performs a ``GET`` request.
+        resource : :py:class:`~pydantic.BaseModel`
+            This has to be the corresponding creation model for ``resource_type``. All creation models follow a naming
+            convention with a prefixed *Create*. See the :doc:`model specifications <models_api>` for a list of all
+            available models.
+        *path : :py:class:`str`
+            Path to the endpoint where the resource should be created.
+
+        Returns
+        -------
+        :py:type:`~flame_hub._base_client.ResourceT`
+            Validated resource that was just created.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match 201.
+        :py:exc:`~pydantic_core._pydantic_core.ValidationError`
+            If the resource returned by the Hub instance does not validate with the given ``resource_type``.
+        """
         r = self._client.post(
             "/".join(path),
             json=resource.model_dump(mode="json"),
@@ -298,7 +459,45 @@ class BaseClient(object):
         fields: FieldParams = None,
         include: IncludeParams = None,
     ) -> ResourceT | None:
-        """Get a resource of a certain type at the specified path."""
+        """Get a single resource of a certain type at the specified path.
+
+        This method accesses the endpoint ``*path`` and returns the resource of type ``resource_type``. In contrast to
+        :py:meth:`._get_all_resources` ``*path`` must point to one specific resource of the specified type.
+
+        Parameters
+        ----------
+        resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+            A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that validates
+            all attributes a resource can have. In other terms, do not pass one of the models that start with *Create*
+            or *Update* since this method performs a ``GET`` request.
+        *path : :py:class:`str` | :py:class:`~flame_hub.types.UuidIdentifiable`
+            A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
+            a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
+            ``id`` attribute.
+        fields : :py:type:`~flame_hub.types.FieldParams`, optional
+            Extend the default resource field selection by explicitly name one or more field names.
+        include : :py:type:`~flame_hub.types.IncludeParams`, optional
+            Extend the default resource fields by explicitly list resource names to nest in the response. See the
+            :doc:`model specifications <models_api>` which resources can be included in other resources.
+
+        Returns
+        -------
+        :py:type:`~flame_hub._base_client.ResourceT` | :py:obj:`None`
+            Returns the resource of type ``resource_type`` found under ``*path``. If there isn't a resource under that
+            path, :py:obj:`None` is returned.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match 200 or 404.
+        :py:exc:`~pydantic_core._pydantic_core.ValidationError`
+            If the resource returned by the Hub instance does not validate with the given ``resource_type``.
+
+        See Also
+        --------
+        :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
+
+        """
         request_params = build_field_params(fields) | build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
@@ -317,7 +516,38 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str | UuidIdentifiable,
     ) -> ResourceT:
-        """Update a resource of a certain type at the specified path."""
+        """Update a resource of a certain type at the specified path.
+
+        The FLAME Hub responds with the updated resource which is then validated with ``resource_type`` and returned by
+        this method.
+
+        Parameters
+        ----------
+        resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+            A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that validates
+            all attributes a resource can have. In other terms, do not pass one of the models that start with *Create*
+            or *Update* since this method performs a ``GET`` request.
+        resource : :py:class:`~pydantic.BaseModel`
+            This has to be the corresponding update model for ``resource_type``. All update models follow a naming
+            convention with a prefixed *Update*. See the :doc:`model specifications <models_api>` for a list of all
+            available models.
+        *path : :py:class:`str` | :py:class:`~flame_hub.types.UuidIdentifiable`
+            A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
+            a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
+            ``id`` attribute.
+
+        Returns
+        -------
+        :py:type:`~flame_hub._base_client.ResourceT`
+            Validated resource that was just updated.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match 202.
+        :py:exc:`~pydantic_core._pydantic_core.ValidationError`
+            If the resource returned by the Hub instance does not validate with the given ``resource_type``.
+        """
         r = self._client.post(
             "/".join(convert_path(path)),
             json=resource.model_dump(mode="json", exclude_none=False, exclude_unset=True),
@@ -329,7 +559,20 @@ class BaseClient(object):
         return resource_type(**r.json())
 
     def _delete_resource(self, *path: str | UuidIdentifiable):
-        """Delete a resource of a certain type at the specified path."""
+        """Delete a resource of a certain type at the specified path.
+
+        Parameters
+        ----------
+        *path : :py:class:`str` | :py:class:`~flame_hub.types.UuidIdentifiable`
+            A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
+            a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
+            ``id`` attribute.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match 202.
+        """
         r = self._client.delete("/".join(convert_path(path)))
 
         if r.status_code != httpx.codes.ACCEPTED.value:

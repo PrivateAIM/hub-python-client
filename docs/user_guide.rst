@@ -5,17 +5,17 @@ User guide
 
 The ``flame_hub`` module contains three different clients that are meant to be imported by a user:
 
-* :any:`AuthClient`
-* :any:`CoreClient`
-* :any:`StorageClient`.
+* :py:class:`.AuthClient`
+* :py:class:`.CoreClient`
+* :py:class:`.StorageClient`.
 
 With these clients it is possible to access the endpoints of the Hub ``auth``, ``core`` and ``storage`` APIs
-respectively. The signature of the clients is always the same since they inherit from the :any:`BaseClient` class.
+respectively. The signature of the clients is always the same since they inherit from the :py:class:`.BaseClient` class.
 
 When initializing a client, there are some things to keep in mind.
 
-* You *should* provide an instance of either :any:`PasswordAuth` or :any:`RobotAuth` to the ``auth`` argument as these
-  are the two main authentication schemes supported by the FLAME Hub.
+* You *should* provide an instance of either :py:class:`.PasswordAuth` or :py:class:`.RobotAuth` to the ``auth``
+  argument as these are the two main authentication schemes supported by the FLAME Hub.
 * You *can* provide a custom ``base_url`` if you're hosting your own instance of the FLAME Hub, otherwise the client
   will use the default publicly available Hub instance https://privateaim.dev to connect to.
 * You *should'nt* set ``client`` explicitly unless you know what you're doing. When providing any of the previous two
@@ -36,20 +36,20 @@ the singular or plural form of a specific resource name following the
 .. py:method:: get_RESOURCE_NAME(self, id: str | uuid.UUID | ResourceT) -> ResourceT | None
     :no-index:
 
-    Takes an ``id`` and returns the corresponding resource or :any:`None` if there is no resource with that ``id``.
-    ``id`` can either be a :any:`str`, an :any:`uuid.UUID` or a resource of the exact type you are searching for. The
-    last option is basically irrelevant unless the resource was updated in the meanwhile and you want to get the updated
-    resource.
+    Takes an ``id`` and returns the corresponding resource or :py:obj:`None` if there is no resource with that ``id``.
+    ``id`` can either be a :py:class:`str`, an :py:class:`~uuid.UUID` or a resource of the exact type you are searching
+    for. The last option is basically irrelevant unless the resource was updated in the meanwhile and you want to get
+    the updated resource.
 
 .. py:method:: get_RESOURCE_NAME_PLURAL(self) -> list[ResourceT]
     :no-index:
 
     Returns a list of the first 50 resources.
 
-.. py:method:: find_RESOURCE_NAME_PLURAL(self, **params: Unpack[FindAllKwargs]) -> list[ResourceT]
+.. py:method:: find_RESOURCE_NAME_PLURAL(self, **params: typing.Unpack[FindAllKwargs]) -> list[ResourceT]
     :no-index:
 
-    Filters, sorts and pages resources and returns matching resources as a list. See :any:`FindAllKwargs` for all
+    Filters, sorts and pages resources and returns matching resources as a list. See :py:class:`.FindAllKwargs` for all
     possible keyword arguments and :ref:`finding-resources` for examples on how to find resources.
 
 .. py:method:: create_RESOURCE_NAME(self, **params) -> ResourceT
@@ -62,17 +62,21 @@ the singular or plural form of a specific resource name following the
 .. py:method:: update_RESOURCE_NAME(self, id: str | uuid.UUID | ResourceT, **params) -> ResourceT
     :no-index:
 
-    Updates the resource that matches a given ``id``. ``id`` can either be a :any:`str`, an :any:`uuid.UUID` or a
-    resource of the same type. ``params`` are keyword arguments that can be send to the Hub when updating an already
-    existing resource of a specific type. To see what parameters can be specified on update, have a look at the concrete
-    *update* method or at the corresponding :doc:`update model <models_api>`. Raises a :any:`HubAPIError` if there is no
-    resource with this ``id``.
+    Updates the resource that matches a given ``id``. ``id`` can either be a :py:class:`str`, an :py:class:`~uuid.UUID`
+    or a resource of the same type. ``params`` are keyword arguments that can be send to the Hub when updating an
+    already existing resource of a specific type. To see what parameters can be specified on update, have a look at the
+    concrete *update* method or at the corresponding :doc:`update model <models_api>`. Raises a :py:exc:`.HubAPIError`
+    if there is no resource with this ``id``.
 
 .. py:method:: delete_RESOURCE_NAME(self, id: str | uuid.UUID | ResourceT)
     :no-index:
 
-    Deletes the resource that matches a given ``id``. ``id`` can either be a :any:`str`, an :any:`uuid.UUID` or a
-    resource of the same type. Raises a :any:`HubAPIError` if there is no resource with this ``id``.
+    Deletes the resource that matches a given ``id``. ``id`` can either be a :py:class:`str`, an :py:class:`~uuid.UUID`
+    or a resource of the same type. Raises a :py:exc:`.HubAPIError` if there is no resource with this ``id``.
+
+.. hint::
+
+    See :py:type:`~flame_hub._base_client.ResourceT` for further information on the base resource type.
 
 .. note::
 
@@ -88,7 +92,7 @@ the singular or plural form of a specific resource name following the
 Overview of implemented resources
 =================================
 
-* :any:`AuthClient`
+* :py:class:`.AuthClient`
     * realms
     * users
     * robots
@@ -99,7 +103,7 @@ Overview of implemented resources
     * user roles
     * robot permissions
     * robot roles
-* :any:`CoreClient`
+* :py:class:`.CoreClient`
     * registries
     * registry projects
     * nodes
@@ -114,7 +118,7 @@ Overview of implemented resources
     * analysis node logs
     * analysis buckets
     * analysis bucket files
-* :any:`StorageClient`
+* :py:class:`.StorageClient`
     * buckets
     * bucket files
 
@@ -168,7 +172,7 @@ comparisons.
       ...
     }
 
-You can also use the :any:`FilterOperator` enum class which contains all possible operators.
+You can also use the :py:class:`.FilterOperator` enum class which contains all possible operators.
 
 .. code-block:: python
 
@@ -191,7 +195,7 @@ left unset, the client will sort in ascending order by default.
 
     assert nodes == sedon[::-1]
 
-See :any:`FindAllKwargs` for the API documentation of all possible parameters.
+See :py:class:`.FindAllKwargs` for the API documentation of all possible parameters.
 
 
 Nested resources
@@ -244,7 +248,7 @@ admin's realm is the master realm.
 Handling exceptions
 ===================
 
-The ``flame_hub`` module exports :any:`HubAPIError` which is a general error that is raised whenever the FLAME Hub
+The ``flame_hub`` module exports :py:exc:`.HubAPIError` which is a general error that is raised whenever the FLAME Hub
 responds with an unexpected status code. All clients will try and put as much information into the raised error as
 possible, including status code and additional information in the response body.
 
@@ -273,9 +277,9 @@ possible, including status code and additional information in the response body.
       "message": "Can't find realm entity by realm_id"
     }
 
-In this example a :any:`HubAPIError` is raised because there is no realm with an ID that matches the dynamically created
-ID. If the response body contains an error, it can be accessed with the ``error_response`` property. Some errors may
-also add additional fields which can also be accessed like this.
+In this example a :py:exc:`.HubAPIError` is raised because there is no realm with an ID that matches the dynamically
+created ID. If the response body contains an error, it can be accessed with the ``error_response`` property. Some errors
+may also add additional fields which can also be accessed like this.
 
 
 Models
@@ -284,9 +288,9 @@ Models
 The ``flame_hub.models`` module contains all model definitions for resources emitted by the FLAME Hub. Use them at you
 own discretion. They may change at any time.
 
-Model classes whose names start with *Update* extend the special base class :any:`UpdateModel` which needs to
-distinguish between properties being :any:`None` and being explicitly unset. :any:`UNSET` exists for this purpose, which
-is a sentinel value that should be used to mark a property as unset.
+Model classes whose names start with *Update* extend the special base class :py:class:`.UpdateModel` which needs to
+distinguish between properties being :py:obj:`None` and being explicitly unset. :py:class:`~flame_hub.models.UNSET`
+exists for this purpose, which is a sentinel value that should be used to mark a property as unset.
 
 .. code-block:: python
 

@@ -17,6 +17,7 @@ __all__ = [
     "AnalysisNodeRunStatus",
     "AnalysisBucketType",
     "UploadFile",
+    "UuidIdentifiable",
 ]
 
 from ._base_client import (
@@ -27,6 +28,7 @@ from ._base_client import (
     IncludeParams,
     FieldParams,
     FindAllKwargs,
+    UuidIdentifiable,
 )
 from ._core_client import (
     NodeType,
