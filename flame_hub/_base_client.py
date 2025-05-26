@@ -111,6 +111,20 @@ IncludeParams = str | Iterable[str]
 FieldParams = str | Iterable[str]
 
 
+class IsField(object):
+    pass
+
+
+def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
+    fields = []
+    for name, annotation in model.__annotations__.items():
+        if t.get_origin(annotation) is t.Annotated:
+            for metadata in annotation.__metadata__:
+                if metadata is IsField:
+                    fields.append(name)
+    return tuple(fields)
+
+
 class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None

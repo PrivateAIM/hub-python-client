@@ -13,6 +13,7 @@ from flame_hub._base_client import (
     GetKwargs,
     ClientKwargs,
     uuid_validator,
+    IsField,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._auth_flows import RobotAuth, PasswordAuth
@@ -53,7 +54,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    email: str | None = None
+    email: t.Annotated[str | None, IsField] = None
     display_name: str | None
     first_name: str | None
     last_name: str | None
