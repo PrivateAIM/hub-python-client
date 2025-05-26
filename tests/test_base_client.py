@@ -12,6 +12,8 @@ from flame_hub._base_client import (
     build_include_params,
     uuid_validator,
     build_field_params,
+    IsField,
+    get_field_names,
 )
 from flame_hub.types import FilterOperator, PageParams
 from flame_hub.models import UNSET
@@ -149,3 +151,31 @@ def test_uuid_validator_with_valid_ids(input_id):
 def test_uuid_validator_with_invalid_ids(input_id):
     with pytest.raises(ValidationError):
         UUIDValidatorModel(id=input_id)
+
+
+class NoFieldModel(BaseModel):
+    bar: str
+
+
+class FieldModel(BaseModel):
+    bar: str
+    foo: t.Annotated[str | None, IsField]
+
+
+class ExtendedFieldModel(BaseModel):
+    bar: str
+    foo: t.Annotated[str | None, IsField] = None
+    foo_bar: bool | None
+    bar_foo: t.Annotated[int, IsField] = 0
+
+
+@pytest.mark.parametrize(
+    "model,fields",
+    [
+        (NoFieldModel, ()),
+        (FieldModel, ("foo",)),
+        (ExtendedFieldModel, ("foo", "bar_foo")),
+    ],
+)
+def test_get_field_names(model, fields):
+    assert get_field_names(model) == fields
