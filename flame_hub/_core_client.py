@@ -16,6 +16,7 @@ from flame_hub._base_client import (
     GetKwargs,
     ClientKwargs,
     uuid_validator,
+    IsField,
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
@@ -30,7 +31,7 @@ class CreateRegistry(BaseModel):
     name: str
     host: str
     account_name: str | None
-    account_secret: str | None = None
+    account_secret: t.Annotated[str | None, IsField] = None
 
 
 class Registry(CreateRegistry):
@@ -64,9 +65,9 @@ class RegistryProject(CreateRegistryProject):
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
     registry: Registry = None
-    account_id: str | None = None
-    account_name: str | None = None
-    account_secret: str | None = None
+    account_id: t.Annotated[str | None, IsField] = None
+    account_name: t.Annotated[str | None, IsField] = None
+    account_secret: t.Annotated[str | None, IsField] = None
     created_at: datetime
     updated_at: datetime
 

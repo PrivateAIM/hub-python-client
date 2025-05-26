@@ -67,6 +67,7 @@ __all__ = [
     "RobotPermission",
     "CreateRobotRole",
     "RobotRole",
+    "IsField",
 ]
 
 from ._core_client import (
@@ -110,8 +111,7 @@ from ._core_client import (
     MasterImageEventLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
-from ._base_client import UpdateModel
-from ._base_client import _UNSET as UNSET
+from ._base_client import UpdateModel, _UNSET as UNSET, IsField
 from ._auth_client import (
     CreateRealm,
     UpdateRealm,

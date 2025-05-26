@@ -41,7 +41,7 @@ class Realm(CreateRealm):
 class CreateUser(BaseModel):
     name: str
     display_name: str | None
-    email: str | None
+    email: t.Annotated[str | None, IsField]
     active: bool
     name_locked: bool
     first_name: str | None
@@ -80,22 +80,18 @@ class UpdateUser(UpdateModel):
 class CreateRobot(BaseModel):
     name: str
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    secret: str
+    secret: t.Annotated[str, IsField] = None
     display_name: str | None
 
 
-class Robot(BaseModel):
+class Robot(CreateRobot):
     id: uuid.UUID
-    name: str
-    display_name: str | None
     description: str | None
     active: bool
-    secret: str = None
     created_at: datetime
     updated_at: datetime
     user_id: uuid.UUID | None
     user: User | None = None
-    realm_id: uuid.UUID
     realm: Realm = None
 
 
