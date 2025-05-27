@@ -204,6 +204,39 @@ print(nodes == sedon[::-1])
 # => True
 ```
 
+### Optional fields
+
+Some fields are not provided by default, such as the secret tied to a robot.
+You can explicitly request these fields with the `fields` keyword argument.
+
+```python
+import flame_hub
+
+auth = flame_hub.auth.PasswordAuth(username="admin", password="start123", base_url="http://localhost:3000/auth/")
+auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
+
+# No good. `secret` is not provided by default.
+system_robot = auth_client.find_robots(filter={"name": "system"}).pop()
+print(system_robot.secret)
+# => None
+
+# You have to request it explicitly in order to get it.
+system_robot = auth_client.find_robots(filter={"name": "system"}, fields="secret").pop()
+print(system_robot.secret)
+# => "$2y$10$KUOKEwbbnaUDo41e7XBKGek4hggD6z6R95I69Cv3mTeBcx0hifBAC"
+```
+
+If you are ever unsure which fields can be requested this way on a specific resource, use the
+`get_field_names` function.
+
+```python
+from flame_hub import get_field_names
+from flame_hub.models import Robot
+
+print(get_field_names(Robot))
+# => ('secret',)
+```
+
 ### Nested resources
 
 Some resources refer to other resources.
