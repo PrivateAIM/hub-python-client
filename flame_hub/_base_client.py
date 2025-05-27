@@ -137,6 +137,23 @@ IncludeParams = str | Iterable[str]
 FieldParams = str | Iterable[str]
 
 
+class IsField(object):
+    pass
+
+
+def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
+    fields = []
+    for cls in model.mro():
+        if not hasattr(cls, "__annotations__"):
+            continue
+        for name, annotation in cls.__annotations__.items():
+            if t.get_origin(annotation) is t.Annotated:
+                for metadata in annotation.__metadata__:
+                    if metadata is IsField:
+                        fields.append(name)
+    return tuple(fields)
+
+
 class FindAllKwargs(te.TypedDict, total=False):
     """Keyword arguments that can be used for finding resources.
 
@@ -149,10 +166,15 @@ class FindAllKwargs(te.TypedDict, total=False):
     filter: FilterParams | None
     page: PageParams | None
     sort: SortParams | None
+    fields: FieldParams | None
 
 
 class ClientKwargs(te.TypedDict, total=False):
     client: httpx.Client | None
+
+
+class GetKwargs(te.TypedDict, total=False):
+    fields: FieldParams | None
 
 
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None) -> dict:
@@ -294,8 +316,8 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str,
-        fields: FieldParams = None,
         include: IncludeParams = None,
+        **params: te.Unpack[GetKwargs],
     ) -> list[ResourceT]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
 
@@ -311,13 +333,12 @@ class BaseClient(object):
         Default pagination parameters are applied as explained in the return section of :py:meth:`_find_all_resources`.
         """
 
-        return self._find_all_resources(resource_type, *path, fields=fields, include=include)
+        return self._find_all_resources(resource_type, *path, include=include, **params)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
-        fields: FieldParams = None,
         include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT]:
@@ -365,13 +386,14 @@ class BaseClient(object):
         page_params = params.get("page", None)
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
+        field_params = params.get("fields", None)
 
         request_params = (
             build_page_params(page_params)
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
             | build_include_params(include)
-            | build_field_params(fields)
+            | build_field_params(field_params)
         )
 
         r = self._client.get("/".join(path), params=request_params)
@@ -426,8 +448,8 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
-        fields: FieldParams = None,
         include: IncludeParams = None,
+        **params: te.Unpack[GetKwargs],
     ) -> ResourceT | None:
         """Get a single resource of a certain type at the specified path.
 
@@ -468,7 +490,9 @@ class BaseClient(object):
         :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
 
         """
-        request_params = build_field_params(fields) | build_include_params(include)
+        field_params = params.get("fields", None)
+
+        request_params = build_field_params(field_params) | build_include_params(include)
 
         r = self._client.get("/".join(convert_path(path)), params=request_params)
 

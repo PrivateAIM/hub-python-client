@@ -12,6 +12,7 @@ from flame_hub._base_client import (
     ResourceList,
     obtain_uuid_from,
     FindAllKwargs,
+    GetKwargs,
     ClientKwargs,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
@@ -86,14 +87,14 @@ class StorageClient(BaseClient):
     def delete_bucket(self, bucket_id: Bucket | str | uuid.UUID):
         self._delete_resource("buckets", bucket_id)
 
-    def get_buckets(self) -> list[Bucket]:
-        return self._get_all_resources(Bucket, "buckets")
+    def get_buckets(self, **params: te.Unpack[GetKwargs]) -> list[Bucket]:
+        return self._get_all_resources(Bucket, "buckets", **params)
 
     def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[Bucket]:
         return self._find_all_resources(Bucket, "buckets", **params)
 
-    def get_bucket(self, bucket_id: Bucket | str | uuid.UUID) -> Bucket | None:
-        return self._get_single_resource(Bucket, "buckets", bucket_id)
+    def get_bucket(self, bucket_id: Bucket | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Bucket | None:
+        return self._get_single_resource(Bucket, "buckets", bucket_id, **params)
 
     def stream_bucket_tarball(self, bucket_id: Bucket | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream") as r:
@@ -119,11 +120,13 @@ class StorageClient(BaseClient):
     def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID):
         self._delete_resource("bucket-files", bucket_file_id)
 
-    def get_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID) -> BucketFile | None:
-        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, include="bucket")
+    def get_bucket_file(
+        self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
+    ) -> BucketFile | None:
+        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, include="bucket", **params)
 
-    def get_bucket_files(self) -> list[BucketFile]:
-        return self._get_all_resources(BucketFile, "bucket-files", include="bucket")
+    def get_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[BucketFile]:
+        return self._get_all_resources(BucketFile, "bucket-files", include="bucket", **params)
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
         return self._find_all_resources(BucketFile, "bucket-files", include="bucket", **params)
