@@ -6,7 +6,7 @@ from enum import Enum
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, model_validator, ValidatorFunctionWrapHandler, ValidationError
+from pydantic import BaseModel, model_validator, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
@@ -74,6 +74,7 @@ def uuid_validator(value: t.Any, handler: ValidatorFunctionWrapHandler) -> uuid.
 
 # resource for meta information on list responses
 class ResourceListMeta(BaseModel):
+    model_config = ConfigDict(extra="allow")  # Extra properties may be available.
     total: int
 
 
@@ -112,7 +113,7 @@ class PageParams(te.TypedDict, total=False):
 
 
 # default limit and offset for paginated requests
-_DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
+DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
 
 
 class FilterOperator(str, Enum):
@@ -167,6 +168,7 @@ class FindAllKwargs(te.TypedDict, total=False):
     page: PageParams | None
     sort: SortParams | None
     fields: FieldParams | None
+    meta: bool
 
 
 class ClientKwargs(te.TypedDict, total=False):
@@ -175,13 +177,14 @@ class ClientKwargs(te.TypedDict, total=False):
 
 class GetKwargs(te.TypedDict, total=False):
     fields: FieldParams | None
+    meta: bool
 
 
 def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None) -> dict:
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
     if default_page_params is None:
-        default_page_params = _DEFAULT_PAGE_PARAMS
+        default_page_params = DEFAULT_PAGE_PARAMS
 
     if page_params is None:
         page_params = {}
@@ -341,7 +344,7 @@ class BaseClient(object):
         *path: str,
         include: IncludeParams = None,
         **params: te.Unpack[FindAllKwargs],
-    ) -> list[ResourceT]:
+    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
 
         This method accesses the endpoint ``*path`` and returns all resources of type ``resource_type`` that match
@@ -387,6 +390,7 @@ class BaseClient(object):
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
         field_params = params.get("fields", None)
+        meta = params.get("meta", False)
 
         request_params = (
             build_page_params(page_params)
@@ -401,7 +405,12 @@ class BaseClient(object):
         if r.status_code != httpx.codes.OK.value:
             raise new_hub_api_error_from_response(r)
 
-        return ResourceList[resource_type](**r.json()).data
+        resource_list = ResourceList[resource_type](**r.json())
+
+        if meta:
+            return resource_list.data, resource_list.meta
+        else:
+            return resource_list.data
 
     def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
         """Create a resource of a certain type at the specified path.
