@@ -153,7 +153,7 @@ affects pagination. They default to :python:`limit=50` and :python:`offset=0`.
 
 .. note::
 
-    :python:`core_client.find_nodes(page={"limit": 50}, "offset": 0)` is functionally equivalent to
+    :python:`core_client.find_nodes(page={"limit": 50, "offset": 0})` is functionally equivalent to
     :python:`core_client.get_nodes()`.
 
 The ``filter`` parameter allows you to filter by any fields. You can perform exact matching, but also any other
