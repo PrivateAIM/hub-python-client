@@ -14,11 +14,11 @@ from flame_hub._base_client import (
     build_field_params,
     IsField,
     get_field_names,
+    DEFAULT_PAGE_PARAMS,
+    BaseClient,
 )
-from flame_hub.types import FilterOperator, PageParams
-from flame_hub.models import UNSET
-
-_DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
+from flame_hub.types import FilterOperator
+from flame_hub.models import UNSET, Node, User, Bucket
 
 
 @pytest.mark.parametrize(
@@ -32,7 +32,7 @@ _DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
     ],
 )
 def test_build_page_params(page_params, expected):
-    assert expected == build_page_params(page_params, _DEFAULT_PAGE_PARAMS)
+    assert expected == build_page_params(page_params, DEFAULT_PAGE_PARAMS)
 
 
 @pytest.mark.parametrize(
@@ -176,3 +176,20 @@ class ExtendedFieldModel(FieldModel):
 )
 def test_get_field_names(model, fields):
     assert get_field_names(model) == fields
+
+
+@pytest.mark.parametrize(
+    "resource_type,base_url_fixture_name,path",
+    [
+        (Node, "core_base_url", "nodes"),
+        (User, "auth_base_url", "users"),
+        (Bucket, "storage_base_url", "buckets"),
+    ],
+)
+def test_resource_list_meta_data(request, password_auth, resource_type, base_url_fixture_name, path):
+    client = BaseClient(base_url=request.getfixturevalue(base_url_fixture_name), auth=password_auth)
+    _, meta = client._find_all_resources(resource_type, path, meta=True)
+
+    assert meta.total >= 0
+    assert meta.limit == DEFAULT_PAGE_PARAMS["limit"]
+    assert meta.offset == DEFAULT_PAGE_PARAMS["offset"]
