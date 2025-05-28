@@ -70,6 +70,7 @@ __all__ = [
     "IsField",
     "ResourceListMeta",
     "ResourceList",
+    "AnalysisLog",
 ]
 
 from ._core_client import (
@@ -111,6 +112,7 @@ from ._core_client import (
     RegistryProject,
     UpdateRegistryProject,
     MasterImageEventLog,
+    AnalysisLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UpdateModel, _UNSET as UNSET, IsField, ResourceListMeta, ResourceList
