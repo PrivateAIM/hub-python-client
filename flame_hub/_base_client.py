@@ -72,16 +72,32 @@ def uuid_validator(value: t.Any, handler: ValidatorFunctionWrapHandler) -> uuid.
             raise e
 
 
-# resource for meta information on list responses
 class ResourceListMeta(BaseModel):
-    model_config = ConfigDict(extra="allow")  # Extra properties may be available.
+    """Resource for meta information on list responses.
+
+    See Also
+    --------
+    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
+    """
+
+    model_config = ConfigDict(extra="allow")
+    """Based on the type of the request, additional attributes like ``limit`` or ``offset`` may be available."""
     total: int
+    """The total amount of records of a specific resource type."""
 
 
-# resource for list responses
 class ResourceList(BaseModel, t.Generic[ResourceT]):
+    """Resource for list responses.
+
+    See Also
+    --------
+    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
+    """
+
     data: list[ResourceT]
+    """Attribute which holds all retrieved resources as a list."""
     meta: ResourceListMeta
+    """Attribute which holds meta information about the result and the requested resource type."""
 
 
 class SortParams(te.TypedDict, total=False):
@@ -178,7 +194,7 @@ class FindAllKwargs(te.TypedDict, total=False):
     See Also
     --------
     :py:class:`.FilterOperator`, :py:type:`~flame_hub.types.FilterParams`, :py:type:`~flame_hub.types.PageParams`,\
-    :py:type:`~flame_hub.types.SortParams`, :py:meth:`._find_all_resources`
+    :py:type:`~flame_hub.types.SortParams`, :py:type:`flame_hub.types.FieldParams`, :py:meth:`._find_all_resources`
     """
 
     filter: FilterParams | None
@@ -193,6 +209,13 @@ class ClientKwargs(te.TypedDict, total=False):
 
 
 class GetKwargs(te.TypedDict, total=False):
+    """Keyword arguments that can be used for getting resources.
+
+    See Also
+    --------
+    :py:type:`~flame_hub.types.FieldParams`
+    """
+
     fields: FieldParams | None
     meta: bool
 
@@ -338,7 +361,7 @@ class BaseClient(object):
         *path: str,
         include: IncludeParams = None,
         **params: te.Unpack[GetKwargs],
-    ) -> list[ResourceT]:
+    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
 
         This method passes its arguments through to :py:meth:`_find_all_resources`. Check the documentation of that
@@ -365,8 +388,8 @@ class BaseClient(object):
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
 
         This method accesses the endpoint ``*path`` and returns all resources of type ``resource_type`` that match
-        certain criteria defined in ``**params``. Further fields and nested resources can be added to response via the
-        ``fields`` and ``include`` argument.
+        certain criteria defined in ``**params``. Further fields and nested resources can be added to responses via the
+        ``fields`` and ``include`` argument. Meta information can be returned with the ``meta`` argument.
 
         Parameters
         ----------
@@ -382,13 +405,15 @@ class BaseClient(object):
             Extend the default resource fields by explicitly list resource names to nest in the response. See the
             :doc:`model specifications <models_api>` which resources can be included in other resources.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.FindAllKwargs`]
-            Further keyword arguments to define filtering, sorting and pagination conditions.
+            Further keyword arguments to define filtering, sorting and pagination conditions, adding optional fields
+            to a response and returning meta information.
 
         Returns
         -------
-        :py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+        :py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`] | :py:class:`tuple`\\[:py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`], :py:class:`.ResourceListMeta`]
             All resources of type ``resource_type`` that match the criteria defined in ``**params``. If no criteria are
-            defined, it returns the first 50 or all resources if there are less than 50.
+            defined, it returns the first 50 or all resources if there are less than 50. If :python:`meta=True`, this
+            method returns meta information about the result and the requested resource type as a second value.
 
         Raises
         ------
@@ -515,6 +540,9 @@ class BaseClient(object):
         --------
         :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
 
+        Notes
+        -----
+        ``meta`` has no relevance for this method.
         """
         field_params = params.get("fields", None)
 

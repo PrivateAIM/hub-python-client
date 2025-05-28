@@ -68,6 +68,8 @@ __all__ = [
     "CreateRobotRole",
     "RobotRole",
     "IsField",
+    "ResourceListMeta",
+    "ResourceList",
 ]
 
 from ._core_client import (
@@ -111,7 +113,7 @@ from ._core_client import (
     MasterImageEventLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
-from ._base_client import UpdateModel, _UNSET as UNSET, IsField
+from ._base_client import UpdateModel, _UNSET as UNSET, IsField, ResourceListMeta, ResourceList
 from ._auth_client import (
     CreateRealm,
     UpdateRealm,

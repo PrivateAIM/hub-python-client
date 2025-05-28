@@ -2,6 +2,9 @@
 Types
 =====
 
+.. autodata:: flame_hub._base_client.ResourceT
+    :annotation: = typing.TypeVar
+
 .. autoclass:: flame_hub.types.FilterParams
 
 .. autoclass:: flame_hub.types.FieldParams
@@ -11,9 +14,6 @@ Types
 .. automodule:: flame_hub.types
     :members:
     :undoc-members:
-
-.. autodata:: flame_hub._base_client.ResourceT
-    :annotation: = typing.TypeVar
 
 .. autoclass:: flame_hub._base_client.UuidModel
     :members:

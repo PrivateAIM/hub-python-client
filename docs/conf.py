@@ -46,6 +46,7 @@ autodoc_default_options = {
 autodoc_member_order = "bysource"
 autodoc_type_aliases = {
     "FilterParams": "flame_hub.types.FilterParams",
+    "FieldParams": "flame_hub.types.FieldParams",
 }
 
 intersphinx_mapping = {

@@ -33,7 +33,7 @@ the naming pattern for each of the methods. ``RESOURCE_NAME`` and ``RESOURCE_NAM
 the singular or plural form of a specific resource name following the
 `naming conventions of Python <https://peps.python.org/pep-0008/#function-and-variable-names>`_.
 
-.. py:method:: get_RESOURCE_NAME(self, id: str | uuid.UUID | ResourceT) -> ResourceT | None
+.. py:method:: get_RESOURCE_NAME(self, id: str | uuid.UUID | ResourceT, **params: typing.Unpack[GetKwargs]) -> ResourceT | None
     :no-index:
 
     Takes an ``id`` and returns the corresponding resource or :py:obj:`None` if there is no resource with that ``id``.
@@ -41,7 +41,7 @@ the singular or plural form of a specific resource name following the
     for. The last option is basically irrelevant unless the resource was updated in the meanwhile and you want to get
     the updated resource.
 
-.. py:method:: get_RESOURCE_NAME_PLURAL(self) -> list[ResourceT]
+.. py:method:: get_RESOURCE_NAME_PLURAL(self, **params: typing.Unpack[GetKwargs]) -> list[ResourceT]
     :no-index:
 
     Returns a list of the first 50 resources.
