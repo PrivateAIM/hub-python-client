@@ -47,6 +47,15 @@ autodoc_member_order = "bysource"
 autodoc_type_aliases = {
     "FilterParams": "flame_hub.types.FilterParams",
     "FieldParams": "flame_hub.types.FieldParams",
+    "NodeType": "flame_hub.types.NodeType",
+    "RegistryProjectType": "flame_hub.types.RegistryProjectType",
+    "ProjectNodeApprovalStatus": "flame_hub.types.ProjectNodeApprovalStatus",
+    "AnalysisBuildStatus": "flame_hub.types.AnalysisBuildStatus",
+    "AnalysisRunStatus": "flame_hub.types.AnalysisRunStatus",
+    "AnalysisCommand": "flame_hub.types.AnalysisCommand",
+    "AnalysisNodeApprovalStatus": "flame_hub.types.AnalysisNodeApprovalStatus",
+    "AnalysisNodeRunStatus": "flame_hub.types.AnalysisNodeRunStatus",
+    "AnalysisBucketType": "flame_hub.types.AnalysisBucketType",
 }
 
 intersphinx_mapping = {
