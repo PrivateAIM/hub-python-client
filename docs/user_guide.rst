@@ -44,7 +44,8 @@ the singular or plural form of a specific resource name following the
 .. py:method:: get_RESOURCE_NAME_PLURAL(self, **params: typing.Unpack[GetKwargs]) -> list[ResourceT]
     :no-index:
 
-    Returns a list of the first 50 resources.
+    Returns a list of the first :python:`DEFAULT_PAGE_PARAMS["limit"]` resources. See
+    :py:const:`~flame_hub._base_client.DEFAULT_PAGE_PARAMS` for the default setting.
 
 .. py:method:: find_RESOURCE_NAME_PLURAL(self, **params: typing.Unpack[FindAllKwargs]) -> list[ResourceT]
     :no-index:
@@ -153,8 +154,9 @@ affects pagination. They default to :python:`limit=50` and :python:`offset=0`.
 
 .. note::
 
-    :python:`core_client.find_nodes(page={"limit": 50, "offset": 0})` is functionally equivalent to
-    :python:`core_client.get_nodes()`.
+    :python:`core_client.find_nodes(page=DEFAULT_PAGE_PARAMS)` is functionally equivalent to
+    :python:`core_client.get_nodes()`. See :py:const:`~flame_hub._base_client.DEFAULT_PAGE_PARAMS` for the default
+    setting.
 
 The ``filter`` parameter allows you to filter by any fields. You can perform exact matching, but also any other
 operation supported by the FLAME Hub, including *like* and *not* queries and numeric *greater than* and *less than*

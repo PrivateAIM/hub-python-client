@@ -128,8 +128,8 @@ class PageParams(te.TypedDict, total=False):
     """Amount of resources to skip before resources are added to the returned list."""
 
 
-# default limit and offset for paginated requests
 DEFAULT_PAGE_PARAMS: PageParams = {"limit": 50, "offset": 0}
+"""Default ``limit`` and ``offset`` for paginated requests."""
 
 
 class FilterOperator(str, Enum):
@@ -412,8 +412,9 @@ class BaseClient(object):
         -------
         :py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`] | :py:class:`tuple`\\[:py:class:`list`\\[:py:type:`~flame_hub._base_client.ResourceT`], :py:class:`.ResourceListMeta`]
             All resources of type ``resource_type`` that match the criteria defined in ``**params``. If no criteria are
-            defined, it returns the first 50 or all resources if there are less than 50. If :python:`meta=True`, this
-            method returns meta information about the result and the requested resource type as a second value.
+            defined, it returns the default paginated resources according to
+            :py:const:`~flame_hub._base_client.DEFAULT_PAGE_PARAMS`. If :python:`meta=True`, this method returns meta
+            information about the result and the requested resource type as a second value.
 
         Raises
         ------

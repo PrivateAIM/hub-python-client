@@ -380,7 +380,7 @@ class CoreClient(BaseClient):
     """The client which implements all core endpoints.
 
     This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
-    further information. Note that ``base_url`` defaults to the core endpoints of the publicly available Hub instance.
+    further information. Note that ``base_url`` defaults :py:const:`~flame_hub._defaults.DEFAULT_CORE_BASE_URL`.
 
     See Also
     --------

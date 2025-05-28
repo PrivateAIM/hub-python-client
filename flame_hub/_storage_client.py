@@ -65,8 +65,7 @@ class StorageClient(BaseClient):
     """The client which implements all storage endpoints.
 
     This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
-    further information. Note that ``base_url`` defaults to the storage endpoints of the publicly available Hub
-    instance.
+    further information. Note that ``base_url`` defaults :py:const:`~flame_hub._defaults.DEFAULT_STORAGE_BASE_URL`.
 
     See Also
     --------

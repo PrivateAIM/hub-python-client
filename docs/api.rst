@@ -12,3 +12,4 @@ API Reference
     models_api
     types_api
     exceptions_api
+    defaults_api
