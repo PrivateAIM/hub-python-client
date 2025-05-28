@@ -198,6 +198,45 @@ left unset, the client will sort in ascending order by default.
 See :py:class:`.FindAllKwargs` for the API documentation of all possible parameters.
 
 
+Optional fields
+===============
+
+Some fields are not provided by default, such as the secret tied to a robot. You can explicitly request these fields
+with the `fields` keyword argument.
+
+.. code-block:: python
+
+    import flame_hub
+
+    auth = flame_hub.auth.PasswordAuth(
+        username="admin", password="start123", base_url="http://localhost:3000/auth/"
+    )
+    auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
+
+    system_robot = auth_client.find_robots(filter={"name": "system"}).pop()
+    assert system_robot.secret is None
+
+You have to request ``secret`` explicitly in order to get it.
+
+.. code-block:: python
+
+    system_robot = auth_client.find_robots(filter={"name": "system"}, fields="secret").pop()
+    print(system_robot.secret)
+
+.. code-block::
+
+    $2y$10$KUOKEwbbnaUDo41e7XBKGek4hggD6z6R95I69Cv3mTeBcx0hifBAC
+
+If you are ever unsure which fields can be requested this way on a specific resource, use :py:func:`.get_field_names`
+function.
+
+.. code-block:: python
+
+    from flame_hub import get_field_names
+    from flame_hub.models import Robot
+
+    assert get_field_names(Robot) == ("secret",)
+
 Nested resources
 ================
 
