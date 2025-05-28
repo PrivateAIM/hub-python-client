@@ -498,6 +498,9 @@ class CoreClient(BaseClient):
         return self._find_all_resources(Project, "projects", include="master_image", **params)
 
     def sync_master_images(self):
+        """This method will start to synchronize the master images. Note that an error is raised if you request a
+        synchronization while the Hub instance is still synchronizing master images.
+        """
         r = self._client.post("master-images/command", json={"command": "sync"})
 
         if r.status_code != httpx.codes.ACCEPTED.value:
