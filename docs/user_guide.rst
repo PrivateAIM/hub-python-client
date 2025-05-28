@@ -237,6 +237,34 @@ function.
 
     assert get_field_names(Robot) == ("secret",)
 
+
+Meta information
+================
+
+Furthermore, it is possible to retrieve meta information for *find* and *get* methods via the ``meta`` keyword argument.
+When set to :python:`True`, methods return a model containing all received meta data as a second value.
+
+.. code-block:: python
+
+    import flame_hub
+
+    auth = flame_hub.auth.PasswordAuth(
+        username="admin", password="start123", base_url="http://localhost:3000/auth/"
+    )
+    auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
+
+    _, meta = auth_client.get_permissions(meta=True)
+    print(meta.model_dump_json(indent=2))
+
+.. code-block:: console
+
+    {
+        "total": 106,
+        "limit": 50,
+        "offset": 0
+    }
+
+
 Nested resources
 ================
 
