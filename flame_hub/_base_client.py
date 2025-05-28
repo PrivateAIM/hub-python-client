@@ -139,10 +139,27 @@ FieldParams = str | Iterable[str]
 
 
 class IsField(object):
-    pass
+    """Sentinel to annotate model attributes as optional fields."""
 
 
 def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
+    """Returns all optional field names for a given model.
+
+    This function traverses a given ``model`` and all of its bases using the method resolution order. While traversing,
+    all attributes are checked if they are annotated with the :py:class:`.IsField` sentinel which marks an optional
+    field. The names of all annotated attributes are returned as a tuple.
+
+    Parameters
+    ----------
+    model : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
+        A resource model for which all field names should be retrieved. Note fields are **not** consequently annotated
+        for *Create* and *Update* models due to inheritance.
+
+    Returns
+    -------
+    :py:class:`tuple`\\[:py:class:`str`, ...]
+        Returns a tuple of all attribute names that are annotated with :py:class:`.IsField`.
+    """
     fields = []
     for cls in model.mro():
         if not hasattr(cls, "__annotations__"):
