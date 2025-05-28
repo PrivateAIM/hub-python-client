@@ -20,3 +20,7 @@ Types
     :undoc-members:
 
 .. autoclass:: flame_hub.types.UuidIdentifiable
+
+.. autoclass:: flame_hub._base_client.ClientKwargs
+    :members:
+    :undoc-members:

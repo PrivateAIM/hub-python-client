@@ -205,6 +205,13 @@ class FindAllKwargs(te.TypedDict, total=False):
 
 
 class ClientKwargs(te.TypedDict, total=False):
+    """Keyword arguments that can be used to instantiate a client.
+
+    See Also
+    --------
+    :py:class:`.BaseClient`, :py:class:`.AuthClient`, :py:class:`.CoreClient`, :py:class:`.StorageClient`
+    """
+
     client: httpx.Client | None
 
 
@@ -342,9 +349,9 @@ class BaseClient(object):
         Base URL of the Hub service.
     auth : :py:class:`.PasswordAuth` | :py:class:`.RobotAuth`, optional
         Authenticator which is used to authenticate the client at the FLAME Hub instance. Defaults to :any:`None`.
-    client : :py:class:`httpx.Client`, optional
-        An already instantiated HTTP client to bypass the default instantiation. This overrides ``base_url`` and
-        ``auth``.
+    **kwargs : :py:class:`Unpack`\\[:py:class:`~flame_hub._base_client.ClientKwargs`]
+        Currently used to pass an already instantiated HTTP client via the ``client`` keyword argument to bypass the
+        default instantiation. This overrides ``base_url`` and ``auth``.
 
     See Also
     --------
