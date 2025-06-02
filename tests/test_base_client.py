@@ -178,6 +178,7 @@ def test_get_field_names(model, fields):
     assert get_field_names(model) == fields
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize(
     "resource_type,base_url_fixture_name,path",
     [
