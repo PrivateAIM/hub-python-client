@@ -11,7 +11,7 @@ class ErrorResponse(BaseModel):
     status_code: t.Annotated[int, Field(validation_alias="statusCode")]
     """The status code of the response. This attribute is mapped to the :python:`"statusCode"` field of the response."""
     code: str
-    """Written equivalent to ``status_code``."""
+    """Written equivalent for ``status_code``."""
     message: str
     """The error message."""
 
