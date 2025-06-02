@@ -178,8 +178,8 @@ def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
     Parameters
     ----------
     model : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
-        A resource model for which all field names should be retrieved. Note fields are **not** consequently annotated
-        for *Create* and *Update* models due to inheritance.
+        A resource model for which all field names should be retrieved. Note that fields are **not** consequently
+        annotated for *Create* and *Update* models due to inheritance.
 
     Returns
     -------
