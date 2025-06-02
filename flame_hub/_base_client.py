@@ -58,7 +58,20 @@ UuidIdentifiable = UuidModel | uuid.UUID | str
 
 
 def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
-    """Extract a UUID from a model containing an ID property, a string or a UUID object."""
+    """Extract a :py:class:`~uuid.UUID` from a model containing an ``id`` property, :py:class:`~uuid.UUID` object or a
+    string.
+
+    Raises
+    ------
+    :py:exc:`ValueError`
+        If ``uuid_identifiable`` is neither an instance of :py:class:`~pydantic.BaseModel`, :py:class:`str` nor
+        :py:class:`~uuid.UUID`.
+
+    See Also
+    --------
+    :py:type:`.UuidIdentifiable`, :py:class:`.UuidModel`, :py:type:`~flame_hub._base_client.ResourceT`
+    """
+
     if isinstance(uuid_identifiable, BaseModel):
         uuid_identifiable = getattr(uuid_identifiable, "id")
 
@@ -72,7 +85,23 @@ def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
 
 
 def uuid_validator(value: t.Any, handler: ValidatorFunctionWrapHandler) -> uuid.UUID:
-    """Callable for Pydantic's wrap validators to cast resource type instances and strings to UUIDs."""
+    """Callable for Pydantic's wrap validator :py:class:`~pydantic.WrapValidator` to cast resource type instances and
+    strings to :py:class:`~uuid.UUID`.
+
+    This function tries to validate ``value`` with ``handler`` and if this raises a validation error, it tries to cast
+    ``value`` to a UUID with :py:func:`~flame_hub._base_client.obtain_from_uuid`.
+
+    Raises
+    ------
+    :py:exc:`~pydantic_core.ValidationError`
+        If :py:func:`~flame_hub._base_client.obtain_from_uuid` raises a :py:exc:`ValueError`, the original
+        :py:exc:`~pydantic_core.ValidationError` is raised.
+
+    See Also
+    --------
+    :py:type:`.UuidIdentifiable`, :py:class:`.UuidModel`, :py:type:`~flame_hub._base_client.ResourceT`,\
+    :py:func:`~flame_hub._base_client.obtain_from_uuid`
+    """
     try:
         return handler(value)
     except ValidationError as e:
