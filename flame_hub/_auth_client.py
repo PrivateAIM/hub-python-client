@@ -237,6 +237,16 @@ class RobotRole(CreateRobotRole):
 
 
 class AuthClient(BaseClient):
+    """The client which implements all auth endpoints.
+
+    This class passes its arguments through to :py:class:`.BaseClient`. Check the documentation of that class for
+    further information. Note that ``base_url`` defaults :py:const:`~flame_hub._defaults.DEFAULT_AUTH_BASE_URL`.
+
+    See Also
+    --------
+    :py:class:`.BaseClient`
+    """
+
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,
