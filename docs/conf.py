@@ -16,8 +16,8 @@ load_dotenv("../.env.test")
 project = "FLAME Hub Client"
 copyright = "2025, Paul Brassel, Maximilian Jugl"
 author = "Paul Brassel, Maximilian Jugl"
-version = "0.2.2"
-release = "0.2.2"
+version = "0.2.4"
+release = "0.2.4"
 rst_prolog = f"""
 .. |hub_version| replace:: {os.getenv("PYTEST_HUB_VERSION")}
 .. role:: console(code)
