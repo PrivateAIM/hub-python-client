@@ -1,6 +1,9 @@
 name: Build and deploy Sphinx documentation
 
-on: workflow_dispatch
+on:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   build:
