@@ -20,6 +20,7 @@ classifiers = [
 
 [project.urls]
 homepage = "https://privateaim.de/"
+documentation = "https://privateaim.github.io/hub-python-client/"
 repository = "https://github.com/PrivateAIM/hub-python-client"
 
 [tool.poetry]
