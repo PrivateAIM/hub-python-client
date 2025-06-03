@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLAME Hub Client &mdash; Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User guide" href="user_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            FLAME Hub Client
+              <img src="https://raw.githubusercontent.com/PrivateAIM/documentation/refs/heads/master/src/public/images/icon/icon_flame_light.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">FLAME Hub Client</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FLAME Hub Client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="flame-hub-client">
+<h1>FLAME Hub Client<a class="headerlink" href="#flame-hub-client" title="Link to this heading"></a></h1>
+<p>The FLAME Hub Client is a Python client which wraps the endpoints of the
+<a class="reference external" href="https://github.com/PrivateAIM/hub">FLAME Hub</a> API. This repository is part of the
+<a class="reference external" href="https://privateaim.de/eng/index.html">PrivateAIM</a> project.</p>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>To install the client Python 3.10 or higher is required.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install flame-hub-client</span>
+</pre></div>
+</div>
+</section>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h2>
+<p>The FLAME Hub Client offers <em>get</em>, <em>find</em>, <em>update</em>, <em>create</em> and <em>delete</em> methods for the core, storage and auth
+endpoints. It is capable of authenticating against the API using either the password or robot authentication. Pick one,
+provide your credentials and plug them into the class for the service you want to use.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The client will automatically reauthenticate if necessary.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
+
+<span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+<span class="p">)</span>
+<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you’re ready to use the library’s functions! Start off with getting the so called master realm by using one of the
+<em>find</em> methods and filtering for the name <code class="code highlight python docutils literal highlight-python"><span class="s2">&quot;master&quot;</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">master_realms</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_realms</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;master&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Every <em>find</em> method returns a list of matching resources. Since there is only one realm called <code class="code highlight python docutils literal highlight-python"><span class="s2">&quot;master&quot;</span></code> in
+this example, we simply pop it from the list and print the result.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">master_realms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">master_realm</span> <span class="o">=</span> <span class="n">master_realms</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">master_realm</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
+<span class="go">  &quot;name&quot;: &quot;master&quot;,</span>
+<span class="go">  &quot;display_name&quot;: null,</span>
+<span class="go">  &quot;description&quot;: null,</span>
+<span class="go">  &quot;id&quot;: &quot;794f2375-f043-4789-bd0c-e5534e8deeaa&quot;,</span>
+<span class="go">  &quot;built_in&quot;: true,</span>
+<span class="go">  &quot;created_at&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;,</span>
+<span class="go">  &quot;updated_at&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Next we want to create a new node. Node resources are accessible over endpoints under the core directive. So the first
+step is to create a new core client and then create a new node.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">core_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">CoreClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/core/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">my_node</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-node&quot;</span><span class="p">,</span> <span class="n">realm_id</span><span class="o">=</span><span class="n">master_realm</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">my_node</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
+<span class="go">  &quot;external_name&quot;: null,</span>
+<span class="go">  &quot;hidden&quot;: false,</span>
+<span class="go">  &quot;name&quot;: &quot;my-node&quot;,</span>
+<span class="go">  &quot;realm_id&quot;: &quot;794f2375-f043-4789-bd0c-e5534e8deeaa&quot;,</span>
+<span class="go">  &quot;registry_id&quot;: null,</span>
+<span class="go">  &quot;type&quot;: &quot;default&quot;,</span>
+<span class="go">  &quot;id&quot;: &quot;03636152-e6a8-4e01-994e-18b2b0c3a935&quot;,</span>
+<span class="go">  &quot;public_key&quot;: null,</span>
+<span class="go">  &quot;online&quot;: false,</span>
+<span class="go">  &quot;registry&quot;: null,</span>
+<span class="go">  &quot;registry_project_id&quot;: null,</span>
+<span class="go">  &quot;registry_project&quot;: null,</span>
+<span class="go">  &quot;robot_id&quot;: &quot;200aab68-a686-407c-a6c1-2dd367ff6031&quot;,</span>
+<span class="go">  &quot;created_at&quot;: &quot;2025-05-19T15:43:57.859000Z&quot;,</span>
+<span class="go">  &quot;updated_at&quot;: &quot;2025-05-19T15:43:57.859000Z&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Maybe making the node public wasn’t such a good idea, so let’s update it by hiding it. To see if the update was
+successful, we have to request the updated node from the Hub.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">core_client</span><span class="o">.</span><span class="n">update_node</span><span class="p">(</span><span class="n">my_node</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">core_client</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">my_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>To cleanup our mess, we delete the node and verify that the node is gone forever.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">core_client</span><span class="o">.</span><span class="n">delete_node</span><span class="p">(</span><span class="n">my_node</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">core_client</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">my_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Creation, update and deletion isn’t available for all resources. Check the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> which methods
+are available for each resource.</p>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#handling-resources">Handling resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#overview-of-implemented-resources">Overview of implemented resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#finding-resources">Finding resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#optional-fields">Optional fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#meta-information">Meta information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#nested-resources">Nested resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#handling-exceptions">Handling exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#types">Types</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#using-testcontainers">Using testcontainers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#deploying-your-own-hub-instance">Deploying your own Hub instance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clients_api.html">Clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_functions_api.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication_api.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_api.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="types_api.html">Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions_api.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="defaults_api.html">Defaults</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_guide.html" class="btn btn-neutral float-right" title="User guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Paul Brassel, Maximilian Jugl.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

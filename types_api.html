@@ -1,0 +1,508 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Types &mdash; Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Exceptions" href="exceptions_api.html" />
+    <link rel="prev" title="Models" href="models_api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            FLAME Hub Client
+              <img src="https://raw.githubusercontent.com/PrivateAIM/documentation/refs/heads/master/src/public/images/icon/icon_flame_light.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="clients_api.html">Clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utility_functions_api.html">Utility functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication_api.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_api.html">Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Types</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.ResourceT"><code class="docutils literal notranslate"><span class="pre">ResourceT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FilterParams"><code class="docutils literal notranslate"><span class="pre">FilterParams</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FieldParams"><code class="docutils literal notranslate"><span class="pre">FieldParams</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.IncludeParams"><code class="docutils literal notranslate"><span class="pre">IncludeParams</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.RegistryCommand"><code class="docutils literal notranslate"><span class="pre">RegistryCommand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.NodeType"><code class="docutils literal notranslate"><span class="pre">NodeType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.RegistryProjectType"><code class="docutils literal notranslate"><span class="pre">RegistryProjectType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ProjectNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">ProjectNodeApprovalStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisBuildStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisBuildStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisRunStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisRunStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisCommand"><code class="docutils literal notranslate"><span class="pre">AnalysisCommand</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisNodeApprovalStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisNodeRunStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisNodeRunStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.PageParams"><code class="docutils literal notranslate"><span class="pre">PageParams</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.PageParams.limit"><code class="docutils literal notranslate"><span class="pre">PageParams.limit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.PageParams.offset"><code class="docutils literal notranslate"><span class="pre">PageParams.offset</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.SortParams"><code class="docutils literal notranslate"><span class="pre">SortParams</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.SortParams.by"><code class="docutils literal notranslate"><span class="pre">SortParams.by</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.SortParams.order"><code class="docutils literal notranslate"><span class="pre">SortParams.order</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FilterOperator"><code class="docutils literal notranslate"><span class="pre">FilterOperator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.eq"><code class="docutils literal notranslate"><span class="pre">FilterOperator.eq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.neq"><code class="docutils literal notranslate"><span class="pre">FilterOperator.neq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.like"><code class="docutils literal notranslate"><span class="pre">FilterOperator.like</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.lt"><code class="docutils literal notranslate"><span class="pre">FilterOperator.lt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.le"><code class="docutils literal notranslate"><span class="pre">FilterOperator.le</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.gt"><code class="docutils literal notranslate"><span class="pre">FilterOperator.gt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FilterOperator.ge"><code class="docutils literal notranslate"><span class="pre">FilterOperator.ge</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FindAllKwargs"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.filter"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.filter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.page"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.sort"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.fields"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.meta"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.meta</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.GetKwargs"><code class="docutils literal notranslate"><span class="pre">GetKwargs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.GetKwargs.fields"><code class="docutils literal notranslate"><span class="pre">GetKwargs.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.GetKwargs.meta"><code class="docutils literal notranslate"><span class="pre">GetKwargs.meta</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.MasterImageCommandArgument"><code class="docutils literal notranslate"><span class="pre">MasterImageCommandArgument</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.MasterImageCommandArgument.value"><code class="docutils literal notranslate"><span class="pre">MasterImageCommandArgument.value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.MasterImageCommandArgument.position"><code class="docutils literal notranslate"><span class="pre">MasterImageCommandArgument.position</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.UploadFile"><code class="docutils literal notranslate"><span class="pre">UploadFile</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.file_name"><code class="docutils literal notranslate"><span class="pre">UploadFile.file_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.content"><code class="docutils literal notranslate"><span class="pre">UploadFile.content</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.content_type"><code class="docutils literal notranslate"><span class="pre">UploadFile.content_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.UuidModel"><code class="docutils literal notranslate"><span class="pre">UuidModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub._base_client.UuidModel.id"><code class="docutils literal notranslate"><span class="pre">UuidModel.id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.UuidIdentifiable"><code class="docutils literal notranslate"><span class="pre">UuidIdentifiable</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.ClientKwargs"><code class="docutils literal notranslate"><span class="pre">ClientKwargs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub._base_client.ClientKwargs.client"><code class="docutils literal notranslate"><span class="pre">ClientKwargs.client</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions_api.html">Exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="defaults_api.html">Defaults</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">FLAME Hub Client</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="api.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Types</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/types_api.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="types">
+<h1>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="flame_hub._base_client.ResourceT">
+<span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">ResourceT</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">typing.TypeVar</span></em><a class="headerlink" href="#flame_hub._base_client.ResourceT" title="Link to this definition"></a></dt>
+<dd><p>Base resource type which assumes <a class="reference external" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> as the base class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterParams">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FilterParams</span></span><a class="headerlink" href="#flame_hub.types.FilterParams" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub._base_client.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></a>]]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FieldParams">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FieldParams</span></span><a class="headerlink" href="#flame_hub.types.FieldParams" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.IncludeParams">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">IncludeParams</span></span><a class="headerlink" href="#flame_hub.types.IncludeParams" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.RegistryCommand">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">RegistryCommand</span></span><a class="headerlink" href="#flame_hub.types.RegistryCommand" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘setup’, ‘cleanup’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.NodeType">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">NodeType</span></span><a class="headerlink" href="#flame_hub.types.NodeType" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘aggregator’, ‘default’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.RegistryProjectType">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">RegistryProjectType</span></span><a class="headerlink" href="#flame_hub.types.RegistryProjectType" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘default’, ‘aggregator’, ‘incoming’, ‘outgoing’, ‘masterImages’, ‘node’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.ProjectNodeApprovalStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">ProjectNodeApprovalStatus</span></span><a class="headerlink" href="#flame_hub.types.ProjectNodeApprovalStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘rejected’, ‘approved’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisBuildStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBuildStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisBuildStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘stopping’, ‘stopped’, ‘finished’, ‘failed’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisRunStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisRunStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisRunStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘running’, ‘stopping’, ‘stopped’, ‘finished’, ‘failed’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisCommand">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisCommand</span></span><a class="headerlink" href="#flame_hub.types.AnalysisCommand" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘spinUp’, ‘tearDown’, ‘buildStart’, ‘buildStop’, ‘configurationLock’, ‘configurationUnlock’, ‘buildStatus’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisNodeApprovalStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisNodeApprovalStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisNodeApprovalStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘rejected’, ‘approved’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisNodeRunStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisNodeRunStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisNodeRunStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘stopping’, ‘stopped’, ‘running’, ‘finished’, ‘failed’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisBucketType">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBucketType</span></span><a class="headerlink" href="#flame_hub.types.AnalysisBucketType" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘CODE’, ‘RESULT’, ‘TEMP’]</p>
+</dd></dl>
+
+<span class="target" id="module-flame_hub.types"></span><dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.PageParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">PageParams</span></span><a class="headerlink" href="#flame_hub.types.PageParams" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Dict shape for specifying limit and offset for paginated queries.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.PageParams.limit">
+<span class="sig-name descname"><span class="pre">limit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#flame_hub.types.PageParams.limit" title="Link to this definition"></a></dt>
+<dd><p>Amount of returned resources.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.PageParams.offset">
+<span class="sig-name descname"><span class="pre">offset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#flame_hub.types.PageParams.offset" title="Link to this definition"></a></dt>
+<dd><p>Amount of resources to skip before resources are added to the returned list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.SortParams">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">SortParams</span></span><a class="headerlink" href="#flame_hub.types.SortParams" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Dict shape for specifying parameters for sorted queries.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.SortParams.by">
+<span class="sig-name descname"><span class="pre">by</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.SortParams.by" title="Link to this definition"></a></dt>
+<dd><p>Name of the attribute to sort by.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.SortParams.order">
+<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'ascending'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'descending'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.types.SortParams.order" title="Link to this definition"></a></dt>
+<dd><p>Sort in either ascending or descending order.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FilterOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.types.FilterOperator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Operators that are supported by the Hub API for filtering requests.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.types.FilterParams" title="flame_hub.types.FilterParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.eq">
+<span class="sig-name descname"><span class="pre">eq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'='</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.eq" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.neq">
+<span class="sig-name descname"><span class="pre">neq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'!'</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.neq" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.like">
+<span class="sig-name descname"><span class="pre">like</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'~'</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.like" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.lt">
+<span class="sig-name descname"><span class="pre">lt</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&lt;'</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.lt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.le">
+<span class="sig-name descname"><span class="pre">le</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&lt;='</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.le" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.gt">
+<span class="sig-name descname"><span class="pre">gt</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&gt;'</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.gt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FilterOperator.ge">
+<span class="sig-name descname"><span class="pre">ge</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'&gt;='</span></em><a class="headerlink" href="#flame_hub.types.FilterOperator.ge" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FindAllKwargs</span></span><a class="headerlink" href="#flame_hub.types.FindAllKwargs" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Keyword arguments that can be used for finding resources.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <a class="reference internal" href="#flame_hub.types.FilterParams" title="flame_hub.types.FilterParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">PageParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">SortParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FieldParams" title="flame_hub.types.FieldParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">flame_hub.types.FieldParams</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">FilterParams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.filter" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.page">
+<span class="sig-name descname"><span class="pre">page</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><span class="pre">PageParams</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.page" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><span class="pre">SortParams</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.sort" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">FieldParams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.GetKwargs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">GetKwargs</span></span><a class="headerlink" href="#flame_hub.types.GetKwargs" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Keyword arguments that can be used for getting resources.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.types.FieldParams" title="flame_hub.types.FieldParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">FieldParams</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.GetKwargs.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">FieldParams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.GetKwargs.fields" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.GetKwargs.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#flame_hub.types.GetKwargs.meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.MasterImageCommandArgument">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">MasterImageCommandArgument</span></span><a class="headerlink" href="#flame_hub.types.MasterImageCommandArgument" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.MasterImageCommandArgument.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.MasterImageCommandArgument.value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.MasterImageCommandArgument.position">
+<span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'before'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'after'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.MasterImageCommandArgument.position" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.UploadFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">UploadFile</span></span><a class="headerlink" href="#flame_hub.types.UploadFile" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.UploadFile.file_name">
+<span class="sig-name descname"><span class="pre">file_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.UploadFile.file_name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.UploadFile.content">
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.13)"><span class="pre">IO</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.UploadFile.content" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.UploadFile.content_type">
+<span class="sig-name descname"><span class="pre">content_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NotRequired" title="(in Python v3.13)"><span class="pre">NotRequired</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.types.UploadFile.content_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub._base_client.UuidModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">UuidModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub._base_client.UuidModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a>[<a class="reference internal" href="#flame_hub._base_client.ResourceT" title="flame_hub._base_client.ResourceT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResourceT</span></code></a>]</p>
+<p>Structural subtype which expects a <a class="reference external" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> to have an <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub._base_client.UuidModel.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.13)"><span class="pre">UUID</span></a></em><a class="headerlink" href="#flame_hub._base_client.UuidModel.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.UuidIdentifiable">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">UuidIdentifiable</span></span><a class="headerlink" href="#flame_hub.types.UuidIdentifiable" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#flame_hub._base_client.UuidModel" title="flame_hub._base_client.UuidModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">UuidModel</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub._base_client.ClientKwargs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">ClientKwargs</span></span><a class="headerlink" href="#flame_hub._base_client.ClientKwargs" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Keyword arguments that can be used to instantiate a client.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient" title="flame_hub._base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub.AuthClient" title="flame_hub.AuthClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthClient</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub.CoreClient" title="flame_hub.CoreClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoreClient</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub.StorageClient" title="flame_hub.StorageClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">StorageClient</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub._base_client.ClientKwargs.client">
+<span class="sig-name descname"><span class="pre">client</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Client</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub._base_client.ClientKwargs.client" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="models_api.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exceptions_api.html" class="btn btn-neutral float-right" title="Exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Paul Brassel, Maximilian Jugl.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
