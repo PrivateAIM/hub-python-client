@@ -32,6 +32,7 @@ rst_prolog = f"""
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "myst_parser",
     "numpydoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
