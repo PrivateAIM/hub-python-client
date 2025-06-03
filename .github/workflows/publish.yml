@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +14,25 @@ jobs:
         uses: ./.github/actions/setup-poetry
       - name: Install dependencies
         run: poetry install
-      - name: Build and publish
-        run: poetry publish --build --no-interaction
-        env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
+      - name: Build package
+        run: poetry build --no-interaction
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: dist/
+          name: package-dist
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ github.workspace }}/dist/
+          name: package-dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
