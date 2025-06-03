@@ -6,7 +6,7 @@ authors = [
     { name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de" },
     { name = "Paul Brassel", email = "Paul.Brassel@medizin.uni-leipzig.de" }
 ]
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.10,<4"
 dependencies = [
     "pydantic (>=2.10.0,<3.0.0)",
