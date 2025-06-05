@@ -16,6 +16,9 @@ class UNSET(object):
     """Sentinel to mark parameters as unset as opposed to using :any:`None`."""
 
 
+UNSET_T = type[UNSET]
+
+
 class UpdateModel(BaseModel):
     """Base class for models that shall validate responses for requests that update resources.
 

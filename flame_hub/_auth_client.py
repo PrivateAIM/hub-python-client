@@ -3,7 +3,6 @@ from datetime import datetime
 import typing as t
 
 import typing_extensions as te
-from pre_commit.envcontext import UNSET
 from pydantic import BaseModel, Field, WrapValidator
 
 from flame_hub._base_client import (
@@ -14,6 +13,7 @@ from flame_hub._base_client import (
     ClientKwargs,
     uuid_validator,
     IsField,
+    UNSET,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._auth_flows import RobotAuth, PasswordAuth

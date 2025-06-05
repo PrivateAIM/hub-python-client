@@ -59,6 +59,7 @@ autodoc_type_aliases = {
     "AnalysisNodeApprovalStatus": "flame_hub.types.AnalysisNodeApprovalStatus",
     "AnalysisNodeRunStatus": "flame_hub.types.AnalysisNodeRunStatus",
     "AnalysisBucketType": "flame_hub.types.AnalysisBucketType",
+    "UNSET_T": "flame_hub.types.UNSET_T",
 }
 
 intersphinx_mapping = {
