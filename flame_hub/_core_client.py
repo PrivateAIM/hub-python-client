@@ -11,8 +11,8 @@ from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
     BaseClient,
     obtain_uuid_from,
-    UpdateModel,
     UNSET,
+    UNSET_T,
     FindAllKwargs,
     GetKwargs,
     ClientKwargs,
@@ -41,11 +41,11 @@ class Registry(CreateRegistry):
     updated_at: datetime
 
 
-class UpdateRegistry(UpdateModel):
-    name: str | None = None
-    host: str | None = None
-    account_name: str | None = None
-    account_secret: str | None = None
+class UpdateRegistry(BaseModel):
+    name: str | None | UNSET_T = UNSET
+    host: str | None | UNSET_T = UNSET
+    account_name: str | None | UNSET_T = UNSET
+    account_secret: str | None | UNSET_T = UNSET
 
 
 RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
@@ -73,11 +73,11 @@ class RegistryProject(CreateRegistryProject):
     updated_at: datetime
 
 
-class UpdateRegistryProject(UpdateModel):
-    name: str | None = None
-    type: RegistryProjectType | None = None
-    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    external_name: str | None = None
+class UpdateRegistryProject(BaseModel):
+    name: str | None | UNSET_T = UNSET
+    type: RegistryProjectType | None | UNSET_T = UNSET
+    registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    external_name: str | None | UNSET_T = UNSET
 
 
 NodeType = t.Literal["aggregator", "default"]
@@ -104,13 +104,13 @@ class Node(CreateNode):
     updated_at: datetime
 
 
-class UpdateNode(UpdateModel):
-    hidden: bool | None = None
-    external_name: str | None = None
-    type: NodeType | None = None
-    public_key: str | None = None
-    realm_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
+class UpdateNode(BaseModel):
+    hidden: bool | None | UNSET_T = UNSET
+    external_name: str | None | UNSET_T = UNSET
+    type: NodeType | None | UNSET_T = UNSET
+    public_key: str | None | UNSET_T = UNSET
+    realm_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
 
 
 class MasterImageGroup(BaseModel):
@@ -184,10 +184,10 @@ class Project(CreateProject):
     robot_id: uuid.UUID | None
 
 
-class UpdateProject(UpdateModel):
-    description: str | None = None
-    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    name: str | None = None
+class UpdateProject(BaseModel):
+    description: str | None | UNSET_T = UNSET
+    master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    name: str | None | UNSET_T = UNSET
 
 
 ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
@@ -210,9 +210,9 @@ class ProjectNode(CreateProjectNode):
     node_realm_id: uuid.UUID
 
 
-class UpdateProjectNode(UpdateModel):
-    comment: str | None = None
-    approval_status: ProjectNodeApprovalStatus | None = None
+class UpdateProjectNode(BaseModel):
+    comment: str | None | UNSET_T = UNSET
+    approval_status: ProjectNodeApprovalStatus | None | UNSET_T = UNSET
 
 
 AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
@@ -248,11 +248,11 @@ class Analysis(CreateAnalysis):
     master_image: MasterImage | None = None
 
 
-class UpdateAnalysis(UpdateModel):
-    description: str | None = None
-    name: str | None = None
-    master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)] = None
-    image_command_arguments: t.Annotated[list[MasterImageCommandArgument], Field(default_factory=list)]
+class UpdateAnalysis(BaseModel):
+    description: str | None | UNSET_T = UNSET
+    name: str | None | UNSET_T = UNSET
+    master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    image_command_arguments: list[MasterImageCommandArgument] | UNSET_T = UNSET
 
 
 AnalysisCommand = t.Literal[
@@ -308,10 +308,10 @@ class AnalysisNode(CreateAnalysisNode):
     node_realm_id: uuid.UUID
 
 
-class UpdateAnalysisNode(UpdateModel):
-    comment: str | None = None
-    approval_status: AnalysisNodeApprovalStatus | None = None
-    run_status: AnalysisNodeRunStatus | None = None
+class UpdateAnalysisNode(BaseModel):
+    comment: str | None | UNSET_T = UNSET
+    approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET
+    run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET
 
 
 class CreateAnalysisNodeLog(BaseModel):
@@ -333,11 +333,11 @@ class AnalysisNodeLog(CreateAnalysisNodeLog):
     node_realm_id: uuid.UUID
 
 
-class UpdateAnalysisNodeLog(UpdateModel):
-    error: bool | None = None
-    error_code: str | None = None
-    status: str | None = None
-    status_message: str | None = None
+class UpdateAnalysisNodeLog(BaseModel):
+    error: bool | None | UNSET_T = UNSET
+    error_code: str | None | UNSET_T = UNSET
+    status: str | None | UNSET_T = UNSET
+    status_message: str | None | UNSET_T = UNSET
 
 
 AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
@@ -373,8 +373,8 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     bucket: AnalysisBucket = None
 
 
-class UpdateAnalysisBucketFile(UpdateModel):
-    root: bool | None = None
+class UpdateAnalysisBucketFile(BaseModel):
+    root: bool | None | UNSET_T = UNSET
 
 
 class CoreClient(BaseClient):

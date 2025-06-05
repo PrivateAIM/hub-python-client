@@ -12,7 +12,7 @@ from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 
 
-class UNSET(object):
+class UNSET(BaseModel):
     """Sentinel to mark parameters as unset as opposed to using :any:`None`."""
 
 
@@ -648,7 +648,8 @@ class BaseClient(object):
         """
         r = self._client.post(
             "/".join(convert_path(path)),
-            json=resource.model_dump(mode="json", exclude_none=False, exclude_unset=True),
+            # Exclude defaults so that properties that are set to UNSET are excluded from update models.
+            json=resource.model_dump(mode="json", exclude_defaults=True),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
