@@ -367,7 +367,7 @@ Hub instance.
     from flame_hub.models import UpdateNode, UNSET
 
     update_node = UpdateNode(hidden=False, external_name=None, type=UNSET)
-    print(update_node.model_dump_json(indent=2, exclude_unset=True))
+    print(update_node.model_dump_json(indent=2, exclude_defaults=True))
 
 .. code-block:: console
 
