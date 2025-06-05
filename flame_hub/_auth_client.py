@@ -3,12 +3,12 @@ from datetime import datetime
 import typing as t
 
 import typing_extensions as te
+from pre_commit.envcontext import UNSET
 from pydantic import BaseModel, Field, WrapValidator
 
 from flame_hub._base_client import (
     BaseClient,
     UpdateModel,
-    _UNSET,
     FindAllKwargs,
     GetKwargs,
     ClientKwargs,
@@ -281,9 +281,9 @@ class AuthClient(BaseClient):
     def update_realm(
         self,
         realm_id: Realm | str | uuid.UUID,
-        name: str = _UNSET,
-        display_name: str = _UNSET,
-        description: str = _UNSET,
+        name: str = UNSET,
+        display_name: str = UNSET,
+        description: str = UNSET,
     ) -> Realm:
         return self._update_resource(
             Realm,
@@ -314,10 +314,10 @@ class AuthClient(BaseClient):
     def update_robot(
         self,
         robot_id: Robot | str | uuid.UUID,
-        name: str = _UNSET,
-        display_name: str = _UNSET,
-        realm_id: Realm | str | uuid.UUID = _UNSET,
-        secret: str = _UNSET,
+        name: str = UNSET,
+        display_name: str = UNSET,
+        realm_id: Realm | str | uuid.UUID = UNSET,
+        secret: str = UNSET,
     ) -> Robot:
         return self._update_resource(
             Robot,
@@ -362,10 +362,10 @@ class AuthClient(BaseClient):
     def update_permission(
         self,
         permission_id: Permission | uuid.UUID | str,
-        name: str = _UNSET,
-        display_name: str = _UNSET,
-        description: str = _UNSET,
-        realm_id: Realm | uuid.UUID | str = _UNSET,
+        name: str = UNSET,
+        display_name: str = UNSET,
+        description: str = UNSET,
+        realm_id: Realm | uuid.UUID | str = UNSET,
     ) -> Permission:
         return self._update_resource(
             Permission,
@@ -396,9 +396,9 @@ class AuthClient(BaseClient):
     def update_role(
         self,
         role_id: Role | uuid.UUID | str,
-        name: str = _UNSET,
-        display_name: str = _UNSET,
-        description: str = _UNSET,
+        name: str = UNSET,
+        display_name: str = UNSET,
+        description: str = UNSET,
     ) -> Role:
         return self._update_resource(
             Role,
@@ -487,14 +487,14 @@ class AuthClient(BaseClient):
     def update_user(
         self,
         user_id: User | uuid.UUID | str,
-        name: str = _UNSET,
-        display_name: str = _UNSET,
-        email: str = _UNSET,
-        active: bool = _UNSET,
-        name_locked: bool = _UNSET,
-        first_name: str = _UNSET,
-        last_name: str = _UNSET,
-        password: str = _UNSET,
+        name: str = UNSET,
+        display_name: str = UNSET,
+        email: str = UNSET,
+        active: bool = UNSET,
+        name_locked: bool = UNSET,
+        first_name: str = UNSET,
+        last_name: str = UNSET,
+        password: str = UNSET,
     ) -> User:
         return self._update_resource(
             User,
