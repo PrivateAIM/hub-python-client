@@ -6,7 +6,7 @@ from enum import Enum
 
 import httpx
 import typing_extensions as te
-from pydantic import BaseModel, model_validator, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
+from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
@@ -17,33 +17,6 @@ class UNSET(BaseModel):
 
 
 UNSET_T = type[UNSET]
-
-
-class UpdateModel(BaseModel):
-    """Base class for models that shall validate responses for requests that update resources.
-
-    This base class is needed so that properties can be unset when passed into the class constructor. Before validation,
-    this class prunes all properties which have the :py:class:`.UNSET` sentinel assigned to them. This way, they are
-    considered unset by the base model.
-    """
-
-    @model_validator(mode="before")
-    @classmethod
-    def strip_unset_properties(cls, data: t.Any) -> t.Any:
-        """Strips unset properties before validating property values.
-
-        To strip all properties that have the :py:class:`.UNSET` sentinel assigned to them, this class method is
-        decorated with Pydantic's model validator :py:func:`pydantic.model_validator` with :python:`mode="before"` so
-        that properties are stripped before validation to avoid validation errors. If ``data`` is a dictionary, then its
-        keys are property names and values are the corresponding property values.
-        """
-        if isinstance(data, dict):
-            props_to_delete = [k for k, v in data.items() if v == UNSET]
-
-            for prop in props_to_delete:
-                del data[prop]
-
-        return data
 
 
 ResourceT = t.TypeVar("ResourceT", bound=BaseModel)

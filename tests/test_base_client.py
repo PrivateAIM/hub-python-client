@@ -8,7 +8,6 @@ from flame_hub._base_client import (
     build_page_params,
     build_filter_params,
     build_sort_params,
-    UpdateModel,
     build_include_params,
     uuid_validator,
     build_field_params,
@@ -16,9 +15,11 @@ from flame_hub._base_client import (
     get_field_names,
     DEFAULT_PAGE_PARAMS,
     BaseClient,
+    UNSET,
+    UNSET_T,
 )
 from flame_hub.types import FilterOperator
-from flame_hub.models import UNSET, Node, User, Bucket
+from flame_hub.models import Node, User, Bucket
 
 
 @pytest.mark.parametrize(
@@ -118,24 +119,20 @@ def test_build_field_params(field_params, expected):
     assert expected == build_field_params(field_params)
 
 
-class FooUpdateModel(UpdateModel):
-    foo: str | None = None
+class UpdateModel(BaseModel):
+    name: str | UNSET_T = UNSET
 
 
-def test_update_model_dump_if_not_set():
-    assert FooUpdateModel().model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
-
-
-def test_update_model_dump_if_none_set():
-    assert FooUpdateModel(foo=None).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {"foo": None}
-
-
-def test_update_model_dump_if_unset():
-    assert FooUpdateModel(foo=UNSET).model_dump(mode="json", exclude_unset=True, exclude_none=False) == {}
-
-
-def test_update_model_dump_if_set():
-    assert FooUpdateModel(foo="bar").model_dump(mode="json", exclude_unset=True, exclude_none=False) == {"foo": "bar"}
+@pytest.mark.parametrize(
+    "model,json",
+    [
+        (UpdateModel(name="my_name"), {"name": "my_name"}),
+        (UpdateModel(name=UNSET), {}),
+        (UpdateModel(), {}),
+    ],
+)
+def test_serializing_update_model(model, json):
+    assert model.model_dump(mode="json", exclude_defaults=True) == json
 
 
 class UUIDValidatorModel(BaseModel):
