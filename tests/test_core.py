@@ -4,9 +4,22 @@ import typing as t
 
 import pytest
 
-from flame_hub import HubAPIError, get_field_names
+from flame_hub import HubAPIError, get_field_names, get_includable_names
 from flame_hub.types import NodeType
-from flame_hub.models import Registry, RegistryProject
+from flame_hub.models import (
+    Registry,
+    RegistryProject,
+    Node,
+    MasterImageEventLog,
+    Project,
+    ProjectNode,
+    Analysis,
+    AnalysisLog,
+    AnalysisNode,
+    AnalysisNodeLog,
+    AnalysisBucket,
+    AnalysisBucketFile,
+)
 from tests.helpers import next_random_string, next_uuid, assert_eventually
 
 pytestmark = pytest.mark.integration
@@ -65,11 +78,21 @@ def master_image_event_log(core_client):
     return core_client.get_master_image_event_logs()[0]
 
 
+@pytest.fixture(scope="session")
+def master_image_event_log_includables():
+    return get_includable_names(MasterImageEventLog)
+
+
 @pytest.fixture()
 def node(core_client, master_realm):
     new_node = core_client.create_node(next_random_string(), master_realm)
     yield new_node
     core_client.delete_node(new_node)
+
+
+@pytest.fixture(scope="session")
+def node_includables():
+    return get_includable_names(Node)
 
 
 @pytest.fixture()
@@ -79,11 +102,21 @@ def project(core_client, master_image):
     core_client.delete_project(new_project)
 
 
+@pytest.fixture(scope="session")
+def project_includables():
+    return get_includable_names(Project)
+
+
 @pytest.fixture()
 def project_node(core_client, node, project):
     new_project_node = core_client.create_project_node(project, node)
     yield new_project_node
     core_client.delete_project_node(new_project_node)
+
+
+@pytest.fixture(scope="session")
+def project_node_includables():
+    return get_includable_names(ProjectNode)
 
 
 @pytest.fixture()
@@ -93,11 +126,21 @@ def analysis(core_client, project, master_image):
     core_client.delete_analysis(new_analysis)
 
 
+@pytest.fixture(scope="session")
+def analysis_includables():
+    return get_includable_names(Analysis)
+
+
 @pytest.fixture()
 def analysis_node(core_client, analysis, project_node):
     new_analysis_node = core_client.create_analysis_node(analysis.id, project_node.node_id)
     yield new_analysis_node
     core_client.delete_analysis_node(new_analysis_node)
+
+
+@pytest.fixture(scope="session")
+def analysis_node_includables():
+    return get_includable_names(AnalysisNode)
 
 
 @pytest.fixture()
@@ -121,6 +164,11 @@ def analysis_buckets(core_client, analysis):
     }
 
 
+@pytest.fixture(scope="session")
+def analysis_bucket_includables():
+    return get_includable_names(AnalysisBucket)
+
+
 @pytest.fixture()
 def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_bytes):
     # Use the analysis bucket for code files so that the created bucket file can be used as an entrypoint to be able
@@ -138,6 +186,11 @@ def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_byte
     )
     yield new_analysis_bucket_file
     core_client.delete_analysis_bucket_file(new_analysis_bucket_file)
+
+
+@pytest.fixture(scope="session")
+def analysis_bucket_file_includables():
+    return get_includable_names(AnalysisBucketFile)
 
 
 @pytest.fixture()
@@ -170,6 +223,11 @@ def analysis_log(core_client, configured_analysis):
     return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
 
 
+@pytest.fixture(scope="session")
+def analysis_log_includables():
+    return get_includable_names(AnalysisLog)
+
+
 @pytest.fixture()
 def analysis_node_log(core_client, analysis_node):
     new_analysis_node_log = core_client.create_analysis_node_log(
@@ -177,6 +235,11 @@ def analysis_node_log(core_client, analysis_node):
     )
     yield new_analysis_node_log
     core_client.delete_analysis_node_log(new_analysis_node_log.id)
+
+
+@pytest.fixture(scope="session")
+def analysis_node_log_includables():
+    return get_includable_names(AnalysisNodeLog)
 
 
 @pytest.fixture()
@@ -212,16 +275,30 @@ def registry_project_fields():
     return get_field_names(RegistryProject)
 
 
-def test_get_nodes(core_client, node):
-    assert len(core_client.get_nodes()) > 0
+@pytest.fixture(scope="session")
+def registry_project_includables():
+    return get_includable_names(RegistryProject)
 
 
-def test_get_node(core_client, node):
-    assert node == core_client.get_node(node.id)
+def test_get_nodes(core_client, node, node_includables):
+    nodes_get = core_client.get_nodes()
+
+    assert len(nodes_get) > 0
+    assert all(includable in n.model_fields_set for n in nodes_get for includable in node_includables)
 
 
-def test_find_nodes(core_client, node):
-    assert core_client.find_nodes(filter={"id": node.id}) == [node]
+def test_get_node(core_client, node, node_includables):
+    node_get = core_client.get_node(node.id)
+
+    assert node_get.id == node.id
+    assert all(includable in node_get.model_fields_set for includable in node_includables)
+
+
+def test_find_nodes(core_client, node, node_includables):
+    nodes_find = core_client.find_nodes(filter={"id": node.id})
+
+    assert [n.id for n in nodes_find] == [node.id]
+    assert all(includable in n.model_fields_set for n in nodes_find for includable in node_includables)
 
 
 def test_get_node_not_found(core_client):
@@ -253,31 +330,52 @@ def test_get_master_image_groups(core_client, master_image_group):
     assert len(core_client.get_master_image_groups()) > 0
 
 
-def test_get_master_image_event_log(core_client, master_image_event_log):
-    assert master_image_event_log == core_client.get_master_image_event_log(master_image_event_log.id)
+def test_get_master_image_event_log(core_client, master_image_event_log, master_image_event_log_includables):
+    master_image_event_log_get = core_client.get_master_image_event_log(master_image_event_log.id)
+
+    assert master_image_event_log_get.id == master_image_event_log.id
+    assert all(
+        includable in master_image_event_log_get.model_fields_set for includable in master_image_event_log_includables
+    )
 
 
 def test_get_master_image_event_logs(core_client):
     _ = core_client.get_master_image_event_logs()
 
 
-def test_find_master_image_event_logs(core_client, master_image_event_log):
+def test_find_master_image_event_logs(core_client, master_image_event_log, master_image_event_log_includables):
     # Use "name" for filtering because there is no filter mechanism for attribute "id".
-    assert master_image_event_log in core_client.find_master_image_event_logs(
+    master_image_event_logs_find = core_client.find_master_image_event_logs(
         filter={"name": master_image_event_log.name}
     )
 
+    assert master_image_event_log.id in [log.id for log in master_image_event_logs_find]
+    assert all(
+        includable in log.model_fields_set
+        for log in master_image_event_logs_find
+        for includable in master_image_event_log_includables
+    )
 
-def test_get_projects(core_client, project):
-    assert len(core_client.get_projects()) > 0
+
+def test_get_projects(core_client, project, project_includables):
+    projects_get = core_client.get_projects()
+
+    assert len(projects_get) > 0
+    assert all(includable in p.model_fields_set for p in projects_get for includable in project_includables)
 
 
-def test_find_projects(core_client, project):
-    assert core_client.find_projects(filter={"id": project.id}) == [project]
+def test_find_projects(core_client, project, project_includables):
+    projects_find = core_client.find_projects(filter={"id": project.id})
+
+    assert [project.id] == [p.id for p in projects_find]
+    assert all(includable in p.model_fields_set for p in projects_find for includable in project_includables)
 
 
-def test_get_project(core_client, project):
-    assert project == core_client.get_project(project.id)
+def test_get_project(core_client, project, project_includables):
+    project_get = core_client.get_project(project.id)
+
+    assert project_get.id == project.id
+    assert all(includable in project_get.model_fields_set for includable in project_includables)
 
 
 def test_get_project_not_found(core_client):
@@ -292,29 +390,28 @@ def test_update_project(core_client, project):
     assert new_node.name == new_name
 
 
-def test_get_project_nodes(core_client, project_node):
+def test_get_project_nodes(core_client, project_node, project_node_includables):
     project_nodes_get = core_client.get_project_nodes()
 
     assert len(project_nodes_get) > 0
-    assert all(pn.project is not None for pn in project_nodes_get)
-    assert all(pn.node is not None for pn in project_nodes_get)
+    assert all(includable in pn.model_fields_set for pn in project_nodes_get for includable in project_node_includables)
 
 
-def test_find_project_nodes(core_client, project_node):
+def test_find_project_nodes(core_client, project_node, project_node_includables):
     # Use "project_id" instead of "id" because filtering for ids does not work.
     project_nodes_find = core_client.find_project_nodes(filter={"project_id": project_node.project_id})
 
     assert [project_node.id] == [pn.id for pn in project_nodes_find]
-    assert all(pn.project is not None for pn in project_nodes_find)
-    assert all(pn.node is not None for pn in project_nodes_find)
+    assert all(
+        includable in pn.model_fields_set for pn in project_nodes_find for includable in project_node_includables
+    )
 
 
-def test_get_project_node(core_client, project_node):
+def test_get_project_node(core_client, project_node, project_node_includables):
     project_node_get = core_client.get_project_node(project_node.id)
 
     assert project_node_get.id == project_node.id
-    assert project_node_get.project is not None
-    assert project_node_get.node is not None
+    assert all(includable in project_node_get.model_fields_set for includable in project_node_includables)
 
 
 def test_update_project_node(core_client, project_node):
@@ -329,25 +426,25 @@ def test_get_project_node_not_found(core_client):
     assert core_client.get_project_node(next_uuid()) is None
 
 
-def test_get_analyses(core_client, analysis):
+def test_get_analyses(core_client, analysis, analysis_includables):
     analyses_get = core_client.get_analyses()
 
     assert len(analyses_get) > 0
-    assert all(a.project is not None for a in analyses_get)
+    assert all(includable in a.model_fields_set for a in analyses_get for includable in analysis_includables)
 
 
-def test_find_analyses(core_client, analysis):
+def test_find_analyses(core_client, analysis, analysis_includables):
     analyses_find = core_client.find_analyses(filter={"id": analysis.id})
 
     assert [analysis.id] == [a.id for a in analyses_find]
-    assert all(a.project is not None for a in analyses_find)
+    assert all(includable in a.model_fields_set for a in analyses_find for includable in analysis_includables)
 
 
-def test_get_analysis(core_client, analysis):
+def test_get_analysis(core_client, analysis, analysis_includables):
     analysis_get = core_client.get_analysis(analysis.id)
 
     assert analysis_get.id == analysis.id
-    assert analysis_get.project is not None
+    assert all(includable in analysis_get.model_fields_set for includable in analysis_includables)
 
 
 def test_get_analysis_not_found(core_client):
@@ -396,50 +493,68 @@ def test_analysis_node_update(core_client, analysis_node):
     assert new_analysis_node.run_status == "starting"
 
 
-def test_get_analysis_nodes(core_client, analysis_node):
+def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includables):
     analysis_nodes_get = core_client.get_analysis_nodes()
 
     assert len(analysis_nodes_get) > 0
-    assert all(an.analysis is not None for an in analysis_nodes_get)
-    assert all(an.node is not None for an in analysis_nodes_get)
+    assert all(
+        includable in an.model_fields_set for an in analysis_nodes_get for includable in analysis_node_includables
+    )
 
 
-def test_find_analysis_nodes(core_client, analysis_node):
+def test_find_analysis_nodes(core_client, analysis_node, analysis_node_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
     analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysis_id": analysis_node.analysis_id})
 
     assert [analysis_node.id] == [an.id for an in analysis_nodes_find]
-    assert all(an.analysis is not None for an in analysis_nodes_find)
-    assert all(an.node is not None for an in analysis_nodes_find)
+    assert all(
+        includable in an.model_fields_set for an in analysis_nodes_find for includable in analysis_node_includables
+    )
 
 
-def test_get_analysis_node(core_client, analysis_node):
+def test_get_analysis_node(core_client, analysis_node, analysis_node_includables):
     analysis_node_get = core_client.get_analysis_node(analysis_node.id)
 
     assert analysis_node_get.id == analysis_node.id
-    assert analysis_node_get.analysis is not None
-    assert analysis_node.node is not None
+    assert all(includable in analysis_node_get.model_fields_set for includable in analysis_node_includables)
 
 
 def test_get_analysis_node_not_found(core_client):
     assert core_client.get_analysis_node(next_uuid()) is None
 
 
-def test_get_analysis_node_log(core_client, analysis_node_log):
-    assert analysis_node_log == core_client.get_analysis_node_log(analysis_node_log.id)
+def test_get_analysis_node_log(core_client, analysis_node_log, analysis_node_log_includables):
+    analysis_node_log_get = core_client.get_analysis_node_log(analysis_node_log.id)
+
+    assert analysis_node_log_get.id == analysis_node_log.id
+    assert all(includable in analysis_node_log_get.model_fields_set for includable in analysis_node_log_includables)
 
 
 def test_get_analysis_node_log_not_found(core_client):
     assert core_client.get_analysis_node_log(next_uuid()) is None
 
 
-def test_get_analysis_node_logs(core_client, analysis_node_log):
-    assert len(core_client.get_analysis_node_logs()) > 0
+def test_get_analysis_node_logs(core_client, analysis_node_log, analysis_node_log_includables):
+    analysis_node_logs_get = core_client.get_analysis_node_logs()
+
+    assert len(analysis_node_logs_get) > 0
+    assert all(
+        includable in log.model_fields_set
+        for log in analysis_node_logs_get
+        for includable in analysis_node_log_includables
+    )
 
 
-def test_find_analysis_node_logs(core_client, analysis_node_log):
+def test_find_analysis_node_logs(core_client, analysis_node_log, analysis_node_log_includables):
     # Use "node_id" for filtering because there is no filter mechanism for attribute "id".
-    assert [analysis_node_log] == core_client.find_analysis_node_logs(filter={"node_id": analysis_node_log.node_id})
+    analysis_node_logs_find = core_client.find_analysis_node_logs(filter={"node_id": analysis_node_log.node_id})
+
+    assert [analysis_node_log.id] == [log.id for log in analysis_node_logs_find]
+    assert all(
+        includable in log.model_fields_set
+        for log in analysis_node_logs_find
+        for includable in analysis_node_log_includables
+    )
 
 
 def test_update_analysis_node_log(core_client, analysis_node_log):
@@ -450,49 +565,58 @@ def test_update_analysis_node_log(core_client, analysis_node_log):
     assert new_status == new_analysis_node_log.status
 
 
-def test_get_analysis_bucket(core_client, analysis_buckets):
+def test_get_analysis_bucket(core_client, analysis_buckets, analysis_bucket_includables):
     analysis_bucket_get = core_client.get_analysis_bucket(analysis_buckets["CODE"].id)
 
     assert analysis_bucket_get.id == analysis_buckets["CODE"].id
-    assert analysis_bucket_get.analysis is not None
+    assert all(includable in analysis_bucket_get.model_fields_set for includable in analysis_bucket_includables)
 
 
-def test_get_analysis_buckets(core_client, analysis_buckets):
+def test_get_analysis_buckets(core_client, analysis_buckets, analysis_bucket_includables):
     analysis_buckets_get = core_client.get_analysis_buckets()
 
     assert len(analysis_buckets_get) > 0
-    assert all(ab.analysis is not None for ab in analysis_buckets_get)
+    assert all(
+        includable in ab.model_fields_set for ab in analysis_buckets_get for includable in analysis_bucket_includables
+    )
 
 
-def test_get_analysis_bucket_file(core_client, analysis_bucket_file):
+def test_get_analysis_bucket_file(core_client, analysis_bucket_file, analysis_bucket_file_includables):
     analysis_bucket_file_get = core_client.get_analysis_bucket_file(analysis_bucket_file.id)
 
     assert analysis_bucket_file_get.id == analysis_bucket_file.id
-    assert analysis_bucket_file_get.analysis is not None
-    assert analysis_bucket_file.bucket is not None
+    assert all(
+        includable in analysis_bucket_file_get.model_fields_set for includable in analysis_bucket_file_includables
+    )
 
 
 def test_get_analysis_bucket_file_not_found(core_client):
     assert core_client.get_analysis_bucket_file(next_uuid()) is None
 
 
-def test_get_analysis_bucket_files(core_client, analysis_bucket_file):
+def test_get_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
     analysis_bucket_files_get = core_client.get_analysis_bucket_files()
 
     assert len(analysis_bucket_files_get) > 0
-    assert all(abf.analysis is not None for abf in analysis_bucket_files_get)
-    assert all(abf.bucket is not None for abf in analysis_bucket_files_get)
+    assert all(
+        includable in abf.model_fields_set
+        for abf in analysis_bucket_files_get
+        for includable in analysis_bucket_file_includables
+    )
 
 
-def test_find_analysis_bucket_files(core_client, analysis_bucket_file):
+def test_find_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
     analysis_bucket_files_find = core_client.find_analysis_bucket_files(
         filter={"analysis_id": analysis_bucket_file.analysis_id}
     )
 
     assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
-    assert all(abf.analysis is not None for abf in analysis_bucket_files_find)
-    assert all(abf.bucket is not None for abf in analysis_bucket_files_find)
+    assert all(
+        includable in abf.model_fields_set
+        for abf in analysis_bucket_files_find
+        for includable in analysis_bucket_file_includables
+    )
 
 
 def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
@@ -548,11 +672,11 @@ def test_registry_setup(core_client, registry):
     assert_eventually(_check_setup)
 
 
-def test_get_registry_project(core_client, registry_project, registry_project_fields):
+def test_get_registry_project(core_client, registry_project, registry_project_fields, registry_project_includables):
     registry_project_get = core_client.get_registry_project(registry_project.id, fields=registry_project_fields)
 
     assert registry_project.id == registry_project_get.id
-    assert registry_project_get.registry is not None
+    assert all(includable in registry_project_get.model_fields_set for includable in registry_project_includables)
     assert all(field in registry_project_get.model_fields_set for field in registry_project_fields)
 
 
@@ -560,21 +684,27 @@ def test_get_registry_project_not_found(core_client, registry_project):
     assert core_client.get_registry_project(next_uuid()) is None
 
 
-def test_get_registry_projects(core_client, registry_project, registry_project_fields):
+def test_get_registry_projects(core_client, registry_project, registry_project_fields, registry_project_includables):
     registry_projects_get = core_client.get_registry_projects(fields=registry_project_fields)
 
     assert len(registry_projects_get) > 0
-    assert all(rp.registry is not None for rp in registry_projects_get)
+    assert all(
+        includable in rp.model_fields_set for rp in registry_projects_get for includable in registry_project_includables
+    )
     assert all(field in rp.model_fields_set for rp in registry_projects_get for field in registry_project_fields)
 
 
-def test_find_registry_projects(core_client, registry_project, registry_project_fields):
+def test_find_registry_projects(core_client, registry_project, registry_project_fields, registry_project_includables):
     registry_projects_find = core_client.find_registry_projects(
         filter={"id": registry_project.id}, fields=registry_project_fields
     )
 
     assert [registry_project.id] == [rp.id for rp in registry_projects_find]
-    assert all(rp.registry is not None for rp in registry_projects_find)
+    assert all(
+        includable in rp.model_fields_set
+        for rp in registry_projects_find
+        for includable in registry_project_includables
+    )
     assert all(field in rp.model_fields_set for rp in registry_projects_find for field in registry_project_fields)
 
 
@@ -586,22 +716,22 @@ def test_update_registry_project(core_client, registry_project):
     assert new_registry_project.name == new_name
 
 
-def test_get_analysis_log(core_client, analysis_log):
+def test_get_analysis_log(core_client, analysis_log, analysis_log_includables):
     analysis_log_get = core_client.get_analysis_log(analysis_log.id)
 
     assert analysis_log_get.id == analysis_log.id
-    assert analysis_log_get.analysis is not None
+    assert all(includable in analysis_log_get.model_fields_set for includable in analysis_log_includables)
 
 
 def test_get_analysis_log_not_found(core_client):
     assert core_client.get_analysis_log(next_uuid()) is None
 
 
-def test_get_analysis_logs(core_client, analysis_log):
+def test_get_analysis_logs(core_client, analysis_log, analysis_log_includables):
     analysis_logs_get = core_client.get_analysis_logs()
 
     assert len(analysis_logs_get) > 0
-    assert all(al.analysis is not None for al in analysis_logs_get)
+    assert all(includable in al.model_fields_set for al in analysis_logs_get for includable in analysis_log_includables)
 
 
 def test_delete_analysis_log(core_client, analysis_log):

@@ -3,6 +3,8 @@ from io import BytesIO
 
 import pytest
 
+from flame_hub import get_includable_names
+from flame_hub.models import BucketFile
 from tests.helpers import next_random_string, next_uuid
 
 pytestmark = pytest.mark.integration
@@ -34,6 +36,11 @@ def bucket_file(storage_client, bucket, rng_bytes):
     storage_client.delete_bucket_file(new_bucket_file)
 
 
+@pytest.fixture(scope="session")
+def bucket_file_includables():
+    return get_includable_names(BucketFile)
+
+
 def test_get_buckets(storage_client, bucket):
     assert len(storage_client.get_buckets()) > 0
 
@@ -62,29 +69,29 @@ def test_get_bucket_not_found(storage_client):
     assert storage_client.get_bucket(next_uuid()) is None
 
 
-def test_get_bucket_file(storage_client, bucket_file):
+def test_get_bucket_file(storage_client, bucket_file, bucket_file_includables):
     bucket_file_get = storage_client.get_bucket_file(bucket_file.id)
 
     assert bucket_file_get.id == bucket_file.id
-    assert bucket_file_get.bucket is not None
+    assert all(includable in bucket_file_get.model_fields_set for includable in bucket_file_includables)
 
 
 def test_get_bucket_file_not_found(storage_client):
     assert storage_client.get_bucket_file(next_uuid()) is None
 
 
-def test_get_bucket_files(storage_client, bucket_file):
+def test_get_bucket_files(storage_client, bucket_file, bucket_file_includables):
     bucket_files_get = storage_client.get_bucket_files()
 
     assert len(bucket_files_get) > 0
-    assert all(bf.bucket is not None for bf in bucket_files_get)
+    assert all(includable in bf.model_fields_set for bf in bucket_files_get for includable in bucket_file_includables)
 
 
-def test_find_bucket_files(storage_client, bucket_file):
+def test_find_bucket_files(storage_client, bucket_file, bucket_file_includables):
     bucket_files_find = storage_client.find_bucket_files(filter={"id": bucket_file.id})
 
     assert [bucket_file.id] == [bf.id for bf in bucket_files_find]
-    assert all(bf.bucket is not None for bf in bucket_files_find)
+    assert all(includable in bf.model_fields_set for bf in bucket_files_find for includable in bucket_file_includables)
 
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
