@@ -15,6 +15,7 @@ from flame_hub._base_client import (
     GetKwargs,
     ClientKwargs,
     IsIncludable,
+    get_includable_names,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
@@ -123,13 +124,15 @@ class StorageClient(BaseClient):
     def get_bucket_file(
         self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
     ) -> BucketFile | None:
-        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, include="bucket", **params)
+        return self._get_single_resource(
+            BucketFile, "bucket-files", bucket_file_id, include=get_includable_names(BucketFile), **params
+        )
 
     def get_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[BucketFile]:
-        return self._get_all_resources(BucketFile, "bucket-files", include="bucket", **params)
+        return self._get_all_resources(BucketFile, "bucket-files", include=get_includable_names(BucketFile), **params)
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[BucketFile]:
-        return self._find_all_resources(BucketFile, "bucket-files", include="bucket", **params)
+        return self._find_all_resources(BucketFile, "bucket-files", include=get_includable_names(BucketFile), **params)
 
     def stream_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
         with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
