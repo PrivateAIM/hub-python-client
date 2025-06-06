@@ -12,6 +12,7 @@ from flame_hub._base_client import (
     ClientKwargs,
     uuid_validator,
     IsField,
+    IsIncludable,
     UNSET,
     UNSET_T,
 )
@@ -61,7 +62,7 @@ class User(BaseModel):
     avatar: str | None
     cover: str | None
     realm_id: uuid.UUID
-    realm: Realm = None
+    realm: t.Annotated[Realm, IsIncludable] = None
     created_at: datetime
     updated_at: datetime
 
@@ -91,8 +92,8 @@ class Robot(CreateRobot):
     created_at: datetime
     updated_at: datetime
     user_id: uuid.UUID | None
-    user: User | None = None
-    realm: Realm = None
+    user: t.Annotated[User | None, IsIncludable] = None
+    realm: t.Annotated[Realm, IsIncludable] = None
 
 
 class UpdateRobot(BaseModel):
@@ -116,7 +117,7 @@ class Permission(CreatePermission):
     client_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    realm: Realm | None = None
+    realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class UpdatePermission(BaseModel):
@@ -139,7 +140,7 @@ class Role(CreateRole):
     realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    realm: Realm | None = None
+    realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class UpdateRole(BaseModel):
@@ -160,10 +161,10 @@ class RolePermission(CreateRolePermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    role: Role = None
-    role_realm: Realm | None = None
-    permission: Permission = None
-    permission_realm: Realm | None = None
+    role: t.Annotated[Role, IsIncludable] = None
+    role_realm: t.Annotated[Realm | None, IsIncludable] = None
+    permission: t.Annotated[Permission, IsIncludable] = None
+    permission_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class CreateUserPermission(BaseModel):
@@ -178,10 +179,10 @@ class UserPermission(CreateUserPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    permission: Permission = None
-    user: User = None
-    permission_realm: Realm | None = None
-    user_realm: Realm | None = None
+    permission: t.Annotated[Permission, IsIncludable] = None
+    user: t.Annotated[User, IsIncludable] = None
+    permission_realm: t.Annotated[Realm | None, IsIncludable] = None
+    user_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class CreateUserRole(BaseModel):
@@ -195,10 +196,10 @@ class UserRole(CreateUserRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    user: User = None
-    role: Role = None
-    user_realm: Realm | None = None
-    role_realm: Realm | None = None
+    user: t.Annotated[User, IsIncludable] = None
+    role: t.Annotated[Role, IsIncludable] = None
+    user_realm: t.Annotated[Realm | None, IsIncludable] = None
+    role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class CreateRobotPermission(BaseModel):
@@ -213,10 +214,10 @@ class RobotPermission(CreateRobotPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    robot: Robot = None
-    permission: Permission = None
-    robot_realm: Realm | None = None
-    permission_realm: Realm | None = None
+    robot: t.Annotated[Robot, IsIncludable] = None
+    permission: t.Annotated[Permission, IsIncludable] = None
+    robot_realm: t.Annotated[Realm | None, IsIncludable] = None
+    permission_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class CreateRobotRole(BaseModel):
@@ -230,10 +231,10 @@ class RobotRole(CreateRobotRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    robot: Robot = None
-    role: Role = None
-    robot_realm: Realm | None = None
-    role_realm: Realm | None = None
+    robot: t.Annotated[Robot, IsIncludable] = None
+    role: t.Annotated[Role, IsIncludable] = None
+    robot_realm: t.Annotated[Realm | None, IsIncludable] = None
+    role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
 class AuthClient(BaseClient):

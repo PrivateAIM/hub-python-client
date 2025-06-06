@@ -14,6 +14,7 @@ from flame_hub._base_client import (
     FindAllKwargs,
     GetKwargs,
     ClientKwargs,
+    IsIncludable,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 from flame_hub._exceptions import new_hub_api_error_from_response
@@ -45,7 +46,7 @@ class BucketFile(BaseModel):
     actor_type: str
     actor_id: uuid.UUID
     bucket_id: uuid.UUID
-    bucket: Bucket = None
+    bucket: t.Annotated[Bucket, IsIncludable] = None
 
 
 class UploadFile(te.TypedDict):

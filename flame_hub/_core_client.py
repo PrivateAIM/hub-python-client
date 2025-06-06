@@ -18,6 +18,7 @@ from flame_hub._base_client import (
     ClientKwargs,
     uuid_validator,
     IsField,
+    IsIncludable,
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
@@ -65,7 +66,7 @@ class RegistryProject(CreateRegistryProject):
     webhook_name: str | None
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
-    registry: Registry = None
+    registry: t.Annotated[Registry, IsIncludable] = None
     account_id: t.Annotated[str | None, IsField] = None
     account_name: t.Annotated[str | None, IsField] = None
     account_secret: t.Annotated[str | None, IsField] = None
@@ -96,9 +97,9 @@ class Node(CreateNode):
     id: uuid.UUID
     public_key: str | None
     online: bool
-    registry: Registry | None = None
+    registry: t.Annotated[Registry | None, IsIncludable] = None
     registry_project_id: uuid.UUID | None
-    registry_project: RegistryProject | None = None
+    registry_project: t.Annotated[RegistryProject | None, IsIncludable] = None
     robot_id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -161,7 +162,7 @@ class MasterImageEventLog(BaseModel):
     expiring: bool
     expires_at: datetime
     master_image_id: uuid.UUID | None
-    master_image: MasterImage | None = None
+    master_image: t.Annotated[MasterImage | None, IsIncludable] = None
     created_at: datetime
     updated_at: datetime
 
@@ -176,7 +177,7 @@ class Project(CreateProject):
     id: uuid.UUID
     analyses: int
     nodes: int
-    master_image: MasterImage | None = None
+    master_image: t.Annotated[MasterImage | None, IsIncludable] = None
     created_at: datetime
     updated_at: datetime
     realm_id: uuid.UUID
@@ -204,8 +205,8 @@ class ProjectNode(CreateProjectNode):
     comment: str | None
     created_at: datetime
     updated_at: datetime
-    node: Node = None
-    project: Project = None
+    node: t.Annotated[Node, IsIncludable] = None
+    project: t.Annotated[Project, IsIncludable] = None
     project_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -240,12 +241,12 @@ class Analysis(CreateAnalysis):
     run_status: AnalysisRunStatus | None
     created_at: datetime
     updated_at: datetime
-    registry: Registry | None = None
+    registry: t.Annotated[Registry | None, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID
     project_id: uuid.UUID
-    project: Project = None
-    master_image: MasterImage | None = None
+    project: t.Annotated[Project, IsIncludable] = None
+    master_image: t.Annotated[MasterImage | None, IsIncludable] = None
 
 
 class UpdateAnalysis(BaseModel):
@@ -279,7 +280,7 @@ class AnalysisLog(BaseModel):
     created_at: datetime
     updated_at: datetime
     analysis_id: uuid.UUID
-    analysis: Analysis = None
+    analysis: t.Annotated[Analysis, IsIncludable] = None
     realm_id: uuid.UUID
 
 
@@ -302,8 +303,8 @@ class AnalysisNode(CreateAnalysisNode):
     artifact_digest: str | None
     created_at: datetime
     updated_at: datetime
-    analysis: Analysis = None
-    node: Node = None
+    analysis: t.Annotated[Analysis, IsIncludable] = None
+    node: t.Annotated[Node, IsIncludable] = None
     analysis_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -327,8 +328,8 @@ class AnalysisNodeLog(CreateAnalysisNodeLog):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    analysis: Analysis = None
-    node: Node = None
+    analysis: t.Annotated[Analysis, IsIncludable] = None
+    node: t.Annotated[Node, IsIncludable] = None
     analysis_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -350,7 +351,7 @@ class AnalysisBucket(BaseModel):
     created_at: datetime
     updated_at: datetime
     analysis_id: uuid.UUID
-    analysis: Analysis = None
+    analysis: t.Annotated[Analysis, IsIncludable] = None
     realm_id: uuid.UUID
 
 
@@ -369,8 +370,8 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     user_id: uuid.UUID | None
     robot_id: uuid.UUID | None
     analysis_id: uuid.UUID
-    analysis: Analysis = None
-    bucket: AnalysisBucket = None
+    analysis: t.Annotated[Analysis, IsIncludable] = None
+    bucket: t.Annotated[AnalysisBucket, IsIncludable] = None
 
 
 class UpdateAnalysisBucketFile(BaseModel):
