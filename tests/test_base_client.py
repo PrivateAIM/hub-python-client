@@ -12,7 +12,9 @@ from flame_hub._base_client import (
     uuid_validator,
     build_field_params,
     IsField,
+    IsIncludable,
     get_field_names,
+    get_includable_names,
     DEFAULT_PAGE_PARAMS,
     BaseClient,
     UNSET,
@@ -173,6 +175,31 @@ class ExtendedFieldModel(FieldModel):
 )
 def test_get_field_names(model, fields):
     assert get_field_names(model) == fields
+
+
+class NoIncludeModel(BaseModel):
+    bar: str
+
+
+class IncludeModel(NoIncludeModel):
+    foo: t.Annotated[str | None, IsIncludable]
+
+
+class ExtendedIncludeModel(IncludeModel):
+    foo_bar: bool | None
+    bar_foo: t.Annotated[int, IsIncludable] = 0
+
+
+@pytest.mark.parametrize(
+    "model,includable_properties",
+    [
+        (NoIncludeModel, ()),
+        (IncludeModel, ("foo",)),
+        (ExtendedIncludeModel, ("bar_foo", "foo")),
+    ],
+)
+def test_get_includable_names(model, includable_properties):
+    assert get_includable_names(model) == includable_properties
 
 
 @pytest.mark.integration
