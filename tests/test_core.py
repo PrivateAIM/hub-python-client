@@ -560,7 +560,7 @@ def test_get_registry_project_not_found(core_client, registry_project):
     assert core_client.get_registry_project(next_uuid()) is None
 
 
-def test_get_project_registries(core_client, registry_project, registry_project_fields):
+def test_get_registry_projects(core_client, registry_project, registry_project_fields):
     registry_projects_get = core_client.get_registry_projects(fields=registry_project_fields)
 
     assert len(registry_projects_get) > 0
@@ -568,7 +568,7 @@ def test_get_project_registries(core_client, registry_project, registry_project_
     assert all(field in rp.model_fields_set for rp in registry_projects_get for field in registry_project_fields)
 
 
-def test_find_project_registries(core_client, registry_project, registry_project_fields):
+def test_find_registry_projects(core_client, registry_project, registry_project_fields):
     registry_projects_find = core_client.find_registry_projects(
         filter={"id": registry_project.id}, fields=registry_project_fields
     )
@@ -578,7 +578,7 @@ def test_find_project_registries(core_client, registry_project, registry_project
     assert all(field in rp.model_fields_set for rp in registry_projects_find for field in registry_project_fields)
 
 
-def test_update_project_registry(core_client, registry_project):
+def test_update_registry_project(core_client, registry_project):
     new_name = next_random_string()
     new_registry_project = core_client.update_registry_project(registry_project.id, name=new_name)
 
