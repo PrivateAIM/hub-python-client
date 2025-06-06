@@ -11,7 +11,7 @@ from flame_hub._base_client import (
     GetKwargs,
     ClientKwargs,
     uuid_validator,
-    IsField,
+    IsOptionalField,
     IsIncludable,
     UNSET,
     UNSET_T,
@@ -42,7 +42,7 @@ class Realm(CreateRealm):
 class CreateUser(BaseModel):
     name: str
     display_name: str | None
-    email: t.Annotated[str | None, IsField]
+    email: t.Annotated[str | None, IsOptionalField]
     active: bool
     name_locked: bool
     first_name: str | None
@@ -55,7 +55,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    email: t.Annotated[str | None, IsField] = None
+    email: t.Annotated[str | None, IsOptionalField] = None
     display_name: str | None
     first_name: str | None
     last_name: str | None
@@ -81,7 +81,7 @@ class UpdateUser(BaseModel):
 class CreateRobot(BaseModel):
     name: str
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    secret: t.Annotated[str, IsField] = None
+    secret: t.Annotated[str, IsOptionalField] = None
     display_name: str | None
 
 

@@ -11,7 +11,7 @@ from flame_hub._base_client import (
     build_include_params,
     uuid_validator,
     build_field_params,
-    IsField,
+    IsOptionalField,
     IsIncludable,
     get_field_names,
     get_includable_names,
@@ -157,12 +157,12 @@ class NoFieldModel(BaseModel):
 
 
 class FieldModel(NoFieldModel):
-    foo: t.Annotated[str | None, IsField]
+    foo: t.Annotated[str | None, IsOptionalField]
 
 
 class ExtendedFieldModel(FieldModel):
     foo_bar: bool | None
-    bar_foo: t.Annotated[int, IsField] = 0
+    bar_foo: t.Annotated[int, IsOptionalField] = 0
 
 
 @pytest.mark.parametrize(

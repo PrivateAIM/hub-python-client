@@ -169,7 +169,7 @@ IncludeParams = str | Iterable[str]
 FieldParams = str | Iterable[str]
 
 
-class IsField(object):
+class IsOptionalField(object):
     """Sentinel to annotate model attributes as optional fields."""
 
 
@@ -199,7 +199,8 @@ def _get_annotated_property_names(model: type[ResourceT], sentinel: object) -> t
 
     See Also
     --------
-    :py:func:`.get_field_names`, :py:func:`.get_includable_names`, :py:class:`.IsField`, :py:class:`.IsIncludable`
+    :py:func:`.get_field_names`, :py:func:`.get_includable_names`, :py:class:`.IsOptionalField`,\
+    :py:class:`.IsIncludable`
     """
     names = []
     for cls in model.mro():
@@ -215,13 +216,13 @@ def _get_annotated_property_names(model: type[ResourceT], sentinel: object) -> t
 
 def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
     """This function is a wrapper which calls :py:func:`._get_annotated_property_names` with ``sentinel`` set to
-    :py:class:`.IsField`.
+    :py:class:`.IsOptionalField`.
 
     See Also
     --------
-    :py:func:`_get_annotated_property_names`, :py:class:`.IsField`
+    :py:func:`_get_annotated_property_names`, :py:class:`.IsOptionalField`
     """
-    return _get_annotated_property_names(model, IsField)
+    return _get_annotated_property_names(model, IsOptionalField)
 
 
 def get_includable_names(model: type[ResourceT]) -> tuple[str, ...]:
