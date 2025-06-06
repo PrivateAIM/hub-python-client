@@ -357,16 +357,17 @@ Models
 The ``flame_hub.models`` module contains all model definitions for resources emitted by the FLAME Hub. Use them at you
 own discretion. They may change at any time.
 
-Model classes whose names start with *Update* extend the special base class :py:class:`.UpdateModel` which needs to
-distinguish between properties being :py:obj:`None` and being explicitly unset. :py:class:`~flame_hub.models.UNSET`
-exists for this purpose, which is a sentinel value that should be used to mark a property as unset.
+Model classes whose names start with *Update* have the sentinel :py:class:`.UNSET` as the default value for all of its
+properties. This is necessary so that properties that are still set to the default value can be excluded when the model
+is serialized. So only properties that are explicitly set to any other value than :py:class:`.UNSET` are sent to the
+Hub instance.
 
 .. code-block:: python
 
     from flame_hub.models import UpdateNode, UNSET
 
     update_node = UpdateNode(hidden=False, external_name=None, type=UNSET)
-    print(update_node.model_dump_json(indent=2, exclude_none=False, exclude_unset=True))
+    print(update_node.model_dump_json(indent=2, exclude_defaults=True))
 
 .. code-block:: console
 

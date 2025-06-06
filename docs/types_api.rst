@@ -2,6 +2,8 @@
 Types
 =====
 
+.. autoclass:: flame_hub.types.UNSET_T
+
 .. autodata:: flame_hub._base_client.ResourceT
     :annotation: = typing.TypeVar
 
