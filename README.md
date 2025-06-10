@@ -103,5 +103,5 @@ core_client.delete_node(my_node)
 assert core_client.get_node(my_node.id) is None
 ```
 
-Note that creation, update and deletion isn't available for all resources. Check the
+Note that creation, update and deletion isn't available for all resources. Check out the
 [documentation](https://privateaim.github.io/hub-python-client/) which methods are available for each resource.
