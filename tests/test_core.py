@@ -426,6 +426,7 @@ def test_get_project_node_not_found(core_client):
     assert core_client.get_project_node(next_uuid()) is None
 
 
+@pytest.mark.xfail(reason="bug in FLAME hub")
 def test_get_analyses(core_client, analysis, analysis_includables):
     analyses_get = core_client.get_analyses()
 
@@ -433,6 +434,7 @@ def test_get_analyses(core_client, analysis, analysis_includables):
     assert all(includable in a.model_fields_set for a in analyses_get for includable in analysis_includables)
 
 
+@pytest.mark.xfail(reason="bug in FLAME hub")
 def test_find_analyses(core_client, analysis, analysis_includables):
     analyses_find = core_client.find_analyses(filter={"id": analysis.id})
 
@@ -440,6 +442,7 @@ def test_find_analyses(core_client, analysis, analysis_includables):
     assert all(includable in a.model_fields_set for a in analyses_find for includable in analysis_includables)
 
 
+@pytest.mark.xfail(reason="bug in FLAME hub")
 def test_get_analysis(core_client, analysis, analysis_includables):
     analysis_get = core_client.get_analysis(analysis.id)
 
