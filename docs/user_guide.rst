@@ -313,6 +313,19 @@ admin's realm is the master realm.
 
     assert admin_user.realm == master_realm
 
+It is also possible to retrieve all names of includable properties for a specific model.
+
+.. code-block:: python
+
+    from flame_hub import get_includable_names
+    from flame_hub.models import Node
+
+    print(get_includable_names(Node))
+
+.. code-block::
+
+    ('registry', 'registry_project')
+
 
 Handling exceptions
 ===================

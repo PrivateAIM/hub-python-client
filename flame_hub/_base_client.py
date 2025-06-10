@@ -169,38 +169,71 @@ IncludeParams = str | Iterable[str]
 FieldParams = str | Iterable[str]
 
 
-class IsField(object):
+class IsOptionalField(object):
     """Sentinel to annotate model attributes as optional fields."""
 
 
-def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
-    """Returns all optional field names for a given model.
+class IsIncludable(object):
+    """Sentinel to annotate model attributes as includable."""
+
+
+def _get_annotated_property_names(model: type[ResourceT], sentinel: object) -> tuple[str, ...]:
+    """Returns the names of all properties for a given model that are annotated with a specific sentinel.
 
     This function traverses a given ``model`` and all of its bases using the method resolution order. While traversing,
-    all attributes are checked if they are annotated with the :py:class:`.IsField` sentinel which marks an optional
-    field. The names of all annotated attributes are returned as a tuple.
+    all attributes are checked if they are annotated with a ``sentinel`` object. The names of all annotated attributes
+    are returned as a tuple.
 
     Parameters
     ----------
     model : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
-        A resource model for which all field names should be retrieved. Note that fields are **not** consequently
+        A resource model for which the property names should be retrieved. Note that fields are **not** consequently
         annotated for *Create* and *Update* models due to inheritance.
+    sentinel : :py:class:`object`
+        Only names of properties that are annotated with ``sentinel`` are returned.
 
     Returns
     -------
     :py:class:`tuple`\\[:py:class:`str`, ...]
-        Returns a tuple of all attribute names that are annotated with :py:class:`.IsField`.
+        Returns a tuple of all attribute names that are annotated with ``sentinel``.
+
+    See Also
+    --------
+    :py:func:`.get_field_names`, :py:func:`.get_includable_names`, :py:class:`.IsOptionalField`,\
+    :py:class:`.IsIncludable`
     """
-    fields = []
+    names = []
     for cls in model.mro():
         if not hasattr(cls, "__annotations__"):
             continue
         for name, annotation in cls.__annotations__.items():
             if t.get_origin(annotation) is t.Annotated:
                 for metadata in annotation.__metadata__:
-                    if metadata is IsField:
-                        fields.append(name)
-    return tuple(fields)
+                    if metadata is sentinel:
+                        names.append(name)
+    return tuple(names)
+
+
+def get_field_names(model: type[ResourceT]) -> tuple[str, ...]:
+    """This function is a wrapper which calls :py:func:`._get_annotated_property_names` with ``sentinel`` set to
+    :py:class:`.IsOptionalField`.
+
+    See Also
+    --------
+    :py:func:`_get_annotated_property_names`, :py:class:`.IsOptionalField`
+    """
+    return _get_annotated_property_names(model, IsOptionalField)
+
+
+def get_includable_names(model: type[ResourceT]) -> tuple[str, ...]:
+    """This function is a wrapper which calls :py:func:`._get_annotated_property_names` with ``sentinel`` set to
+    :py:class:`.IsIncludable`.
+
+    See Also
+    --------
+    :py:func:`_get_annotated_property_names`, :py:class:`.IsIncludable`
+    """
+    return _get_annotated_property_names(model, IsIncludable)
 
 
 class FindAllKwargs(te.TypedDict, total=False):

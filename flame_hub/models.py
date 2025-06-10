@@ -66,7 +66,8 @@ __all__ = [
     "RobotPermission",
     "CreateRobotRole",
     "RobotRole",
-    "IsField",
+    "IsOptionalField",
+    "IsIncludable",
     "ResourceListMeta",
     "ResourceList",
     "AnalysisLog",
@@ -116,7 +117,7 @@ from ._core_client import (
     AnalysisLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
-from ._base_client import UNSET, IsField, ResourceListMeta, ResourceList
+from ._base_client import UNSET, IsOptionalField, IsIncludable, ResourceListMeta, ResourceList
 from ._auth_client import (
     CreateRealm,
     UpdateRealm,
