@@ -123,7 +123,7 @@ class MasterImageGroup(BaseModel):
     updated_at: datetime
 
 
-class MasterImageCommandArgument(te.TypedDict):
+class MasterImageCommandArgument(t.TypedDict):
     value: str
     position: t.Literal["before", "after"] | None
 

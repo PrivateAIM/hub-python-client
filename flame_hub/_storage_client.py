@@ -50,7 +50,7 @@ class BucketFile(BaseModel):
     bucket: t.Annotated[Bucket, IsIncludable] = None
 
 
-class UploadFile(te.TypedDict):
+class UploadFile(t.TypedDict):
     file_name: str
     content: bytes | t.IO[bytes] | str
     content_type: te.NotRequired[str]

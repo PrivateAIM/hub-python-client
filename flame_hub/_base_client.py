@@ -115,7 +115,7 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
     """Attribute which holds meta information about the result and the requested resource type."""
 
 
-class SortParams(te.TypedDict, total=False):
+class SortParams(t.TypedDict, total=False):
     """Dict shape for specifying parameters for sorted queries.
 
     See Also
@@ -129,7 +129,7 @@ class SortParams(te.TypedDict, total=False):
     """Sort in either ascending or descending order."""
 
 
-class PageParams(te.TypedDict, total=False):
+class PageParams(t.TypedDict, total=False):
     """Dict shape for specifying limit and offset for paginated queries.
 
     See Also
@@ -236,7 +236,7 @@ def get_includable_names(model: type[ResourceT]) -> tuple[str, ...]:
     return _get_annotated_property_names(model, IsIncludable)
 
 
-class FindAllKwargs(te.TypedDict, total=False):
+class FindAllKwargs(t.TypedDict, total=False):
     """Keyword arguments that can be used for finding resources.
 
     See Also
@@ -252,7 +252,7 @@ class FindAllKwargs(te.TypedDict, total=False):
     meta: bool
 
 
-class ClientKwargs(te.TypedDict, total=False):
+class ClientKwargs(t.TypedDict, total=False):
     """Keyword arguments that can be used to instantiate a client.
 
     See Also
@@ -263,7 +263,7 @@ class ClientKwargs(te.TypedDict, total=False):
     client: httpx.Client | None
 
 
-class GetKwargs(te.TypedDict, total=False):
+class GetKwargs(t.TypedDict, total=False):
     """Keyword arguments that can be used for getting resources.
 
     See Also
