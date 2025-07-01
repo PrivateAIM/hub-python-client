@@ -43,8 +43,8 @@ class Registry(CreateRegistry):
 
 
 class UpdateRegistry(BaseModel):
-    name: str | None | UNSET_T = UNSET
-    host: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    host: str | UNSET_T = UNSET
     account_name: str | None | UNSET_T = UNSET
     account_secret: str | None | UNSET_T = UNSET
 
@@ -75,10 +75,10 @@ class RegistryProject(CreateRegistryProject):
 
 
 class UpdateRegistryProject(BaseModel):
-    name: str | None | UNSET_T = UNSET
-    type: RegistryProjectType | None | UNSET_T = UNSET
-    registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
-    external_name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    type: RegistryProjectType | UNSET_T = UNSET
+    registry_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    external_name: str | UNSET_T = UNSET
 
 
 NodeType = t.Literal["aggregator", "default"]
@@ -106,11 +106,11 @@ class Node(CreateNode):
 
 
 class UpdateNode(BaseModel):
-    hidden: bool | None | UNSET_T = UNSET
+    hidden: bool | UNSET_T = UNSET
     external_name: str | None | UNSET_T = UNSET
-    type: NodeType | None | UNSET_T = UNSET
+    type: NodeType | UNSET_T = UNSET
     public_key: str | None | UNSET_T = UNSET
-    realm_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    realm_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
     registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
 
 
@@ -188,7 +188,7 @@ class Project(CreateProject):
 class UpdateProject(BaseModel):
     description: str | None | UNSET_T = UNSET
     master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
-    name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
 
 
 ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
@@ -335,9 +335,9 @@ class AnalysisNodeLog(CreateAnalysisNodeLog):
 
 
 class UpdateAnalysisNodeLog(BaseModel):
-    error: bool | None | UNSET_T = UNSET
+    error: bool | UNSET_T = UNSET
     error_code: str | None | UNSET_T = UNSET
-    status: str | None | UNSET_T = UNSET
+    status: str | UNSET_T = UNSET
     status_message: str | None | UNSET_T = UNSET
 
 
@@ -375,7 +375,7 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
 
 
 class UpdateAnalysisBucketFile(BaseModel):
-    root: bool | None | UNSET_T = UNSET
+    root: bool | UNSET_T = UNSET
 
 
 class CoreClient(BaseClient):
@@ -434,12 +434,12 @@ class CoreClient(BaseClient):
     def update_node(
         self,
         node_id: Node | uuid.UUID | str,
-        external_name: str = UNSET,
-        hidden: bool = UNSET,
-        node_type: NodeType = UNSET,
-        realm_id: Realm | str | uuid.UUID = UNSET,
-        registry_id: Registry | str | uuid.UUID = UNSET,
-        public_key: str = UNSET,
+        external_name: str | None | UNSET_T = UNSET,
+        hidden: bool | UNSET_T = UNSET,
+        node_type: NodeType | UNSET_T = UNSET,
+        realm_id: Realm | str | uuid.UUID | UNSET_T = UNSET,
+        registry_id: Registry | str | uuid.UUID | None | UNSET_T = UNSET,
+        public_key: str | None | UNSET_T = UNSET,
     ) -> Node:
         return self._update_resource(
             Node,
@@ -533,9 +533,9 @@ class CoreClient(BaseClient):
     def update_project(
         self,
         project_id: Project | uuid.UUID | str,
-        description: str = UNSET,
-        master_image_id: MasterImage | str | uuid.UUID = UNSET,
-        name: str = UNSET,
+        description: str | None | UNSET_T = UNSET,
+        master_image_id: MasterImage | str | uuid.UUID | None | UNSET_T = UNSET,
+        name: str | UNSET_T = UNSET,
     ) -> Project:
         return self._update_resource(
             Project,
@@ -576,8 +576,8 @@ class CoreClient(BaseClient):
     def update_project_node(
         self,
         project_node_id: ProjectNode | uuid.UUID | str,
-        comment: str = UNSET,
-        approval_status: ProjectNodeApprovalStatus = UNSET,
+        comment: str | None | UNSET_T = UNSET,
+        approval_status: ProjectNodeApprovalStatus | None | UNSET_T = UNSET,
     ):
         return self._update_resource(
             ProjectNode,
@@ -625,10 +625,10 @@ class CoreClient(BaseClient):
     def update_analysis(
         self,
         analysis_id: Analysis | uuid.UUID | str,
-        name: str = UNSET,
-        description: str = UNSET,
-        master_image_id: MasterImage | uuid.UUID | str = UNSET,
-        image_command_arguments: list[MasterImageCommandArgument] = UNSET,
+        name: str | None | UNSET_T = UNSET,
+        description: str | None | UNSET_T = UNSET,
+        master_image_id: MasterImage | uuid.UUID | str | None | UNSET_T = UNSET,
+        image_command_arguments: list[MasterImageCommandArgument] | UNSET_T = UNSET,
     ) -> Analysis:
         return self._update_resource(
             Analysis,
@@ -665,9 +665,9 @@ class CoreClient(BaseClient):
     def update_analysis_node(
         self,
         analysis_node_id: AnalysisNode | uuid.UUID | str,
-        comment: str = UNSET,
-        approval_status: AnalysisNodeApprovalStatus = UNSET,
-        run_status: AnalysisNodeRunStatus = UNSET,
+        comment: str | None | UNSET_T = UNSET,
+        approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET,
+        run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET,
     ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
@@ -742,10 +742,10 @@ class CoreClient(BaseClient):
     def update_analysis_node_log(
         self,
         analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str,
-        error: bool = UNSET,
-        error_code: str = UNSET,
-        status: str = UNSET,
-        status_message: str = UNSET,
+        error: bool | UNSET_T = UNSET,
+        error_code: str | None | UNSET_T = UNSET,
+        status: str | UNSET_T = UNSET,
+        status_message: str | None | UNSET_T = UNSET,
     ) -> AnalysisNodeLog:
         return self._update_resource(
             AnalysisNodeLog,
@@ -820,7 +820,7 @@ class CoreClient(BaseClient):
         )
 
     def update_analysis_bucket_file(
-        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, is_entrypoint: bool = UNSET
+        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, is_entrypoint: bool | UNSET_T = UNSET
     ) -> AnalysisBucketFile:
         return self._update_resource(
             AnalysisBucketFile,
@@ -845,10 +845,10 @@ class CoreClient(BaseClient):
     def update_registry(
         self,
         registry_id: Registry | uuid.UUID | str,
-        name: str = UNSET,
-        host: str = UNSET,
-        account_name: str = UNSET,
-        account_secret: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        host: str | UNSET_T = UNSET,
+        account_name: str | None | UNSET_T = UNSET,
+        account_secret: str | None | UNSET_T = UNSET,
     ) -> Registry:
         return self._update_resource(
             Registry,
@@ -906,10 +906,10 @@ class CoreClient(BaseClient):
     def update_registry_project(
         self,
         registry_project_id: RegistryProject | uuid.UUID | str,
-        name: str = UNSET,
-        registry_project_type: RegistryProjectType = UNSET,
-        registry_id: Registry | uuid.UUID | str = UNSET,
-        external_name: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        registry_project_type: RegistryProjectType | UNSET_T = UNSET,
+        registry_id: Registry | uuid.UUID | str | UNSET_T = UNSET,
+        external_name: str | UNSET_T = UNSET,
     ) -> RegistryProject:
         return self._update_resource(
             RegistryProject,

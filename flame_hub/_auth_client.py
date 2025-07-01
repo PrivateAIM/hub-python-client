@@ -28,7 +28,7 @@ class CreateRealm(BaseModel):
 
 
 class UpdateRealm(BaseModel):
-    name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
 
@@ -69,11 +69,11 @@ class User(BaseModel):
 
 
 class UpdateUser(BaseModel):
-    name: str | None | UNSET_T = UNSET
-    display_name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    display_name: str | UNSET_T = UNSET
     email: str | None | UNSET_T = UNSET
-    active: bool | None | UNSET_T = UNSET
-    name_locked: bool | None | UNSET_T = UNSET
+    active: bool | UNSET_T = UNSET
+    name_locked: bool | UNSET_T = UNSET
     first_name: str | None | UNSET_T = UNSET
     last_name: str | None | UNSET_T = UNSET
     password: str | None | UNSET_T = UNSET
@@ -99,9 +99,9 @@ class Robot(CreateRobot):
 
 class UpdateRobot(BaseModel):
     display_name: str | None | UNSET_T = UNSET
-    name: str | None | UNSET_T = UNSET
-    realm_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
-    secret: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    realm_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
+    secret: str | UNSET_T = UNSET
 
 
 class CreatePermission(BaseModel):
@@ -122,7 +122,7 @@ class Permission(CreatePermission):
 
 
 class UpdatePermission(BaseModel):
-    name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
     realm_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
@@ -145,7 +145,7 @@ class Role(CreateRole):
 
 
 class UpdateRole(BaseModel):
-    name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
 
@@ -283,9 +283,9 @@ class AuthClient(BaseClient):
     def update_realm(
         self,
         realm_id: Realm | str | uuid.UUID,
-        name: str = UNSET,
-        display_name: str = UNSET,
-        description: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
+        description: str | None | UNSET_T = UNSET,
     ) -> Realm:
         return self._update_resource(
             Realm,
@@ -316,10 +316,10 @@ class AuthClient(BaseClient):
     def update_robot(
         self,
         robot_id: Robot | str | uuid.UUID,
-        name: str = UNSET,
-        display_name: str = UNSET,
-        realm_id: Realm | str | uuid.UUID = UNSET,
-        secret: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
+        realm_id: Realm | str | uuid.UUID | UNSET_T = UNSET,
+        secret: str | UNSET_T = UNSET,
     ) -> Robot:
         return self._update_resource(
             Robot,
@@ -366,10 +366,10 @@ class AuthClient(BaseClient):
     def update_permission(
         self,
         permission_id: Permission | uuid.UUID | str,
-        name: str = UNSET,
-        display_name: str = UNSET,
-        description: str = UNSET,
-        realm_id: Realm | uuid.UUID | str = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
+        description: str | None | UNSET_T = UNSET,
+        realm_id: Realm | uuid.UUID | str | None | UNSET_T = UNSET,
     ) -> Permission:
         return self._update_resource(
             Permission,
@@ -400,9 +400,9 @@ class AuthClient(BaseClient):
     def update_role(
         self,
         role_id: Role | uuid.UUID | str,
-        name: str = UNSET,
-        display_name: str = UNSET,
-        description: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
+        description: str | None | UNSET_T = UNSET,
     ) -> Role:
         return self._update_resource(
             Role,
@@ -491,14 +491,14 @@ class AuthClient(BaseClient):
     def update_user(
         self,
         user_id: User | uuid.UUID | str,
-        name: str = UNSET,
-        display_name: str = UNSET,
-        email: str = UNSET,
-        active: bool = UNSET,
-        name_locked: bool = UNSET,
-        first_name: str = UNSET,
-        last_name: str = UNSET,
-        password: str = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | UNSET_T = UNSET,
+        email: str | None | UNSET_T = UNSET,
+        active: bool | UNSET_T = UNSET,
+        name_locked: bool | UNSET_T = UNSET,
+        first_name: str | None | UNSET_T = UNSET,
+        last_name: str | None | UNSET_T = UNSET,
+        password: str | None | UNSET_T = UNSET,
     ) -> User:
         return self._update_resource(
             User,
