@@ -48,7 +48,6 @@ class CreateUser(BaseModel):
     name_locked: bool
     first_name: str | None
     last_name: str | None
-    password: str | None
 
 
 class User(BaseModel):
@@ -465,7 +464,6 @@ class AuthClient(BaseClient):
         name_locked: bool = True,
         first_name: str = None,
         last_name: str = None,
-        password: str = None,
     ) -> User:
         return self._create_resource(
             User,
@@ -477,7 +475,6 @@ class AuthClient(BaseClient):
                 name_locked=name_locked,
                 first_name=first_name,
                 last_name=last_name,
-                password=password,
             ),
             "users",
         )
@@ -498,7 +495,6 @@ class AuthClient(BaseClient):
         name_locked: bool | UNSET_T = UNSET,
         first_name: str | None | UNSET_T = UNSET,
         last_name: str | None | UNSET_T = UNSET,
-        password: str | None | UNSET_T = UNSET,
     ) -> User:
         return self._update_resource(
             User,
@@ -510,7 +506,6 @@ class AuthClient(BaseClient):
                 name_locked=name_locked,
                 first_name=first_name,
                 last_name=last_name,
-                password=password,
             ),
             "users",
             user_id,
