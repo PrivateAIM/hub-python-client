@@ -298,7 +298,6 @@ class AnalysisNode(CreateAnalysisNode):
     approval_status: AnalysisNodeApprovalStatus | None
     run_status: AnalysisNodeRunStatus | None
     comment: str | None
-    index: int
     artifact_tag: str | None
     artifact_digest: str | None
     created_at: datetime
