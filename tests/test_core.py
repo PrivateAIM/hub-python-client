@@ -10,7 +10,6 @@ from flame_hub.models import (
     Registry,
     RegistryProject,
     Node,
-    MasterImageEventLog,
     Project,
     ProjectNode,
     Analysis,
@@ -63,24 +62,6 @@ def master_image_group(core_client, master_image):
         assert_eventually(_check_default_master_image_group_available, max_retries=10, delay_millis=1000)
 
     return core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})[0]
-
-
-@pytest.fixture(scope="module")
-def master_image_event_log(core_client):
-    if len(core_client.get_master_image_event_logs()) == 0:
-        sync_master_images(core_client)
-
-        def _check_master_image_event_logs_available():
-            assert len(core_client.get_master_image_event_logs()) > 0
-
-        assert_eventually(_check_master_image_event_logs_available, max_retries=10, delay_millis=1000)
-
-    return core_client.get_master_image_event_logs()[0]
-
-
-@pytest.fixture(scope="session")
-def master_image_event_log_includables():
-    return get_includable_names(MasterImageEventLog)
 
 
 @pytest.fixture()
@@ -328,33 +309,6 @@ def test_get_master_image_group(core_client, master_image_group):
 
 def test_get_master_image_groups(core_client, master_image_group):
     assert len(core_client.get_master_image_groups()) > 0
-
-
-def test_get_master_image_event_log(core_client, master_image_event_log, master_image_event_log_includables):
-    master_image_event_log_get = core_client.get_master_image_event_log(master_image_event_log.id)
-
-    assert master_image_event_log_get.id == master_image_event_log.id
-    assert all(
-        includable in master_image_event_log_get.model_fields_set for includable in master_image_event_log_includables
-    )
-
-
-def test_get_master_image_event_logs(core_client):
-    _ = core_client.get_master_image_event_logs()
-
-
-def test_find_master_image_event_logs(core_client, master_image_event_log, master_image_event_log_includables):
-    # Use "name" for filtering because there is no filter mechanism for attribute "id".
-    master_image_event_logs_find = core_client.find_master_image_event_logs(
-        filter={"name": master_image_event_log.name}
-    )
-
-    assert master_image_event_log.id in [log.id for log in master_image_event_logs_find]
-    assert all(
-        includable in log.model_fields_set
-        for log in master_image_event_logs_find
-        for includable in master_image_event_log_includables
-    )
 
 
 def test_get_projects(core_client, project, project_includables):

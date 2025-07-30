@@ -36,7 +36,6 @@ __all__ = [
     "CreateRegistryProject",
     "RegistryProject",
     "UpdateRegistryProject",
-    "MasterImageEventLog",
     "CreateBucket",
     "BucketFile",
     "Bucket",
@@ -113,7 +112,6 @@ from ._core_client import (
     CreateRegistryProject,
     RegistryProject,
     UpdateRegistryProject,
-    MasterImageEventLog,
     AnalysisLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
