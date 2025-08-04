@@ -13,9 +13,7 @@ from flame_hub.models import (
     Project,
     ProjectNode,
     Analysis,
-    AnalysisLog,
     AnalysisNode,
-    AnalysisNodeLog,
     AnalysisBucket,
     AnalysisBucketFile,
 )
@@ -192,6 +190,7 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
     return analysis
 
 
+# TODO: Make it possible to create analysis logs in the current test deployment.
 @pytest.fixture()
 def analysis_log(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis, "buildStart")
@@ -204,23 +203,15 @@ def analysis_log(core_client, configured_analysis):
     return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
 
 
-@pytest.fixture(scope="session")
-def analysis_log_includables():
-    return get_includable_names(AnalysisLog)
-
-
 @pytest.fixture()
 def analysis_node_log(core_client, analysis_node):
     new_analysis_node_log = core_client.create_analysis_node_log(
-        analysis_node.analysis_id, analysis_node.node_id, error=False
+        analysis_node.analysis_id, analysis_node.node_id, level="info", status="started"
     )
     yield new_analysis_node_log
-    core_client.delete_analysis_node_log(new_analysis_node_log.id)
-
-
-@pytest.fixture(scope="session")
-def analysis_node_log_includables():
-    return get_includable_names(AnalysisNodeLog)
+    core_client.delete_analysis_node_logs(
+        analysis_id=new_analysis_node_log.labels["analysis_id"], node_id=new_analysis_node_log.labels["node_id"]
+    )
 
 
 @pytest.fixture()
@@ -432,6 +423,7 @@ def test_build_analysis(core_client, configured_analysis):
     assert core_client.send_analysis_command(configured_analysis.id, command="buildStop").build_status == "stopping"
 
 
+@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
 def test_build_status_analysis(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis.id, command="buildStart")
     core_client.send_analysis_command(configured_analysis.id, command="buildStatus")
@@ -480,46 +472,13 @@ def test_get_analysis_node_not_found(core_client):
     assert core_client.get_analysis_node(next_uuid()) is None
 
 
-def test_get_analysis_node_log(core_client, analysis_node_log, analysis_node_log_includables):
-    analysis_node_log_get = core_client.get_analysis_node_log(analysis_node_log.id)
-
-    assert analysis_node_log_get.id == analysis_node_log.id
-    assert all(includable in analysis_node_log_get.model_fields_set for includable in analysis_node_log_includables)
-
-
-def test_get_analysis_node_log_not_found(core_client):
-    assert core_client.get_analysis_node_log(next_uuid()) is None
-
-
-def test_get_analysis_node_logs(core_client, analysis_node_log, analysis_node_log_includables):
-    analysis_node_logs_get = core_client.get_analysis_node_logs()
-
-    assert len(analysis_node_logs_get) > 0
-    assert all(
-        includable in log.model_fields_set
-        for log in analysis_node_logs_get
-        for includable in analysis_node_log_includables
+def test_find_analysis_node_logs(core_client, analysis_node_log):
+    # "node_id" and "analysis_id" have to be specified to filter for analysis node logs.
+    analysis_node_logs_find = core_client.find_analysis_node_logs(
+        filter={"node_id": analysis_node_log.labels["node_id"], "analysis_id": analysis_node_log.labels["analysis_id"]}
     )
 
-
-def test_find_analysis_node_logs(core_client, analysis_node_log, analysis_node_log_includables):
-    # Use "node_id" for filtering because there is no filter mechanism for attribute "id".
-    analysis_node_logs_find = core_client.find_analysis_node_logs(filter={"node_id": analysis_node_log.node_id})
-
-    assert [analysis_node_log.id] == [log.id for log in analysis_node_logs_find]
-    assert all(
-        includable in log.model_fields_set
-        for log in analysis_node_logs_find
-        for includable in analysis_node_log_includables
-    )
-
-
-def test_update_analysis_node_log(core_client, analysis_node_log):
-    new_status = next_random_string()
-    new_analysis_node_log = core_client.update_analysis_node_log(analysis_node_log.id, status=new_status)
-
-    assert new_analysis_node_log != analysis_node_log
-    assert new_status == new_analysis_node_log.status
+    assert analysis_node_log.time in [log.time for log in analysis_node_logs_find]
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets, analysis_bucket_includables):
@@ -673,24 +632,8 @@ def test_update_registry_project(core_client, registry_project):
     assert new_registry_project.name == new_name
 
 
-def test_get_analysis_log(core_client, analysis_log, analysis_log_includables):
-    analysis_log_get = core_client.get_analysis_log(analysis_log.id)
+@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
+def test_delete_analysis_logs(core_client, analysis_log):
+    core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysis_id"])
 
-    assert analysis_log_get.id == analysis_log.id
-    assert all(includable in analysis_log_get.model_fields_set for includable in analysis_log_includables)
-
-
-def test_get_analysis_log_not_found(core_client):
-    assert core_client.get_analysis_log(next_uuid()) is None
-
-
-def test_get_analysis_logs(core_client, analysis_log, analysis_log_includables):
-    analysis_logs_get = core_client.get_analysis_logs()
-
-    assert len(analysis_logs_get) > 0
-    assert all(includable in al.model_fields_set for al in analysis_logs_get for includable in analysis_log_includables)
-
-
-def test_delete_analysis_log(core_client, analysis_log):
-    core_client.delete_analysis_log(analysis_log.id)
-    assert core_client.get_analysis_log(analysis_log.id) is None
+    assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis_log.labels["analysis_id"]})) == 0

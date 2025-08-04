@@ -23,8 +23,7 @@ __all__ = [
     "AnalysisNode",
     "UpdateAnalysisNode",
     "CreateAnalysisNodeLog",
-    "AnalysisNodeLog",
-    "UpdateAnalysisNodeLog",
+    "Log",
     "AnalysisBucketType",
     "AnalysisBucket",
     "CreateAnalysisBucketFile",
@@ -69,7 +68,6 @@ __all__ = [
     "IsIncludable",
     "ResourceListMeta",
     "ResourceList",
-    "AnalysisLog",
     "AccessToken",
     "RefreshToken",
 ]
@@ -99,8 +97,7 @@ from ._core_client import (
     AnalysisNode,
     UpdateAnalysisNode,
     CreateAnalysisNodeLog,
-    AnalysisNodeLog,
-    UpdateAnalysisNodeLog,
+    Log,
     AnalysisBucketType,
     AnalysisBucket,
     CreateAnalysisBucketFile,
@@ -112,7 +109,6 @@ from ._core_client import (
     CreateRegistryProject,
     RegistryProject,
     UpdateRegistryProject,
-    AnalysisLog,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UNSET, IsOptionalField, IsIncludable, ResourceListMeta, ResourceList
