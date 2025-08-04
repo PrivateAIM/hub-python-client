@@ -81,13 +81,14 @@ the singular or plural form of a specific resource name following the
 
 .. note::
 
-    Every resource model has an ``id`` attribute. If you commit a resource instance as an ``id`` to either a *get*,
-    *update* or *delete* method, the client will automatically use the ``id`` attribute of the given resource.
+    Every resource model (except logging resources) has an ``id`` attribute. If you commit a resource instance as an
+    ``id`` to either a *get*, *update* or *delete* method, the client will automatically use the ``id`` attribute of the
+    given resource.
 
 .. warning::
 
-    Creation, deletion or update methods are not implemented for all resources since there is no endpoint on the Hub in
-    some cases. Please check the :doc:`API of the clients <clients_api>` to see which methods exist.
+    Not all methods are implemented for each resource since there is no endpoint on the Hub in some cases. Please check
+    the :doc:`API of the clients <clients_api>` to see which methods exist.
 
 
 Overview of implemented resources
