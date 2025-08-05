@@ -19,6 +19,7 @@ from flame_hub._base_client import (
     IsOptionalField,
     IsIncludable,
     get_includable_names,
+    build_filter_params,
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
@@ -155,18 +156,6 @@ class MasterImage(BaseModel):
     updated_at: datetime
 
 
-class MasterImageEventLog(BaseModel):
-    id: uuid.UUID
-    name: str
-    data: dict | None = None  # Hub resource does not have a "data" key if there is no data.
-    expiring: bool
-    expires_at: datetime
-    master_image_id: uuid.UUID | None
-    master_image: t.Annotated[MasterImage | None, IsIncludable] = None
-    created_at: datetime
-    updated_at: datetime
-
-
 class CreateProject(BaseModel):
     description: str | None
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
@@ -214,6 +203,16 @@ class ProjectNode(CreateProjectNode):
 class UpdateProjectNode(BaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: ProjectNodeApprovalStatus | None | UNSET_T = UNSET
+
+
+LogLevel = t.Literal["emerg", "alert", "crit", "error", "warn", "notice", "info", "debug"]
+
+
+class Log(BaseModel):
+    time: str | int
+    message: str | None
+    level: LogLevel
+    labels: dict[str, str | None]
 
 
 AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
@@ -267,23 +266,6 @@ AnalysisCommand = t.Literal[
 ]
 
 
-class AnalysisLog(BaseModel):
-    id: uuid.UUID
-    component: str | None
-    command: str | None
-    event: str | None
-    error: bool
-    error_code: str | None
-    status: str | None
-    status_message: str | None
-    meta: str | None
-    created_at: datetime
-    updated_at: datetime
-    analysis_id: uuid.UUID
-    analysis: t.Annotated[Analysis, IsIncludable] = None
-    realm_id: uuid.UUID
-
-
 class CreateAnalysisNode(BaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
@@ -298,7 +280,6 @@ class AnalysisNode(CreateAnalysisNode):
     approval_status: AnalysisNodeApprovalStatus | None
     run_status: AnalysisNodeRunStatus | None
     comment: str | None
-    index: int
     artifact_tag: str | None
     artifact_digest: str | None
     created_at: datetime
@@ -318,27 +299,10 @@ class UpdateAnalysisNode(BaseModel):
 class CreateAnalysisNodeLog(BaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: uuid.UUID
-    error: bool
-    error_code: str | None
+    code: str | None
     status: str
-    status_message: str | None
-
-
-class AnalysisNodeLog(CreateAnalysisNodeLog):
-    id: uuid.UUID
-    created_at: datetime
-    updated_at: datetime
-    analysis: t.Annotated[Analysis, IsIncludable] = None
-    node: t.Annotated[Node, IsIncludable] = None
-    analysis_realm_id: uuid.UUID
-    node_realm_id: uuid.UUID
-
-
-class UpdateAnalysisNodeLog(BaseModel):
-    error: bool | UNSET_T = UNSET
-    error_code: str | None | UNSET_T = UNSET
-    status: str | UNSET_T = UNSET
-    status_message: str | None | UNSET_T = UNSET
+    message: str | None
+    level: LogLevel
 
 
 AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
@@ -476,27 +440,6 @@ class CoreClient(BaseClient):
 
     def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImage]:
         return self._find_all_resources(MasterImage, "master-images", **params)
-
-    def get_master_image_event_log(
-        self, master_image_event_log_id: MasterImageEventLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> MasterImageEventLog | None:
-        return self._get_single_resource(
-            MasterImageEventLog,
-            "master-image-event-logs",
-            master_image_event_log_id,
-            include=get_includable_names(MasterImageEventLog),
-            **params,
-        )
-
-    def get_master_image_event_logs(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageEventLog]:
-        return self._get_all_resources(
-            MasterImageEventLog, "master-image-event-logs", include=get_includable_names(MasterImageEventLog), **params
-        )
-
-    def find_master_image_event_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageEventLog]:
-        return self._find_all_resources(
-            MasterImageEventLog, "master-image-event-logs", include=get_includable_names(MasterImageEventLog), **params
-        )
 
     def get_projects(self, **params: te.Unpack[GetKwargs]) -> list[Project]:
         return self._get_all_resources(Project, "projects", include=get_includable_names(Project), **params)
@@ -697,62 +640,37 @@ class CoreClient(BaseClient):
         self,
         analysis_id: Analysis | uuid.UUID | str,
         node_id: Node | uuid.UUID | str,
-        error: bool,
-        error_code: str = None,
-        status: str = "",
-        status_message: str = None,
-    ) -> AnalysisNodeLog:
+        level: LogLevel,
+        status: str,
+        code: str = None,
+        message: str = None,
+    ) -> Log:
         return self._create_resource(
-            AnalysisNodeLog,
+            Log,
             CreateAnalysisNodeLog(
                 analysis_id=obtain_uuid_from(analysis_id),
                 node_id=obtain_uuid_from(node_id),
-                error=error,
-                error_code=error_code,
+                code=code,
                 status=status,
-                status_message=status_message,
+                message=message,
+                level=level,
             ),
             "analysis-node-logs",
         )
 
-    def get_analysis_node_log(
-        self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> AnalysisNodeLog | None:
-        return self._get_single_resource(
-            AnalysisNodeLog,
-            "analysis-node-logs",
-            analysis_node_log_id,
-            include=get_includable_names(AnalysisNodeLog),
-            **params,
+    def delete_analysis_node_logs(self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str):
+        r = self._client.delete(
+            "/analysis-node-logs",
+            params=build_filter_params(
+                {"analysis_id": str(obtain_uuid_from(analysis_id)), "node_id": str(obtain_uuid_from(node_id))}
+            ),
         )
 
-    def delete_analysis_node_log(self, analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str):
-        self._delete_resource("analysis-node-logs", analysis_node_log_id)
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_hub_api_error_from_response(r)
 
-    def get_analysis_node_logs(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisNodeLog]:
-        return self._get_all_resources(
-            AnalysisNodeLog, "analysis-node-logs", include=get_includable_names(AnalysisNodeLog), **params
-        )
-
-    def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNodeLog]:
-        return self._find_all_resources(
-            AnalysisNodeLog, "analysis-node-logs", include=get_includable_names(AnalysisNodeLog), **params
-        )
-
-    def update_analysis_node_log(
-        self,
-        analysis_node_log_id: AnalysisNodeLog | uuid.UUID | str,
-        error: bool | UNSET_T = UNSET,
-        error_code: str | None | UNSET_T = UNSET,
-        status: str | UNSET_T = UNSET,
-        status_message: str | None | UNSET_T = UNSET,
-    ) -> AnalysisNodeLog:
-        return self._update_resource(
-            AnalysisNodeLog,
-            UpdateAnalysisNodeLog(error=error, error_code=error_code, status=status, status_message=status_message),
-            "analysis-node-logs",
-            analysis_node_log_id,
-        )
+    def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[Log]:
+        return self._find_all_resources(Log, "analysis-node-logs", **params)
 
     def get_analysis_buckets(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucket]:
         return self._get_all_resources(
@@ -939,22 +857,14 @@ class CoreClient(BaseClient):
             **params,
         )
 
-    def get_analysis_log(
-        self, analysis_log_id: AnalysisLog | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> AnalysisLog | None:
-        return self._get_single_resource(
-            AnalysisLog, "analysis-logs", analysis_log_id, include=get_includable_names(AnalysisLog), **params
+    def delete_analysis_logs(self, analysis_id: Analysis | uuid.UUID | str):
+        r = self._client.delete(
+            "/analysis-logs",
+            params=build_filter_params({"analysis_id": str(obtain_uuid_from(analysis_id))}),
         )
 
-    def delete_analysis_log(self, analysis_log_id: AnalysisLog | uuid.UUID | str):
-        self._delete_resource("analysis-logs", analysis_log_id)
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_hub_api_error_from_response(r)
 
-    def get_analysis_logs(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisLog]:
-        return self._get_all_resources(
-            AnalysisLog, "analysis-logs", include=get_includable_names(AnalysisLog), **params
-        )
-
-    def find_analysis_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisLog]:
-        return self._find_all_resources(
-            AnalysisLog, "analysis-logs", include=get_includable_names(AnalysisLog), **params
-        )
+    def find_analysis_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[Log]:
+        return self._find_all_resources(Log, "analysis-logs", **params)

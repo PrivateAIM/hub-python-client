@@ -18,6 +18,7 @@ __all__ = [
     "AnalysisNodeApprovalStatus",
     "AnalysisNodeRunStatus",
     "AnalysisBucketType",
+    "LogLevel",
     "UploadFile",
     "UuidIdentifiable",
     "ResourceT",
@@ -49,5 +50,6 @@ from ._core_client import (
     AnalysisNodeApprovalStatus,
     AnalysisNodeRunStatus,
     AnalysisBucketType,
+    LogLevel,
 )
 from ._storage_client import UploadFile
