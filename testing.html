@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -101,9 +101,9 @@ development, it is highly recommended to set up you own Hub instance instead.</p
 <p>Grab the <a class="reference external" href="https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml">Docker compose file</a>
 from the Hub repository and store it somewhere warm and comfy. For <code class="docutils literal notranslate"><span class="pre">core</span></code>, <code class="docutils literal notranslate"><span class="pre">messenger</span></code>, <code class="docutils literal notranslate"><span class="pre">analysis-manager</span></code>,
 <code class="docutils literal notranslate"><span class="pre">storage</span></code> and <code class="docutils literal notranslate"><span class="pre">ui</span></code> services, remove the <code class="docutils literal notranslate"><span class="pre">build</span></code> property and replace it with
-<code class="docutils literal notranslate"><span class="pre">image:</span> <span class="pre">ghcr.io/privateaim/hub:HUB_VERSION</span></code>. The latest version of the FLAME Hub Client is tested with the Hub
-version 0.8.13. Now you can run <code class="code highlight console docutils literal highlight-console"><span class="go">docker compose up -d</span></code> and, after a few minutes, you will be able to
-access the UI at <a class="reference external" href="http://localhost:3000">http://localhost:3000</a>.</p>
+<code class="docutils literal notranslate"><span class="pre">image:</span> <span class="pre">ghcr.io/privateaim/hub:HUB_VERSION</span></code>. The latest version of the FLAME Hub Client that is tested with the Hub is
+0.8.15. Now you can run <code class="code highlight console docutils literal highlight-console"><span class="go">docker compose up -d</span></code> and, after a few minutes, you will be able to access the
+UI at <a class="reference external" href="http://localhost:3000">http://localhost:3000</a>.</p>
 <p>In order for <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to pick up on the locally deployed instance, run <code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.test .env</span></code> and modify the
 <code class="file docutils literal notranslate"><span class="pre">.env</span></code> file such that <code class="docutils literal notranslate"><span class="pre">PYTEST_USE_TESTCONTAINERS=0</span></code>. This will skip the creation of all test containers and make
 test setup much faster.</p>

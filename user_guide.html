@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -167,13 +167,14 @@ or a resource of the same type. Raises a <a class="reference internal" href="exc
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Every resource model has an <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute. If you commit a resource instance as an <code class="docutils literal notranslate"><span class="pre">id</span></code> to either a <em>get</em>,
-<em>update</em> or <em>delete</em> method, the client will automatically use the <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute of the given resource.</p>
+<p>Every resource model (except logging resources) has an <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute. If you commit a resource instance as an
+<code class="docutils literal notranslate"><span class="pre">id</span></code> to either a <em>get</em>, <em>update</em> or <em>delete</em> method, the client will automatically use the <code class="docutils literal notranslate"><span class="pre">id</span></code> attribute of the
+given resource.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Creation, deletion or update methods are not implemented for all resources since there is no endpoint on the Hub in
-some cases. Please check the <a class="reference internal" href="clients_api.html"><span class="doc">API of the clients</span></a> to see which methods exist.</p>
+<p>Not all methods are implemented for each resource since there is no endpoint on the Hub in some cases. Please check
+the <a class="reference internal" href="clients_api.html"><span class="doc">API of the clients</span></a> to see which methods exist.</p>
 </div>
 </section>
 <section id="overview-of-implemented-resources">
@@ -202,7 +203,6 @@ some cases. Please check the <a class="reference internal" href="clients_api.htm
 <li><p>nodes</p></li>
 <li><p>master image groups</p></li>
 <li><p>master images</p></li>
-<li><p>master image event logs</p></li>
 <li><p>projects</p></li>
 <li><p>project nodes</p></li>
 <li><p>analyses</p></li>
@@ -380,6 +380,16 @@ admin’s realm is the master realm.</p>
 <span class="k">assert</span> <span class="n">admin_user</span><span class="o">.</span><span class="n">realm</span> <span class="o">==</span> <span class="n">master_realm</span>
 </pre></div>
 </div>
+<p>It is also possible to retrieve all names of includable properties for a specific model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_includable_names</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">get_includable_names</span><span class="p">(</span><span class="n">Node</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;registry&#39;</span><span class="p">,</span> <span class="s1">&#39;registry_project&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="handling-exceptions">
 <h2>Handling exceptions<a class="headerlink" href="#handling-exceptions" title="Link to this heading"></a></h2>
@@ -417,13 +427,14 @@ may also add additional fields which can also be accessed like this.</p>
 <h2>Models<a class="headerlink" href="#models" title="Link to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">flame_hub.models</span></code> module contains all model definitions for resources emitted by the FLAME Hub. Use them at you
 own discretion. They may change at any time.</p>
-<p>Model classes whose names start with <em>Update</em> extend the special base class <a class="reference internal" href="models_api.html#flame_hub.models.UpdateModel" title="flame_hub.models.UpdateModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">UpdateModel</span></code></a> which needs to
-distinguish between properties being <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> and being explicitly unset. <a class="reference internal" href="models_api.html#flame_hub.models.UNSET" title="flame_hub.models.UNSET"><code class="xref py py-class docutils literal notranslate"><span class="pre">UNSET</span></code></a>
-exists for this purpose, which is a sentinel value that should be used to mark a property as unset.</p>
+<p>Model classes whose names start with <em>Update</em> have the sentinel <a class="reference internal" href="models_api.html#flame_hub.models.UNSET" title="flame_hub.models.UNSET"><code class="xref py py-class docutils literal notranslate"><span class="pre">UNSET</span></code></a> as the default value for all of its
+properties. This is necessary so that properties that are still set to the default value can be excluded when the model
+is serialized. So only properties that are explicitly set to any other value than <a class="reference internal" href="models_api.html#flame_hub.models.UNSET" title="flame_hub.models.UNSET"><code class="xref py py-class docutils literal notranslate"><span class="pre">UNSET</span></code></a> are sent to the
+Hub instance.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">UpdateNode</span><span class="p">,</span> <span class="n">UNSET</span>
 
 <span class="n">update_node</span> <span class="o">=</span> <span class="n">UpdateNode</span><span class="p">(</span><span class="n">hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">external_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">UNSET</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">update_node</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exclude_none</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">update_node</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>

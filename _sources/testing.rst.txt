@@ -28,9 +28,9 @@ Deploying your own Hub instance
 Grab the `Docker compose file <https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml>`_
 from the Hub repository and store it somewhere warm and comfy. For ``core``, ``messenger``, ``analysis-manager``,
 ``storage`` and ``ui`` services, remove the ``build`` property and replace it with
-``image: ghcr.io/privateaim/hub:HUB_VERSION``. The latest version of the FLAME Hub Client is tested with the Hub
-version |hub_version|. Now you can run :console:`docker compose up -d` and, after a few minutes, you will be able to
-access the UI at http://localhost:3000.
+``image: ghcr.io/privateaim/hub:HUB_VERSION``. The latest version of the FLAME Hub Client that is tested with the Hub is
+|hub_version|. Now you can run :console:`docker compose up -d` and, after a few minutes, you will be able to access the
+UI at http://localhost:3000.
 
 In order for ``pytest`` to pick up on the locally deployed instance, run :console:`cp .env.test .env` and modify the
 :file:`.env` file such that ``PYTEST_USE_TESTCONTAINERS=0``. This will skip the creation of all test containers and make

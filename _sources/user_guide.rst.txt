@@ -81,13 +81,14 @@ the singular or plural form of a specific resource name following the
 
 .. note::
 
-    Every resource model has an ``id`` attribute. If you commit a resource instance as an ``id`` to either a *get*,
-    *update* or *delete* method, the client will automatically use the ``id`` attribute of the given resource.
+    Every resource model (except logging resources) has an ``id`` attribute. If you commit a resource instance as an
+    ``id`` to either a *get*, *update* or *delete* method, the client will automatically use the ``id`` attribute of the
+    given resource.
 
 .. warning::
 
-    Creation, deletion or update methods are not implemented for all resources since there is no endpoint on the Hub in
-    some cases. Please check the :doc:`API of the clients <clients_api>` to see which methods exist.
+    Not all methods are implemented for each resource since there is no endpoint on the Hub in some cases. Please check
+    the :doc:`API of the clients <clients_api>` to see which methods exist.
 
 
 Overview of implemented resources
@@ -110,7 +111,6 @@ Overview of implemented resources
     * nodes
     * master image groups
     * master images
-    * master image event logs
     * projects
     * project nodes
     * analyses
@@ -313,6 +313,19 @@ admin's realm is the master realm.
 
     assert admin_user.realm == master_realm
 
+It is also possible to retrieve all names of includable properties for a specific model.
+
+.. code-block:: python
+
+    from flame_hub import get_includable_names
+    from flame_hub.models import Node
+
+    print(get_includable_names(Node))
+
+.. code-block::
+
+    ('registry', 'registry_project')
+
 
 Handling exceptions
 ===================
@@ -357,16 +370,17 @@ Models
 The ``flame_hub.models`` module contains all model definitions for resources emitted by the FLAME Hub. Use them at you
 own discretion. They may change at any time.
 
-Model classes whose names start with *Update* extend the special base class :py:class:`.UpdateModel` which needs to
-distinguish between properties being :py:obj:`None` and being explicitly unset. :py:class:`~flame_hub.models.UNSET`
-exists for this purpose, which is a sentinel value that should be used to mark a property as unset.
+Model classes whose names start with *Update* have the sentinel :py:class:`.UNSET` as the default value for all of its
+properties. This is necessary so that properties that are still set to the default value can be excluded when the model
+is serialized. So only properties that are explicitly set to any other value than :py:class:`.UNSET` are sent to the
+Hub instance.
 
 .. code-block:: python
 
     from flame_hub.models import UpdateNode, UNSET
 
     update_node = UpdateNode(hidden=False, external_name=None, type=UNSET)
-    print(update_node.model_dump_json(indent=2, exclude_none=False, exclude_unset=True))
+    print(update_node.model_dump_json(indent=2, exclude_defaults=True))
 
 .. code-block:: console
 

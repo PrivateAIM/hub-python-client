@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -76,12 +76,11 @@
              
   <section id="flame-hub-client">
 <h1>FLAME Hub Client<a class="headerlink" href="#flame-hub-client" title="Link to this heading"></a></h1>
-<p>The FLAME Hub Client is a Python client which wraps the endpoints of the
-<a class="reference external" href="https://github.com/PrivateAIM/hub">FLAME Hub</a> API. This repository is part of the
-<a class="reference external" href="https://privateaim.de/eng/index.html">PrivateAIM</a> project.</p>
+<p>The FLAME Hub Client is a Python Client which wraps the endpoints of <a class="reference external" href="https://github.com/PrivateAIM/hub">FLAME Hub</a>
+API. This repository is part of the <a class="reference external" href="https://privateaim.de/eng/index.html">PrivateAIM</a> project.</p>
 <section id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
-<p>To install the client Python 3.10 or higher is required.</p>
+<p>To install the client, Python 3.10 or higher is required.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python -m pip install flame-hub-client</span>
 </pre></div>
 </div>
@@ -89,12 +88,9 @@
 <section id="quickstart">
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h2>
 <p>The FLAME Hub Client offers <em>get</em>, <em>find</em>, <em>update</em>, <em>create</em> and <em>delete</em> methods for the core, storage and auth
-endpoints. It is capable of authenticating against the API using either the password or robot authentication. Pick one,
-provide your credentials and plug them into the class for the service you want to use.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The client will automatically reauthenticate if necessary.</p>
-</div>
+endpoints. It is capable of authenticating against the API using either password or robot authentication. Pick one,
+provide your credentials and plug them into the class for the service you want to use. Note that the client will
+automatically reauthenticate if necessary.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
@@ -103,13 +99,13 @@ provide your credentials and plug them into the class for the service you want t
 <span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now you’re ready to use the library’s functions! Start off with getting the so called master realm by using one of the
-<em>find</em> methods and filtering for the name <code class="code highlight python docutils literal highlight-python"><span class="s2">&quot;master&quot;</span></code>.</p>
+<p>Now you’re ready to use the library’s functions! Start off with getting the so-called master realm by using one of the
+<em>find</em> methods and filtering for the name <code class="docutils literal notranslate"><span class="pre">&quot;master&quot;</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">master_realms</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_realms</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;master&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>Every <em>find</em> method returns a list of matching resources. Since there is only one realm called <code class="code highlight python docutils literal highlight-python"><span class="s2">&quot;master&quot;</span></code> in
-this example, we simply pop it from the list and print the result.</p>
+<p>Every <em>find</em> method returns a list of matching resources. Since there is only one realm called <code class="docutils literal notranslate"><span class="pre">&quot;master&quot;</span></code> in this
+example, we simply pop it from the list and print the result.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">master_realms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="n">master_realm</span> <span class="o">=</span> <span class="n">master_realms</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
@@ -161,17 +157,16 @@ successful, we have to request the updated node from the Hub.</p>
 <span class="k">assert</span> <span class="n">core_client</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">my_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>To cleanup our mess, we delete the node and verify that the node is gone forever.</p>
+<p>To clean up our mess, we delete the node and verify that the node is gone forever.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">core_client</span><span class="o">.</span><span class="n">delete_node</span><span class="p">(</span><span class="n">my_node</span><span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">core_client</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">my_node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Creation, update and deletion isn’t available for all resources. Check the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> which methods
-are available for each resource.</p>
-</div>
+<p>Note that not all method types are implemented for each resource. Check out the
+<a class="reference external" href="https://privateaim.github.io/hub-python-client/">documentation</a> which methods are available.</p>
+</section>
+</section>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul>
@@ -204,8 +199,6 @@ are available for each resource.</p>
 </li>
 </ul>
 </div>
-</section>
-</section>
 
 
            </div>

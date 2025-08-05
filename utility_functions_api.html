@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/documentation_options.js?v=fc7d8818"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,7 +51,9 @@
 <li class="toctree-l1 current"><a class="reference internal" href="api.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="clients_api.html">Clients</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Utility functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client._get_annotated_property_names"><code class="docutils literal notranslate"><span class="pre">_get_annotated_property_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.get_field_names"><code class="docutils literal notranslate"><span class="pre">get_field_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.get_includable_names"><code class="docutils literal notranslate"><span class="pre">get_includable_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.obtain_uuid_from"><code class="docutils literal notranslate"><span class="pre">obtain_uuid_from()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.uuid_validator"><code class="docutils literal notranslate"><span class="pre">uuid_validator()</span></code></a></li>
 </ul>
@@ -93,27 +95,61 @@
   <section id="utility-functions">
 <h1>Utility functions<a class="headerlink" href="#utility-functions" title="Link to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="flame_hub.get_field_names">
-<span class="sig-prename descclassname"><span class="pre">flame_hub.</span></span><span class="sig-name descname"><span class="pre">get_field_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub.get_field_names" title="Link to this definition"></a></dt>
-<dd><p>Returns all optional field names for a given model.</p>
+<dt class="sig sig-object py" id="flame_hub._base_client._get_annotated_property_names">
+<span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">_get_annotated_property_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sentinel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><span class="pre">object</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub._base_client._get_annotated_property_names" title="Link to this definition"></a></dt>
+<dd><p>Returns the names of all properties for a given model that are annotated with a specific sentinel.</p>
 <p>This function traverses a given <code class="docutils literal notranslate"><span class="pre">model</span></code> and all of its bases using the method resolution order. While traversing,
-all attributes are checked if they are annotated with the <a class="reference internal" href="models_api.html#flame_hub.models.IsField" title="flame_hub.models.IsField"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsField</span></code></a> sentinel which marks an optional
-field. The names of all annotated attributes are returned as a tuple.</p>
+all attributes are checked if they are annotated with a <code class="docutils literal notranslate"><span class="pre">sentinel</span></code> object. The names of all annotated attributes
+are returned as a tuple.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
-<dt><strong>model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference internal" href="types_api.html#flame_hub._base_client.ResourceT" title="flame_hub._base_client.ResourceT"><code class="xref py py-type docutils literal notranslate"><span class="pre">ResourceT</span></code></a>]</span></dt><dd><p>A resource model for which all field names should be retrieved. Note that fields are <strong>not</strong> consequently
+<dt><strong>model</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference internal" href="types_api.html#flame_hub._base_client.ResourceT" title="flame_hub._base_client.ResourceT"><code class="xref py py-type docutils literal notranslate"><span class="pre">ResourceT</span></code></a>]</span></dt><dd><p>A resource model for which the property names should be retrieved. Note that fields are <strong>not</strong> consequently
 annotated for <em>Create</em> and <em>Update</em> models due to inheritance.</p>
+</dd>
+<dt><strong>sentinel</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></span></dt><dd><p>Only names of properties that are annotated with <code class="docutils literal notranslate"><span class="pre">sentinel</span></code> are returned.</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, …]</dt><dd><p>Returns a tuple of all attribute names that are annotated with <a class="reference internal" href="models_api.html#flame_hub.models.IsField" title="flame_hub.models.IsField"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsField</span></code></a>.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, …]</dt><dd><p>Returns a tuple of all attribute names that are annotated with <code class="docutils literal notranslate"><span class="pre">sentinel</span></code>.</p>
 </dd>
 </dl>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#flame_hub.get_field_names" title="flame_hub.get_field_names"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_field_names()</span></code></a>, <a class="reference internal" href="#flame_hub.get_includable_names" title="flame_hub.get_includable_names"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_includable_names()</span></code></a>, <a class="reference internal" href="models_api.html#flame_hub.models.IsOptionalField" title="flame_hub._base_client.IsOptionalField"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsOptionalField</span></code></a>, <a class="reference internal" href="models_api.html#flame_hub.models.IsIncludable" title="flame_hub._base_client.IsIncludable"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsIncludable</span></code></a></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flame_hub.get_field_names">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.</span></span><span class="sig-name descname"><span class="pre">get_field_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub.get_field_names" title="Link to this definition"></a></dt>
+<dd><p>This function is a wrapper which calls <a class="reference internal" href="#flame_hub._base_client._get_annotated_property_names" title="flame_hub._base_client._get_annotated_property_names"><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_annotated_property_names()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">sentinel</span></code> set to
+<a class="reference internal" href="models_api.html#flame_hub.models.IsOptionalField" title="flame_hub.models.IsOptionalField"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsOptionalField</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_annotated_property_names()</span></code>, <a class="reference internal" href="models_api.html#flame_hub.models.IsOptionalField" title="flame_hub.models.IsOptionalField"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsOptionalField</span></code></a></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="flame_hub.get_includable_names">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.</span></span><span class="sig-name descname"><span class="pre">get_includable_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub.get_includable_names" title="Link to this definition"></a></dt>
+<dd><p>This function is a wrapper which calls <a class="reference internal" href="#flame_hub._base_client._get_annotated_property_names" title="flame_hub._base_client._get_annotated_property_names"><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_annotated_property_names()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">sentinel</span></code> set to
+<a class="reference internal" href="models_api.html#flame_hub.models.IsIncludable" title="flame_hub.models.IsIncludable"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsIncludable</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-func docutils literal notranslate"><span class="pre">_get_annotated_property_names()</span></code>, <a class="reference internal" href="models_api.html#flame_hub.models.IsIncludable" title="flame_hub.models.IsIncludable"><code class="xref py py-class docutils literal notranslate"><span class="pre">IsIncludable</span></code></a></dt><dd></dd>
+</dl>
+</div>
 </dd></dl>
 
 <dl class="py function">
