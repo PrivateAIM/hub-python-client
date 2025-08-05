@@ -111,7 +111,6 @@ Overview of implemented resources
     * nodes
     * master image groups
     * master images
-    * master image event logs
     * projects
     * project nodes
     * analyses
