@@ -298,10 +298,10 @@ class UpdateAnalysisNode(BaseModel):
 
 class CreateAnalysisNodeLog(BaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    node_id: uuid.UUID
+    node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     code: str | None
-    status: str
-    message: str | None
+    status: str | None
+    message: str
     level: LogLevel
 
 
@@ -641,22 +641,25 @@ class CoreClient(BaseClient):
         analysis_id: Analysis | uuid.UUID | str,
         node_id: Node | uuid.UUID | str,
         level: LogLevel,
-        status: str,
+        message: str,
+        status: str = None,
         code: str = None,
-        message: str = None,
-    ) -> Log:
-        return self._create_resource(
-            Log,
-            CreateAnalysisNodeLog(
-                analysis_id=obtain_uuid_from(analysis_id),
-                node_id=obtain_uuid_from(node_id),
-                code=code,
-                status=status,
-                message=message,
-                level=level,
-            ),
-            "analysis-node-logs",
+    ) -> None:
+        """Note that this method returns :any:`None` since the response does not contain the log resource."""
+        # TODO: This method should also use _create_resource() from the base client. Therefore creating analysis node
+        # TODO: logs have to return a status code of 201 and the response has to contain the log resource itself.
+        resource = CreateAnalysisNodeLog(
+            analysis_id=analysis_id,
+            node_id=node_id,
+            code=code,
+            status=status,
+            message=message,
+            level=level,
         )
+        r = self._client.post("analysis-node-logs", json=resource.model_dump(mode="json"))
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_hub_api_error_from_response(r)
+        return None
 
     def delete_analysis_node_logs(self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str):
         r = self._client.delete(
