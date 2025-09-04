@@ -190,7 +190,6 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
     return analysis
 
 
-# TODO: Make it possible to create analysis logs in the current test deployment.
 @pytest.fixture()
 def analysis_log(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis, "buildStart")
@@ -412,14 +411,13 @@ def test_build_analysis(core_client, configured_analysis):
     assert core_client.send_analysis_command(configured_analysis.id, command="buildStop").build_status == "stopping"
 
 
-@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
 def test_build_status_analysis(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis.id, command="buildStart")
     core_client.send_analysis_command(configured_analysis.id, command="buildStatus")
 
     def _check_checking_event_in_logs():
         logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
-        assert "checking" in [log.event for log in logs]
+        assert "checking" in [log.labels.get("event", None) for log in logs]
 
     assert_eventually(_check_checking_event_in_logs)
 
@@ -639,7 +637,7 @@ def test_update_registry_project(core_client, registry_project):
     assert new_registry_project.name == new_name
 
 
-@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
+@pytest.mark.xfail(reason="Bug in Hub, see https://github.com/PrivateAIM/hub/issues/1181.")
 def test_delete_analysis_logs(core_client, analysis_log):
     core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysis_id"])
 
