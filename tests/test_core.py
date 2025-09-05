@@ -190,7 +190,6 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
     return analysis
 
 
-# TODO: Make it possible to create analysis logs in the current test deployment.
 @pytest.fixture()
 def analysis_log(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis, "buildStart")
@@ -201,17 +200,6 @@ def analysis_log(core_client, configured_analysis):
     assert_eventually(_check_analysis_logs_present)
 
     return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
-
-
-@pytest.fixture()
-def analysis_node_log(core_client, analysis_node):
-    new_analysis_node_log = core_client.create_analysis_node_log(
-        analysis_node.analysis_id, analysis_node.node_id, level="info", status="started"
-    )
-    yield new_analysis_node_log
-    core_client.delete_analysis_node_logs(
-        analysis_id=new_analysis_node_log.labels["analysis_id"], node_id=new_analysis_node_log.labels["node_id"]
-    )
 
 
 @pytest.fixture()
@@ -423,14 +411,13 @@ def test_build_analysis(core_client, configured_analysis):
     assert core_client.send_analysis_command(configured_analysis.id, command="buildStop").build_status == "stopping"
 
 
-@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
 def test_build_status_analysis(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis.id, command="buildStart")
     core_client.send_analysis_command(configured_analysis.id, command="buildStatus")
 
     def _check_checking_event_in_logs():
         logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
-        assert "checking" in [log.event for log in logs]
+        assert "checking" in [log.labels.get("event", None) for log in logs]
 
     assert_eventually(_check_checking_event_in_logs)
 
@@ -472,13 +459,31 @@ def test_get_analysis_node_not_found(core_client):
     assert core_client.get_analysis_node(next_uuid()) is None
 
 
-def test_find_analysis_node_logs(core_client, analysis_node_log):
-    # "node_id" and "analysis_id" have to be specified to filter for analysis node logs.
-    analysis_node_logs_find = core_client.find_analysis_node_logs(
-        filter={"node_id": analysis_node_log.labels["node_id"], "analysis_id": analysis_node_log.labels["analysis_id"]}
+def test_analysis_node_logs(core_client, analysis_node):
+    core_client.create_analysis_node_log(
+        analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id, level="info", message="test"
     )
 
-    assert analysis_node_log.time in [log.time for log in analysis_node_logs_find]
+    def _check_analysis_node_logs_present():
+        assert (
+            len(
+                core_client.find_analysis_node_logs(
+                    filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+                )
+            )
+            == 1
+        )
+
+    assert_eventually(_check_analysis_node_logs_present)
+
+    # TODO: Deleting analysis node logs raises am error in the hub.
+    # core_client.delete_analysis_node_logs(
+    #    analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id
+    # )
+
+    # assert len(core_client.find_analysis_node_logs(
+    #    filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+    # )) == 0
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets, analysis_bucket_includables):
@@ -632,7 +637,7 @@ def test_update_registry_project(core_client, registry_project):
     assert new_registry_project.name == new_name
 
 
-@pytest.mark.xfail(reason="It is not possible to create analysis logs in the current test deployment.")
+@pytest.mark.xfail(reason="Bug in Hub, see https://github.com/PrivateAIM/hub/issues/1181.")
 def test_delete_analysis_logs(core_client, analysis_log):
     core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysis_id"])
 
