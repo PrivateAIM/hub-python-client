@@ -174,7 +174,7 @@ def analysis_bucket_file_includables():
 
 @pytest.fixture()
 def configured_analysis(core_client, registry, analysis, master_realm, analysis_bucket_file):
-    # An analysis needs at least one default and one aggregator node.
+    # An analysis needs at least one default node,  one aggregator node, a base image and an entrypoint to be lockable.
     nodes = []
     for node_type in t.get_args(NodeType):
         new_node = core_client.create_node(
@@ -186,8 +186,22 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
         nodes.append(new_node)
         core_client.create_project_node(analysis.project_id, new_node)
         core_client.create_analysis_node(analysis, new_node)
-    core_client.send_analysis_command(analysis.id, command="configurationLock")
-    return analysis
+
+    # It takes some time until an analysis is lockable.
+    def _check_analysis_lockable():
+        try:
+            core_client.send_analysis_command(analysis.id, command="configurationLock")
+        except HubAPIError as e:
+            assert False, e
+        else:
+            assert True
+
+    assert_eventually(_check_analysis_lockable)
+
+    yield analysis
+
+    for node in nodes:
+        core_client.delete_node(node)
 
 
 @pytest.fixture()
