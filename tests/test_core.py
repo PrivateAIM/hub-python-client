@@ -17,7 +17,7 @@ from flame_hub.models import (
     AnalysisBucket,
     AnalysisBucketFile,
 )
-from tests.helpers import next_random_string, next_uuid, assert_eventually
+from tests.helpers import next_random_string, next_uuid, assert_eventually, next_random_number
 
 pytestmark = pytest.mark.integration
 
@@ -437,15 +437,16 @@ def test_build_status_analysis(core_client, configured_analysis):
 
 
 def test_update_analysis_node(core_client, analysis_node):
+    progress = next_random_number(upper=100, is_int=True)
     new_analysis_node = core_client.update_analysis_node(
         analysis_node.id,
         execution_status="starting",
-        execution_progress=1,
+        execution_progress=progress,
     )
 
     assert analysis_node != new_analysis_node
     assert new_analysis_node.execution_status == "starting"
-    assert new_analysis_node.execution_progress == 1
+    assert new_analysis_node.execution_progress == progress
 
 
 def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includables):
