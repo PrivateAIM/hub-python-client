@@ -17,7 +17,7 @@ from flame_hub.models import (
     AnalysisBucket,
     AnalysisBucketFile,
 )
-from tests.helpers import next_random_string, next_uuid, assert_eventually
+from tests.helpers import next_random_string, next_uuid, assert_eventually, next_random_number
 
 pytestmark = pytest.mark.integration
 
@@ -174,7 +174,7 @@ def analysis_bucket_file_includables():
 
 @pytest.fixture()
 def configured_analysis(core_client, registry, analysis, master_realm, analysis_bucket_file):
-    # An analysis needs at least one default and one aggregator node.
+    # An analysis needs at least one default node,  one aggregator node, a base image and an entrypoint to be lockable.
     nodes = []
     for node_type in t.get_args(NodeType):
         new_node = core_client.create_node(
@@ -186,8 +186,22 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
         nodes.append(new_node)
         core_client.create_project_node(analysis.project_id, new_node)
         core_client.create_analysis_node(analysis, new_node)
-    core_client.send_analysis_command(analysis.id, command="configurationLock")
-    return analysis
+
+    # It takes some time until an analysis is lockable.
+    def _check_analysis_lockable():
+        try:
+            core_client.send_analysis_command(analysis.id, command="configurationLock")
+        except HubAPIError as e:
+            assert False, e
+        else:
+            assert True
+
+    assert_eventually(_check_analysis_lockable)
+
+    yield analysis
+
+    for node in nodes:
+        core_client.delete_node(node)
 
 
 @pytest.fixture()
@@ -417,16 +431,22 @@ def test_build_status_analysis(core_client, configured_analysis):
 
     def _check_checking_event_in_logs():
         logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
-        assert "checking" in [log.labels.get("event", None) for log in logs]
+        assert "configured" in [log.labels.get("event", None) for log in logs]
 
     assert_eventually(_check_checking_event_in_logs)
 
 
-def test_analysis_node_update(core_client, analysis_node):
-    new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status="starting")
+def test_update_analysis_node(core_client, analysis_node):
+    progress = next_random_number(upper=100, is_int=True)
+    new_analysis_node = core_client.update_analysis_node(
+        analysis_node.id,
+        execution_status="starting",
+        execution_progress=progress,
+    )
 
     assert analysis_node != new_analysis_node
-    assert new_analysis_node.run_status == "starting"
+    assert new_analysis_node.execution_status == "starting"
+    assert new_analysis_node.execution_progress == progress
 
 
 def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includables):

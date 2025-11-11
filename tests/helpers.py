@@ -31,5 +31,12 @@ def next_random_string(charset=string.ascii_letters, length: int = 20):
     return "".join([random.choice(charset) for _ in range(length)])
 
 
+def next_random_number(lower=0, upper=1, is_int=False):
+    if is_int:
+        return random.randint(lower, upper)
+    else:
+        return random.uniform(lower, upper)
+
+
 def next_uuid():
     return str(uuid.uuid4())
