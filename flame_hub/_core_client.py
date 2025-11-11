@@ -215,8 +215,7 @@ class Log(BaseModel):
     labels: dict[str, str | None]
 
 
-AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
-AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "stopped", "finished", "failed"]
+ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
 
 
 class CreateAnalysis(BaseModel):
@@ -234,10 +233,17 @@ class CreateAnalysis(BaseModel):
 
 class Analysis(CreateAnalysis):
     id: uuid.UUID
-    configuration_locked: bool
     nodes: int
-    build_status: AnalysisBuildStatus | None
-    run_status: AnalysisRunStatus | None
+    configuration_locked: bool
+    configuration_entrypoint_valid: bool
+    configuration_image_valid: bool
+    configuration_node_aggregator_valid: bool
+    configuration_node_default_valid: bool
+    configuration_nodes_valid: bool
+    build_status: ProcessStatus | None
+    execution_status: ProcessStatus | None
+    distribution_status: ProcessStatus | None
+    execution_progress: int | None
     created_at: datetime
     updated_at: datetime
     registry: t.Annotated[Registry | None, IsIncludable] = None
@@ -278,7 +284,8 @@ AnalysisNodeRunStatus = t.Literal["starting", "started", "stopping", "stopped", 
 class AnalysisNode(CreateAnalysisNode):
     id: uuid.UUID
     approval_status: AnalysisNodeApprovalStatus | None
-    run_status: AnalysisNodeRunStatus | None
+    execution_status: ProcessStatus | None
+    execution_progress: int | None
     comment: str | None
     artifact_tag: str | None
     artifact_digest: str | None
@@ -293,7 +300,8 @@ class AnalysisNode(CreateAnalysisNode):
 class UpdateAnalysisNode(BaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET
-    run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET
+    execution_status: ProcessStatus | None | UNSET_T = UNSET
+    execution_progress: int | None | UNSET_T = UNSET
 
 
 class CreateAnalysisNodeLog(BaseModel):
@@ -610,11 +618,17 @@ class CoreClient(BaseClient):
         analysis_node_id: AnalysisNode | uuid.UUID | str,
         comment: str | None | UNSET_T = UNSET,
         approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET,
-        run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET,
+        execution_status: ProcessStatus | None | UNSET_T = UNSET,
+        execution_progress: int | None | UNSET_T = UNSET,
     ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
-            UpdateAnalysisNode(comment=comment, approval_status=approval_status, run_status=run_status),
+            UpdateAnalysisNode(
+                comment=comment,
+                approval_status=approval_status,
+                execution_status=execution_status,
+                execution_progress=execution_progress,
+            ),
             "analysis-nodes",
             analysis_node_id,
         )

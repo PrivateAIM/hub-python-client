@@ -431,16 +431,21 @@ def test_build_status_analysis(core_client, configured_analysis):
 
     def _check_checking_event_in_logs():
         logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
-        assert "checking" in [log.labels.get("event", None) for log in logs]
+        assert "configured" in [log.labels.get("event", None) for log in logs]
 
     assert_eventually(_check_checking_event_in_logs)
 
 
-def test_analysis_node_update(core_client, analysis_node):
-    new_analysis_node = core_client.update_analysis_node(analysis_node.id, run_status="starting")
+def test_update_analysis_node(core_client, analysis_node):
+    new_analysis_node = core_client.update_analysis_node(
+        analysis_node.id,
+        execution_status="starting",
+        execution_progress=1,
+    )
 
     assert analysis_node != new_analysis_node
-    assert new_analysis_node.run_status == "starting"
+    assert new_analysis_node.execution_status == "starting"
+    assert new_analysis_node.execution_progress == 1
 
 
 def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includables):
