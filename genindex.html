@@ -201,8 +201,6 @@
 </li>
       <li><a href="types_api.html#flame_hub.types.AnalysisBucketType">AnalysisBucketType (in module flame_hub.types)</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisBuildStatus">AnalysisBuildStatus (in module flame_hub.types)</a>
-</li>
       <li><a href="types_api.html#flame_hub.types.AnalysisCommand">AnalysisCommand (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode">AnalysisNode (class in flame_hub.models)</a>
@@ -210,8 +208,6 @@
       <li><a href="types_api.html#flame_hub.types.AnalysisNodeApprovalStatus">AnalysisNodeApprovalStatus (in module flame_hub.types)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.AnalysisNodeRunStatus">AnalysisNodeRunStatus (in module flame_hub.types)</a>
-</li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisRunStatus">AnalysisRunStatus (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode.approval_status">approval_status (flame_hub.models.AnalysisNode attribute)</a>
 
@@ -301,7 +297,17 @@
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.comment">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.configuration_entrypoint_valid">configuration_entrypoint_valid (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.configuration_image_valid">configuration_image_valid (flame_hub.models.Analysis attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.Analysis.configuration_locked">configuration_locked (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.configuration_node_aggregator_valid">configuration_node_aggregator_valid (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.configuration_node_default_valid">configuration_node_default_valid (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.configuration_nodes_valid">configuration_nodes_valid (flame_hub.models.Analysis attribute)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.UploadFile.content">content (flame_hub.types.UploadFile attribute)</a>
 </li>
@@ -353,14 +359,14 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysis">CreateAnalysis (class in flame_hub.models)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile">CreateAnalysisBucketFile (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNode">CreateAnalysisNode (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog">CreateAnalysisNodeLog (class in flame_hub.models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.CreateBucket">CreateBucket (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.Analysis.created_at">created_at (flame_hub.models.Analysis attribute)</a>
@@ -553,6 +559,8 @@
         <li><a href="models_api.html#flame_hub.models.User.display_name">(flame_hub.models.User attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.distribution_status">distribution_status (flame_hub.models.Analysis attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -571,10 +579,26 @@
 </li>
       <li><a href="exceptions_api.html#flame_hub._exceptions.ErrorResponse">ErrorResponse (class in flame_hub._exceptions)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.AccessToken.expires_in">expires_in (flame_hub.models.AccessToken attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.Analysis.execution_progress">execution_progress (flame_hub.models.Analysis attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_progress">(flame_hub.models.AnalysisNode attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_progress">(flame_hub.models.UpdateAnalysisNode attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.execution_status">execution_status (flame_hub.models.Analysis attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_status">(flame_hub.models.AnalysisNode attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.AccessToken.expires_in">expires_in (flame_hub.models.AccessToken attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucket.external_id">external_id (flame_hub.models.AnalysisBucket attribute)</a>
 
       <ul>
@@ -1425,10 +1449,10 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.RegistryProject">RegistryProject (class in flame_hub.models)</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.RegistryProjectType">RegistryProjectType (in module flame_hub.types)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="types_api.html#flame_hub.types.RegistryProjectType">RegistryProjectType (in module flame_hub.types)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.ResourceList">ResourceList (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.ResourceListMeta">ResourceListMeta (class in flame_hub.models)</a>
@@ -1513,14 +1537,6 @@
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisBucketFile.root">(flame_hub.models.UpdateAnalysisBucketFile attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.run_status">run_status (flame_hub.models.Analysis attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.AnalysisNode.run_status">(flame_hub.models.AnalysisNode attribute)</a>
-</li>
-        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.run_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
       </ul></li>
   </ul></td>
