@@ -1,4 +1,5 @@
 import os
+import random
 import string
 import typing as t
 
@@ -100,7 +101,15 @@ def project_node_includables():
 
 @pytest.fixture()
 def analysis(core_client, project, master_image):
-    new_analysis = core_client.create_analysis(project, master_image_id=master_image.id)
+    args = [
+        {"value": next_random_string()},
+        {"value": next_random_string(), "position": random.choice(("before", "after"))},
+    ]
+    new_analysis = core_client.create_analysis(
+        project,
+        master_image_id=master_image.id,
+        image_command_arguments=args,
+    )
     yield new_analysis
     core_client.delete_analysis(new_analysis)
 
@@ -402,11 +411,16 @@ def test_get_analysis_not_found(core_client):
 
 
 def test_update_analysis(core_client, analysis):
+    args = [
+        {"value": next_random_string()},
+        {"value": next_random_string(), "position": random.choice(("before", "after"))},
+    ]
     new_name = next_random_string()
-    new_analysis = core_client.update_analysis(analysis.id, name=new_name)
+    new_analysis = core_client.update_analysis(analysis.id, name=new_name, image_command_arguments=args)
 
     assert analysis != new_analysis
     assert new_analysis.name == new_name
+    assert new_analysis.image_command_arguments == args  # Note that args is modified during updating the analysis.
 
 
 def test_unlock_analysis(core_client, configured_analysis):

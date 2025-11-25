@@ -227,7 +227,7 @@ class CreateAnalysis(BaseModel):
     image_command_arguments: t.Annotated[
         list[MasterImageCommandArgument],
         Field(default_factory=list),
-        BeforeValidator(lambda value: [] if value is None else value),
+        BeforeValidator(lambda args: [] if args is None else ensure_position_none(args)),
     ]
 
 
@@ -258,7 +258,13 @@ class UpdateAnalysis(BaseModel):
     description: str | None | UNSET_T = UNSET
     name: str | None | UNSET_T = UNSET
     master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
-    image_command_arguments: list[MasterImageCommandArgument] | UNSET_T = UNSET
+    image_command_arguments: (
+        t.Annotated[
+            list[MasterImageCommandArgument],
+            BeforeValidator(lambda args: ensure_position_none(args)),
+        ]
+        | UNSET_T
+    ) = UNSET
 
 
 AnalysisCommand = t.Literal[
