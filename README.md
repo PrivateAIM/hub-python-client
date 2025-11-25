@@ -1,6 +1,6 @@
-# FLAME Hub Client
+# FLAME Hub Python Client
 
-The FLAME Hub Client is a Python Client which wraps the endpoints of [FLAME Hub](https://github.com/PrivateAIM/hub)
+The FLAME Hub Python Client is a client which wraps the endpoints of [FLAME Hub](https://github.com/PrivateAIM/hub)
 API. This repository is part of the [PrivateAIM](https://privateaim.de/eng/index.html) project.
 
 ## Getting started
@@ -13,7 +13,7 @@ python -m pip install flame-hub-client
 
 ## Quickstart
 
-The FLAME Hub Client offers *get*, *find*, *update*, *create* and *delete* methods for the core, storage and auth
+The FLAME Hub Python Client offers *get*, *find*, *update*, *create* and *delete* methods for the core, storage and auth
 endpoints. It is capable of authenticating against the API using either password or robot authentication. Pick one,
 provide your credentials and plug them into the class for the service you want to use. Note that the client will
 automatically reauthenticate if necessary.
@@ -104,4 +104,4 @@ assert core_client.get_node(my_node.id) is None
 ```
 
 Note that not all method types are implemented for each resource. Check out the
-[documentation](https://privateaim.github.io/flame-hub-client/) which methods are available.
+[documentation](https://privateaim.github.io/hub-python-client/) which methods are available.

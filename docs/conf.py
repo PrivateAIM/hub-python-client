@@ -15,7 +15,7 @@ load_dotenv("../.env.test")
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "FLAME Hub Client"
+project = "FLAME Hub Python Client"
 copyright = "2025, Paul Brassel, Maximilian Jugl"
 author = "Paul Brassel, Maximilian Jugl"
 version = __version__
