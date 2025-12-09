@@ -26,7 +26,6 @@ from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
 from flame_hub._storage_client import BucketFile
 
-
 RegistryCommand = t.Literal["setup", "cleanup"]
 
 
@@ -215,7 +214,8 @@ class Log(BaseModel):
     labels: dict[str, str | None]
 
 
-ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
+AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
+AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "stopped", "finished", "failed"]
 
 
 class CreateAnalysis(BaseModel):
@@ -240,10 +240,8 @@ class Analysis(CreateAnalysis):
     configuration_node_aggregator_valid: bool
     configuration_node_default_valid: bool
     configuration_nodes_valid: bool
-    build_status: ProcessStatus | None
-    execution_status: ProcessStatus | None
-    distribution_status: ProcessStatus | None
-    execution_progress: int | None
+    build_status: AnalysisBuildStatus | None
+    run_status: AnalysisRunStatus | None
     created_at: datetime
     updated_at: datetime
     registry: t.Annotated[Registry | None, IsIncludable] = None
@@ -290,8 +288,7 @@ AnalysisNodeRunStatus = t.Literal["starting", "started", "stopping", "stopped", 
 class AnalysisNode(CreateAnalysisNode):
     id: uuid.UUID
     approval_status: AnalysisNodeApprovalStatus | None
-    execution_status: ProcessStatus | None
-    execution_progress: int | None
+    run_status: AnalysisNodeRunStatus | None
     comment: str | None
     artifact_tag: str | None
     artifact_digest: str | None
@@ -306,8 +303,7 @@ class AnalysisNode(CreateAnalysisNode):
 class UpdateAnalysisNode(BaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET
-    execution_status: ProcessStatus | None | UNSET_T = UNSET
-    execution_progress: int | None | UNSET_T = UNSET
+    run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET
 
 
 class CreateAnalysisNodeLog(BaseModel):
@@ -624,16 +620,14 @@ class CoreClient(BaseClient):
         analysis_node_id: AnalysisNode | uuid.UUID | str,
         comment: str | None | UNSET_T = UNSET,
         approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET,
-        execution_status: ProcessStatus | None | UNSET_T = UNSET,
-        execution_progress: int | None | UNSET_T = UNSET,
+        run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET,
     ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
             UpdateAnalysisNode(
                 comment=comment,
                 approval_status=approval_status,
-                execution_status=execution_status,
-                execution_progress=execution_progress,
+                run_status=run_status,
             ),
             "analysis-nodes",
             analysis_node_id,
