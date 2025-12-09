@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b01fafc3"></script>
+      <script src="_static/documentation_options.js?v=14672bda"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -33,7 +33,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            FLAME Hub Client
+            FLAME Hub Python Client
               <img src="https://raw.githubusercontent.com/PrivateAIM/documentation/refs/heads/master/src/public/images/icon/icon_flame_light.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -63,6 +63,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.NodeType"><code class="docutils literal notranslate"><span class="pre">NodeType</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.RegistryProjectType"><code class="docutils literal notranslate"><span class="pre">RegistryProjectType</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ProjectNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">ProjectNodeApprovalStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisBuildStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisBuildStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisRunStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisRunStatus</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisCommand"><code class="docutils literal notranslate"><span class="pre">AnalysisCommand</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisNodeApprovalStatus</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisNodeRunStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisNodeRunStatus</span></code></a></li>
@@ -134,7 +136,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">FLAME Hub Client</a>
+          <a href="index.html">FLAME Hub Python Client</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -207,6 +209,18 @@
 <dt class="sig sig-object py" id="flame_hub.types.ProjectNodeApprovalStatus">
 <span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">ProjectNodeApprovalStatus</span></span><a class="headerlink" href="#flame_hub.types.ProjectNodeApprovalStatus" title="Link to this definition"></a></dt>
 <dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘rejected’, ‘approved’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisBuildStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBuildStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisBuildStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘stopping’, ‘stopped’, ‘finished’, ‘failed’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisRunStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisRunStatus</span></span><a class="headerlink" href="#flame_hub.types.AnalysisRunStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘running’, ‘stopping’, ‘stopped’, ‘finished’, ‘failed’]</p>
 </dd></dl>
 
 <dl class="py attribute">

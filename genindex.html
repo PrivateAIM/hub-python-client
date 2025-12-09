@@ -13,7 +13,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b01fafc3"></script>
+      <script src="_static/documentation_options.js?v=14672bda"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,7 +30,7 @@
           
           
           <a href="index.html" class="icon icon-home">
-            FLAME Hub Client
+            FLAME Hub Python Client
               <img src="https://raw.githubusercontent.com/PrivateAIM/documentation/refs/heads/master/src/public/images/icon/icon_flame_light.png" class="logo" alt="Logo"/>
           </a>
 <div role="search">
@@ -54,7 +54,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">FLAME Hub Client</a>
+          <a href="index.html">FLAME Hub Python Client</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -201,6 +201,8 @@
 </li>
       <li><a href="types_api.html#flame_hub.types.AnalysisBucketType">AnalysisBucketType (in module flame_hub.types)</a>
 </li>
+      <li><a href="types_api.html#flame_hub.types.AnalysisBuildStatus">AnalysisBuildStatus (in module flame_hub.types)</a>
+</li>
       <li><a href="types_api.html#flame_hub.types.AnalysisCommand">AnalysisCommand (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode">AnalysisNode (class in flame_hub.models)</a>
@@ -208,6 +210,8 @@
       <li><a href="types_api.html#flame_hub.types.AnalysisNodeApprovalStatus">AnalysisNodeApprovalStatus (in module flame_hub.types)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.AnalysisNodeRunStatus">AnalysisNodeRunStatus (in module flame_hub.types)</a>
+</li>
+      <li><a href="types_api.html#flame_hub.types.AnalysisRunStatus">AnalysisRunStatus (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode.approval_status">approval_status (flame_hub.models.AnalysisNode attribute)</a>
 
@@ -559,8 +563,6 @@
         <li><a href="models_api.html#flame_hub.models.User.display_name">(flame_hub.models.User attribute)</a>
 </li>
       </ul></li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.distribution_status">distribution_status (flame_hub.models.Analysis attribute)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -579,26 +581,10 @@
 </li>
       <li><a href="exceptions_api.html#flame_hub._exceptions.ErrorResponse">ErrorResponse (class in flame_hub._exceptions)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.execution_progress">execution_progress (flame_hub.models.Analysis attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_progress">(flame_hub.models.AnalysisNode attribute)</a>
-</li>
-        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_progress">(flame_hub.models.UpdateAnalysisNode attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.execution_status">execution_status (flame_hub.models.Analysis attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_status">(flame_hub.models.AnalysisNode attribute)</a>
-</li>
-        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.AccessToken.expires_in">expires_in (flame_hub.models.AccessToken attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucket.external_id">external_id (flame_hub.models.AnalysisBucket attribute)</a>
 
       <ul>
@@ -1449,10 +1435,10 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.RegistryProject">RegistryProject (class in flame_hub.models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="types_api.html#flame_hub.types.RegistryProjectType">RegistryProjectType (in module flame_hub.types)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.ResourceList">ResourceList (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.ResourceListMeta">ResourceListMeta (class in flame_hub.models)</a>
@@ -1537,6 +1523,14 @@
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisBucketFile.root">(flame_hub.models.UpdateAnalysisBucketFile attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.run_status">run_status (flame_hub.models.Analysis attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.AnalysisNode.run_status">(flame_hub.models.AnalysisNode attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.run_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
       </ul></li>
   </ul></td>
