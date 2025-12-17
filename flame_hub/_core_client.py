@@ -546,7 +546,7 @@ class CoreClient(BaseClient):
         description: str = None,
         master_image_id: MasterImage | uuid.UUID | str = None,
         registry_id: Registry | uuid.UUID | str = None,
-        image_command_arguments: list[MasterImageCommandArgument] = (),
+        image_command_arguments: list[MasterImageCommandArgument] = None,
     ) -> Analysis:
         return self._create_resource(
             Analysis,
