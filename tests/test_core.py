@@ -423,6 +423,14 @@ def test_update_analysis(core_client, analysis):
     assert new_analysis.image_command_arguments == args  # Note that args is modified during updating the analysis.
 
 
+def test_create_analysis_without_arguments(core_client, project):
+    analysis = core_client.create_analysis(project_id=project.id, image_command_arguments=None)
+
+    assert analysis.image_command_arguments == []
+
+    core_client.delete_analysis(analysis)
+
+
 def test_unlock_analysis(core_client, configured_analysis):
     assert (
         core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock").configuration_locked
