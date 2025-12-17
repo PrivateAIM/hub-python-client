@@ -1,6 +1,6 @@
 [project]
 name = "flame-hub-client"
-version = "0.2.9"
+version = "0.2.10"
 description = "HTTP client for interacting with FLAME Hub services."
 authors = [
     { name = "Maximilian Jugl", email = "Maximilian.Jugl@medizin.uni-leipzig.de" },
