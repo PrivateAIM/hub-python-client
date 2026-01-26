@@ -79,7 +79,7 @@ def role_permission_includables():
 
 @pytest.fixture()
 def user(auth_client):
-    new_user = auth_client.create_user(next_random_string())
+    new_user = auth_client.create_user(name=next_random_string(), email=f"{next_random_string()}@test.com")
     yield new_user
     auth_client.delete_user(new_user)
 
