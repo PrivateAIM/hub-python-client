@@ -3,7 +3,7 @@ from datetime import datetime
 import typing as t
 
 import typing_extensions as te
-from pydantic import BaseModel, Field, WrapValidator
+from pydantic import BaseModel, Field, WrapValidator, EmailStr
 
 from flame_hub._base_client import (
     BaseClient,
@@ -55,7 +55,7 @@ class User(BaseModel):
     name: str
     active: bool
     name_locked: bool
-    email: t.Annotated[str | None, IsOptionalField] = None
+    email: t.Annotated[EmailStr, IsOptionalField] = None
     display_name: str | None
     first_name: str | None
     last_name: str | None
@@ -458,8 +458,8 @@ class AuthClient(BaseClient):
     def create_user(
         self,
         name: str,
+        email: str,
         display_name: str = None,
-        email: str = None,
         active: bool = True,
         name_locked: bool = True,
         first_name: str = None,
