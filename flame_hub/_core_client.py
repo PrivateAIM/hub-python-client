@@ -100,7 +100,7 @@ class Node(CreateNode):
     registry: t.Annotated[Registry | None, IsIncludable] = None
     registry_project_id: uuid.UUID | None
     registry_project: t.Annotated[RegistryProject | None, IsIncludable] = None
-    robot_id: uuid.UUID
+    robot_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
 
