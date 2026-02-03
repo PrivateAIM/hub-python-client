@@ -143,11 +143,16 @@ def ensure_position_none(value: t.Any) -> t.Any:
     return value
 
 
+ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
+
+
 class MasterImage(BaseModel):
     id: uuid.UUID
     path: str | None
     virtual_path: str
     group_virtual_path: str
+    build_status: ProcessStatus | None
+    build_progress: float | None
     name: str
     command: str | None
     command_arguments: t.Annotated[list[MasterImageCommandArgument] | None, BeforeValidator(ensure_position_none)]
