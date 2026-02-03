@@ -37,15 +37,15 @@ def sync_master_images(core_client):
 def master_image(core_client):
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
 
-    if len(core_client.find_master_images(filter={"path": default_master_image})) != 1:
+    if len(core_client.find_master_images(filter={"virtual_path": default_master_image})) != 1:
         sync_master_images(core_client)
 
         def _check_default_master_image_available():
-            assert len(core_client.find_master_images(filter={"path": default_master_image})) == 1
+            assert len(core_client.find_master_images(filter={"virtual_path": default_master_image})) == 1
 
         assert_eventually(_check_default_master_image_available, max_retries=10, delay_millis=1000)
 
-    return core_client.find_master_images(filter={"path": default_master_image})[0]
+    return core_client.find_master_images(filter={"virtual_path": default_master_image})[0]
 
 
 @pytest.fixture(scope="module")
