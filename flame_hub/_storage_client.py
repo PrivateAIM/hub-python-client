@@ -30,8 +30,8 @@ class Bucket(CreateBucket):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    actor_id: uuid.UUID
-    actor_type: str
+    actor_id: uuid.UUID | None
+    actor_type: str | None
     realm_id: uuid.UUID | None
 
 
