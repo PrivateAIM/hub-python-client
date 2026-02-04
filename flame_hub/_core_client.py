@@ -292,13 +292,13 @@ class CreateAnalysisNode(BaseModel):
 
 
 AnalysisNodeApprovalStatus = t.Literal["rejected", "approved"]
-AnalysisNodeRunStatus = t.Literal["starting", "started", "stopping", "stopped", "running", "finished", "failed"]
 
 
 class AnalysisNode(CreateAnalysisNode):
     id: uuid.UUID
     approval_status: AnalysisNodeApprovalStatus | None
-    run_status: AnalysisNodeRunStatus | None
+    execution_status: ProcessStatus | None
+    execution_progress: int | None
     comment: str | None
     artifact_tag: str | None
     artifact_digest: str | None
@@ -313,7 +313,8 @@ class AnalysisNode(CreateAnalysisNode):
 class UpdateAnalysisNode(BaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET
-    run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET
+    execution_status: ProcessStatus | None | UNSET_T = UNSET
+    execution_progress: int | None | UNSET_T = UNSET
 
 
 class CreateAnalysisNodeLog(BaseModel):
@@ -630,14 +631,16 @@ class CoreClient(BaseClient):
         analysis_node_id: AnalysisNode | uuid.UUID | str,
         comment: str | None | UNSET_T = UNSET,
         approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET,
-        run_status: AnalysisNodeRunStatus | None | UNSET_T = UNSET,
+        execution_status: ProcessStatus | None | UNSET_T = UNSET,
+        execution_progress: int | None | UNSET_T = UNSET,
     ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
             UpdateAnalysisNode(
                 comment=comment,
                 approval_status=approval_status,
-                run_status=run_status,
+                execution_status=execution_status,
+                execution_progress=execution_progress,
             ),
             "analysis-nodes",
             analysis_node_id,
