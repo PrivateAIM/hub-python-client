@@ -2,7 +2,7 @@ import httpx
 import pytest
 
 from flame_hub import HubAPIError
-from flame_hub.auth import RobotAuth, PasswordAuth
+from flame_hub.auth import RobotAuth, PasswordAuth, ClientAuth
 from tests.helpers import next_random_string
 
 pytestmark = pytest.mark.integration
@@ -44,6 +44,39 @@ def test_robot_auth(auth_client, auth_base_url, master_realm):
     assert r.status_code == httpx.codes.OK.value
 
     auth_client.delete_robot(robot)
+
+
+def test_client_auth(auth_client, auth_base_url, master_realm):
+    client_secret = next_random_string(length=64)
+    client_resource = auth_client.create_client(name=next_random_string(), realm_id=master_realm, secret=client_secret)
+    client_id = str(client_resource.id)
+
+    client_auth = ClientAuth(
+        client_id=client_id,
+        client_secret=client_secret,
+        base_url=auth_base_url,
+    )
+
+    client = httpx.Client(auth=client_auth)
+
+    # Check that the auth flow works.
+    r = client.get(auth_base_url)
+    assert r.status_code == httpx.codes.OK.value
+
+    auth_client.delete_client(client_resource)
+
+
+def test_client_auth_raise_error(nginx, auth_base_url):
+    # Use random client_id and client_secret.
+    client_auth = ClientAuth(client_id=next_random_string(), client_secret=next_random_string(), base_url=auth_base_url)
+    client = httpx.Client(auth=client_auth)
+
+    # This call should fail.
+    with pytest.raises(HubAPIError) as e:
+        client.get(auth_base_url)
+
+    assert "The client credentials are invalid" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
 
 
 def test_password_auth_raise_error(nginx, auth_base_url):
