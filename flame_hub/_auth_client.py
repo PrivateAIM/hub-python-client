@@ -43,22 +43,15 @@ class Realm(CreateRealm):
 class CreateUser(BaseModel):
     name: str
     display_name: str | None
-    email: t.Annotated[str | None, IsOptionalField]
-    active: bool
-    name_locked: bool
-    first_name: str | None
-    last_name: str | None
-
-
-class User(BaseModel):
-    id: uuid.UUID
-    name: str
-    active: bool
-    name_locked: bool
     email: t.Annotated[EmailStr, IsOptionalField] = None
-    display_name: str | None
+    active: bool
+    name_locked: bool
     first_name: str | None
     last_name: str | None
+
+
+class User(CreateUser):
+    id: uuid.UUID
     avatar: str | None
     cover: str | None
     realm_id: uuid.UUID
