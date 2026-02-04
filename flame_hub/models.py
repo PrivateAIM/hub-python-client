@@ -66,6 +66,9 @@ __all__ = [
     "ResourceList",
     "AccessToken",
     "RefreshToken",
+    "CreateClient",
+    "UpdateClient",
+    "Client",
 ]
 
 from ._core_client import (
@@ -130,5 +133,8 @@ from ._auth_client import (
     RobotPermission,
     CreateRobotRole,
     RobotRole,
+    CreateClient,
+    Client,
+    UpdateClient,
 )
 from ._auth_flows import AccessToken, RefreshToken
