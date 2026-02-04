@@ -152,7 +152,7 @@ class MasterImage(BaseModel):
     virtual_path: str
     group_virtual_path: str
     build_status: ProcessStatus | None
-    build_progress: float | None
+    build_progress: int | None
     name: str
     command: str | None
     command_arguments: t.Annotated[list[MasterImageCommandArgument] | None, BeforeValidator(ensure_position_none)]
