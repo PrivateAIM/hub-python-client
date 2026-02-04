@@ -219,10 +219,6 @@ class Log(BaseModel):
     labels: dict[str, str | None]
 
 
-AnalysisBuildStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
-AnalysisRunStatus = t.Literal["starting", "started", "running", "stopping", "stopped", "finished", "failed"]
-
-
 class CreateAnalysis(BaseModel):
     description: str | None
     name: str | None
@@ -239,14 +235,23 @@ class CreateAnalysis(BaseModel):
 class Analysis(CreateAnalysis):
     id: uuid.UUID
     nodes: int
+    nodes_approved: int
     configuration_locked: bool
     configuration_entrypoint_valid: bool
     configuration_image_valid: bool
     configuration_node_aggregator_valid: bool
     configuration_node_default_valid: bool
     configuration_nodes_valid: bool
-    build_status: AnalysisBuildStatus | None
-    run_status: AnalysisRunStatus | None
+    build_status: ProcessStatus | None
+    build_nodes_valid: bool
+    build_progress: int | None
+    build_hash: str | None
+    build_os: str | None
+    build_size: int | None
+    distribution_status: ProcessStatus | None
+    distribution_progress: int | None
+    execution_status: ProcessStatus | None
+    execution_progress: int | None
     created_at: datetime
     updated_at: datetime
     registry: t.Annotated[Registry | None, IsIncludable] = None
