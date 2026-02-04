@@ -1,5 +1,6 @@
 import time
 import typing as t
+import warnings
 
 import httpx
 from pydantic import BaseModel
@@ -61,6 +62,11 @@ class RobotAuth(httpx.Auth):
         self._current_token = None
         self._current_token_expires_at_nanos = 0
         self._client = client or httpx.Client(base_url=base_url)
+
+        warnings.warn(
+            "'RobotAuth' is deprecated and will be removed in a future version. Please use 'ClientAuth' instead.",
+            category=DeprecationWarning,
+        )
 
     def auth_flow(self, request) -> t.Iterator[httpx.Request]:
         """Executes the robot authentication flow.
