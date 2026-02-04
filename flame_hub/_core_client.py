@@ -1,3 +1,4 @@
+from enum import Enum
 import typing as t
 import uuid
 from datetime import datetime
@@ -326,7 +327,10 @@ class CreateAnalysisNodeLog(BaseModel):
     level: LogLevel
 
 
-AnalysisBucketType = t.Literal["CODE", "RESULT", "TEMP"]
+class AnalysisBucketType(str, Enum):
+    CODE = "CODE"
+    RESULT = "RESULT"
+    TEMP = "TEMP"
 
 
 class AnalysisBucket(BaseModel):

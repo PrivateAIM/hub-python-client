@@ -6,7 +6,7 @@ import typing as t
 import pytest
 
 from flame_hub import HubAPIError, get_field_names, get_includable_names
-from flame_hub.types import NodeType, ProcessStatus
+from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType
 from flame_hub.models import (
     Registry,
     RegistryProject,
@@ -134,7 +134,7 @@ def analysis_node_includables():
 @pytest.fixture()
 def analysis_buckets(core_client, analysis):
     def _check_analysis_buckets_present():
-        all_analysis_bucket_types = {"CODE", "RESULT", "TEMP"}
+        all_analysis_bucket_types = set(AnalysisBucketType)
 
         # Constrain to buckets created for this analysis.
         analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
@@ -161,7 +161,7 @@ def analysis_bucket_includables():
 def analysis_bucket_file(core_client, storage_client, analysis_buckets, rng_bytes):
     # Use the analysis bucket for code files so that the created bucket file can be used as an entrypoint to be able
     # to generate analysis logs.
-    analysis_bucket = analysis_buckets["CODE"]
+    analysis_bucket = analysis_buckets[AnalysisBucketType.CODE]
 
     # Upload example file to referenced bucket.
     bucket_files = storage_client.upload_to_bucket(
@@ -530,9 +530,9 @@ def test_analysis_node_logs(core_client, analysis_node):
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets, analysis_bucket_includables):
-    analysis_bucket_get = core_client.get_analysis_bucket(analysis_buckets["CODE"].id)
+    analysis_bucket_get = core_client.get_analysis_bucket(analysis_buckets[AnalysisBucketType.CODE].id)
 
-    assert analysis_bucket_get.id == analysis_buckets["CODE"].id
+    assert analysis_bucket_get.id == analysis_buckets[AnalysisBucketType.CODE].id
     assert all(includable in analysis_bucket_get.model_fields_set for includable in analysis_bucket_includables)
 
 
