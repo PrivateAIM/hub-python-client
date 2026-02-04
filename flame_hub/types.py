@@ -21,6 +21,7 @@ __all__ = [
     "ResourceT",
     "UNSET_T",
     "ProcessStatus",
+    "LogChannel",
 ]
 
 from ._base_client import (
@@ -47,5 +48,6 @@ from ._core_client import (
     AnalysisBucketType,
     LogLevel,
     ProcessStatus,
+    LogChannel,
 )
 from ._storage_client import UploadFile

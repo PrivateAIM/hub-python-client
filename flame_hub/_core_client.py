@@ -211,11 +211,14 @@ class UpdateProjectNode(BaseModel):
 
 
 LogLevel = t.Literal["emerg", "alert", "crit", "error", "warn", "notice", "info", "debug"]
+LogChannel = t.Literal["http", "websocket", "background", "system"]
 
 
 class Log(BaseModel):
-    time: str | int
-    message: str | None
+    time: str
+    message: str
+    service: str
+    channel: LogChannel
     level: LogLevel
     labels: dict[str, str | None]
 
