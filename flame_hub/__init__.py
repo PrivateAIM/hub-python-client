@@ -12,6 +12,8 @@ __all__ = [
     "__version_info__",
 ]
 
+import warnings
+
 from . import auth, types, models
 
 from ._auth_client import AuthClient
@@ -20,3 +22,7 @@ from ._exceptions import HubAPIError
 from ._core_client import CoreClient
 from ._storage_client import StorageClient
 from ._version import __version__, __version_info__
+
+
+# Show deprecation warnings per default.
+warnings.simplefilter("default", DeprecationWarning)
