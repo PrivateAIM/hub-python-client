@@ -6,7 +6,7 @@ import typing as t
 import pytest
 
 from flame_hub import HubAPIError, get_field_names, get_includable_names
-from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType
+from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType, LogLevel
 from flame_hub.models import (
     Registry,
     RegistryProject,
@@ -502,31 +502,39 @@ def test_get_analysis_node_not_found(core_client):
     assert core_client.get_analysis_node(next_uuid()) is None
 
 
+@pytest.mark.xfail(reason="Deletion of analysis node logs does not work")
 def test_analysis_node_logs(core_client, analysis_node):
-    core_client.create_analysis_node_log(
-        analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id, level="info", message="test"
+    log = core_client.create_analysis_node_log(
+        analysis_id=analysis_node.analysis_id,
+        node_id=analysis_node.node_id,
+        level=random.choice(t.get_args(LogLevel)),
+        message=next_random_string(),
     )
 
     def _check_analysis_node_logs_present():
-        assert (
-            len(
-                core_client.find_analysis_node_logs(
-                    filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
-                )
-            )
-            == 1
+        found_logs = core_client.find_analysis_node_logs(
+            filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
         )
+        assert len(found_logs) == 1
 
     assert_eventually(_check_analysis_node_logs_present)
 
-    # TODO: Deleting analysis node logs raises am error in the hub.
-    # core_client.delete_analysis_node_logs(
-    #    analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id
-    # )
+    new_log = core_client.find_analysis_node_logs(
+        filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+    )[0]
 
-    # assert len(core_client.find_analysis_node_logs(
-    #    filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
-    # )) == 0
+    assert log == new_log
+
+    core_client.delete_analysis_node_logs(analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id)
+
+    assert (
+        len(
+            core_client.find_analysis_node_logs(
+                filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+            )
+        )
+        == 0
+    )
 
 
 def test_get_analysis_bucket(core_client, analysis_buckets, analysis_bucket_includables):
