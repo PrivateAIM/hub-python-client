@@ -102,6 +102,7 @@ class Node(CreateNode):
     registry_project_id: uuid.UUID | None
     registry_project: t.Annotated[RegistryProject | None, IsIncludable] = None
     robot_id: uuid.UUID | None
+    client_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
 
