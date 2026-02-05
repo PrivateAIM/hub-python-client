@@ -679,22 +679,20 @@ class CoreClient(BaseClient):
         message: str,
         status: str = None,
         code: str = None,
-    ) -> None:
-        """Note that this method returns :any:`None` since the response does not contain the log resource."""
-        # TODO: This method should also use _create_resource() from the base client. Therefore creating analysis node
-        # TODO: logs have to return a status code of 201 and the response has to contain the log resource itself.
-        resource = CreateAnalysisNodeLog(
-            analysis_id=analysis_id,
-            node_id=node_id,
-            code=code,
-            status=status,
-            message=message,
-            level=level,
+    ) -> Log:
+        return self._create_resource(
+            Log,
+            CreateAnalysisNodeLog(
+                analysis_id=analysis_id,
+                node_id=node_id,
+                level=level,
+                message=message,
+                status=status,
+                code=code,
+            ),
+            "analysis-node-logs",
+            expected_code=httpx.codes.ACCEPTED.value,
         )
-        r = self._client.post("analysis-node-logs", json=resource.model_dump(mode="json"))
-        if r.status_code != httpx.codes.ACCEPTED.value:
-            raise new_hub_api_error_from_response(r)
-        return None
 
     def delete_analysis_node_logs(self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str):
         r = self._client.delete(
