@@ -31,11 +31,15 @@ def test_robot_auth(auth_client, auth_base_url, master_realm):
     robot = auth_client.create_robot(next_random_string(), master_realm, robot_secret)
     robot_id = str(robot.id)
 
-    robot_auth = RobotAuth(
-        robot_id=robot_id,
-        robot_secret=robot_secret,
-        base_url=auth_base_url,
-    )
+    with pytest.warns(
+        DeprecationWarning,
+        match="'RobotAuth' is deprecated and will be removed in a future version. Please use 'ClientAuth' instead.",
+    ):
+        robot_auth = RobotAuth(
+            robot_id=robot_id,
+            robot_secret=robot_secret,
+            base_url=auth_base_url,
+        )
 
     client = httpx.Client(auth=robot_auth)
 
@@ -93,8 +97,12 @@ def test_password_auth_raise_error(nginx, auth_base_url):
 
 
 def test_robot_auth_raise_error(nginx, auth_base_url):
-    # use random id and secret
-    robot_auth = RobotAuth(next_random_string(), next_random_string(), auth_base_url)
+    with pytest.warns(
+        DeprecationWarning,
+        match="'RobotAuth' is deprecated and will be removed in a future version. Please use 'ClientAuth' instead.",
+    ):
+        # use random id and secret
+        robot_auth = RobotAuth(next_random_string(), next_random_string(), auth_base_url)
     client = httpx.Client(auth=robot_auth)
 
     # this call should fail
