@@ -304,7 +304,8 @@ def nginx(ui, core, authup, storage, messenger, network, analysis_manager, use_t
         yield None
     else:
         r = httpx.get(
-            "https://raw.githubusercontent.com/PrivateAIM/hub-deployment/refs/heads/master/docker-compose/nginx.conf"
+            "https://raw.githubusercontent.com/PrivateAIM/hub-deployment/a3ef9dedbf857e09695b5f898979caadd3f1f1dc/"
+            "docker-compose/nginx.conf"
         )
         assert r.status_code == 200
 
