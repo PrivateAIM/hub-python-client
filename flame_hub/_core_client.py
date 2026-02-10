@@ -281,13 +281,13 @@ class UpdateAnalysis(BaseModel):
 
 
 AnalysisCommand = t.Literal[
-    "spinUp",
-    "tearDown",
     "buildStart",
-    "buildStop",
+    "buildCheck",
     "configurationLock",
     "configurationUnlock",
-    "buildStatus",
+    "distributionStart",
+    "distributionCheck",
+    "storageCheck",
 ]
 
 

@@ -445,19 +445,26 @@ def test_unlock_analysis(core_client, configured_analysis):
 
 
 def test_build_analysis(core_client, configured_analysis):
-    assert core_client.send_analysis_command(configured_analysis.id, command="buildStart").build_status == "starting"
-    assert core_client.send_analysis_command(configured_analysis.id, command="buildStop").build_status == "stopping"
+    assert (
+        core_client.send_analysis_command(
+            analysis_id=configured_analysis.id,
+            command="buildStart",
+        ).build_status
+        == "starting"
+    )
 
+    def _wait_for_successful_build():
+        try:
+            analysis = core_client.send_analysis_command(analysis_id=configured_analysis.id, command="buildCheck")
+        except HubAPIError as e:
+            if "The analysis build process has already been successfully completed." in str(e):
+                analysis = core_client.get_analysis(analysis_id=configured_analysis.id)
+            else:
+                raise e
+        assert analysis.build_status == "finished"
+        assert analysis.build_progress == 100
 
-def test_build_status_analysis(core_client, configured_analysis):
-    core_client.send_analysis_command(configured_analysis.id, command="buildStart")
-    core_client.send_analysis_command(configured_analysis.id, command="buildStatus")
-
-    def _check_checking_event_in_logs():
-        logs = core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})
-        assert "configured" in [log.labels.get("event", None) for log in logs]
-
-    assert_eventually(_check_checking_event_in_logs)
+    assert_eventually(_wait_for_successful_build)
 
 
 def test_update_analysis_node(core_client, analysis_node):
