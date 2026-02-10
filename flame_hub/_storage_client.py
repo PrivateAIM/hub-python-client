@@ -46,6 +46,7 @@ class BucketFile(BaseModel):
     updated_at: datetime
     actor_type: str
     actor_id: uuid.UUID
+    realm_id: uuid.UUID
     bucket_id: uuid.UUID
     bucket: t.Annotated[Bucket, IsIncludable] = None
 
