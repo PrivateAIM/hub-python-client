@@ -11,6 +11,7 @@ from flame_hub.models import (
     UserRole,
     RobotPermission,
     RobotRole,
+    Client,
 )
 from tests.helpers import next_random_string, next_uuid
 
@@ -140,6 +141,23 @@ def robot_role(auth_client, robot, role):
 @pytest.fixture(scope="session")
 def robot_role_includables():
     return get_includable_names(RobotRole)
+
+
+@pytest.fixture()
+def client(auth_client, realm):
+    new_client = auth_client.create_client(name=next_random_string(), realm_id=realm)
+    yield new_client
+    auth_client.delete_client(client_id=new_client)
+
+
+@pytest.fixture(scope="session")
+def client_includables():
+    return get_includable_names(Client)
+
+
+@pytest.fixture(scope="session")
+def client_fields():
+    return get_field_names(Client)
 
 
 def test_get_realm(auth_client, realm):
@@ -461,3 +479,40 @@ def test_find_robot_roles(auth_client, robot_role, robot_role_includables):
 
     assert [robot_role.id] == [rr.id for rr in robot_roles_find]
     assert all(includable in rr.model_fields_set for rr in robot_roles_find for includable in robot_role_includables)
+
+
+def test_get_client(auth_client, client, client_includables, client_fields):
+    client_get = auth_client.get_client(client_id=client, fields=client_fields)
+
+    assert client_get.id == client.id
+    assert all(includable in client_get.model_fields_set for includable in client_includables)
+    assert all(field in client_get.model_fields_set for field in client_fields)
+
+
+def test_get_client_not_found(auth_client):
+    assert auth_client.get_client(client_id=next_uuid()) is None
+
+
+def test_get_clients(auth_client, client, client_includables, client_fields):
+    clients_get = auth_client.get_clients(fields=client_fields)
+
+    assert len(clients_get) > 0
+    assert all(includable in c.model_fields_set for c in clients_get for includable in client_includables)
+    assert all(field in c.model_fields_set for c in clients_get for field in client_fields)
+
+
+def test_find_clients(auth_client, client, client_includables, client_fields):
+    # Use "name" for filtering because there is no filter mechanism for attribute "id".
+    clients_find = auth_client.find_clients(filter={"name": client.name}, fields=client_fields)
+
+    assert [client.id] == [c.id for c in clients_find]
+    assert all(includable in c.model_fields_set for c in clients_find for includable in client_includables)
+    assert all(field in c.model_fields_set for c in clients_find for field in client_fields)
+
+
+def test_update_client(auth_client, client):
+    new_name = next_random_string()
+    new_client = auth_client.update_client(client_id=client, name=new_name)
+
+    assert client != new_client
+    assert new_client.name == new_name

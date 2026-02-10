@@ -43,22 +43,15 @@ class Realm(CreateRealm):
 class CreateUser(BaseModel):
     name: str
     display_name: str | None
-    email: t.Annotated[str | None, IsOptionalField]
-    active: bool
-    name_locked: bool
-    first_name: str | None
-    last_name: str | None
-
-
-class User(BaseModel):
-    id: uuid.UUID
-    name: str
-    active: bool
-    name_locked: bool
     email: t.Annotated[EmailStr, IsOptionalField] = None
-    display_name: str | None
+    active: bool
+    name_locked: bool
     first_name: str | None
     last_name: str | None
+
+
+class User(CreateUser):
+    id: uuid.UUID
     avatar: str | None
     cover: str | None
     realm_id: uuid.UUID
@@ -235,6 +228,43 @@ class RobotRole(CreateRobotRole):
     role: t.Annotated[Role, IsIncludable] = None
     robot_realm: t.Annotated[Realm | None, IsIncludable] = None
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
+
+
+class CreateClient(BaseModel):
+    name: str
+    secret: t.Annotated[str | None, IsOptionalField] = None
+    display_name: str | None
+    description: str | None
+    redirect_uri: str | None
+    active: bool
+    is_confidential: bool
+    secret_hashed: bool
+    grant_types: str | None
+    realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+
+
+class Client(CreateClient):
+    id: uuid.UUID
+    built_in: bool
+    secret_encrypted: bool
+    scope: str | None
+    base_url: str | None
+    root_url: str | None
+    created_at: datetime
+    updated_at: datetime
+    realm: t.Annotated[Realm, IsIncludable] = None
+
+
+class UpdateClient(BaseModel):
+    name: str | UNSET_T = UNSET
+    secret: str | None | UNSET_T = UNSET
+    display_name: str | None | UNSET_T = UNSET
+    description: str | None | UNSET_T = UNSET
+    redirect_uri: str | None | UNSET_T = UNSET
+    active: bool | UNSET_T = UNSET
+    is_confidential: bool | UNSET_T = UNSET
+    secret_hashed: bool | UNSET_T = UNSET
+    grant_types: str | None | UNSET_T = UNSET
 
 
 class AuthClient(BaseClient):
@@ -642,3 +672,75 @@ class AuthClient(BaseClient):
 
     def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
         return self._find_all_resources(RobotRole, "robot-roles", include=get_includable_names(RobotRole), **params)
+
+    def create_client(
+        self,
+        name: str,
+        realm_id: Realm | str | uuid.UUID,
+        secret: str = None,
+        display_name: str = None,
+        description: str = None,
+        redirect_uri: str = None,
+        active: bool = True,
+        is_confidential: bool = True,
+        secret_hashed: bool = False,
+        grant_types: str = None,
+    ) -> Client:
+        return self._create_resource(
+            Client,
+            CreateClient(
+                name=name,
+                realm_id=realm_id,
+                secret=secret,
+                display_name=display_name,
+                description=description,
+                redirect_uri=redirect_uri,
+                active=active,
+                is_confidential=is_confidential,
+                secret_hashed=secret_hashed,
+                grant_types=grant_types,
+            ),
+            "clients",
+        )
+
+    def delete_client(self, client_id: Client | uuid.UUID | str):
+        self._delete_resource("clients", client_id)
+
+    def get_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Client | None:
+        return self._get_single_resource(Client, "clients", client_id, include=get_includable_names(Client), **params)
+
+    def get_clients(self, **params: te.Unpack[GetKwargs]) -> list[Client]:
+        return self._get_all_resources(Client, "clients", include=get_includable_names(Client), **params)
+
+    def find_clients(self, **params: te.Unpack[FindAllKwargs]) -> list[Client]:
+        return self._find_all_resources(Client, "clients", include=get_includable_names(Client), **params)
+
+    def update_client(
+        self,
+        client_id: Client | uuid.UUID | str,
+        name: str | UNSET_T = UNSET,
+        secret: str | None | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
+        description: str | None | UNSET_T = UNSET,
+        redirect_uri: str | None | UNSET_T = UNSET,
+        active: bool | UNSET_T = UNSET,
+        is_confidential: bool | UNSET_T = UNSET,
+        secret_hashed: bool | UNSET_T = UNSET,
+        grant_types: str | None | UNSET_T = UNSET,
+    ) -> Client:
+        return self._update_resource(
+            Client,
+            UpdateClient(
+                name=name,
+                secret=secret,
+                display_name=display_name,
+                description=description,
+                redirect_uri=redirect_uri,
+                active=active,
+                is_confidential=is_confidential,
+                secret_hashed=secret_hashed,
+                grant_types=grant_types,
+            ),
+            "clients",
+            client_id,
+        )

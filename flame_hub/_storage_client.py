@@ -30,8 +30,8 @@ class Bucket(CreateBucket):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    actor_id: uuid.UUID
-    actor_type: str
+    actor_id: uuid.UUID | None
+    actor_type: str | None
     realm_id: uuid.UUID | None
 
 
@@ -46,6 +46,7 @@ class BucketFile(BaseModel):
     updated_at: datetime
     actor_type: str
     actor_id: uuid.UUID
+    realm_id: uuid.UUID
     bucket_id: uuid.UUID
     bucket: t.Annotated[Bucket, IsIncludable] = None
 

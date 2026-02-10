@@ -9,7 +9,7 @@ Tests for the FLAME Hub Client are implemented with `pytest <https://docs.pytest
 
     This assumes that an virtual environment has been setup and activated with `poetry <https://python-poetry.org/>`_.
 
-Furthermore, tests require access to a FLAME Hub instance. There are two way of accomplishing this - either by using
+Furthermore, tests require access to a FLAME Hub instance. There are two ways of accomplishing this - either by using
 `testcontainers <https://testcontainers-python.readthedocs.io/en/latest/>`_ or by deploying your own instance.
 
 
@@ -25,13 +25,13 @@ development, it is highly recommended to set up you own Hub instance instead.
 Deploying your own Hub instance
 ===============================
 
-Grab the `Docker compose file <https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml>`_
-from the Hub repository and store it somewhere warm and comfy. For ``core``, ``messenger``, ``analysis-manager``,
-``storage`` and ``ui`` services, remove the ``build`` property and replace it with
-``image: ghcr.io/privateaim/hub:HUB_VERSION``. The latest version of the FLAME Hub Client that is tested with the Hub is
-|hub_version|. Now you can run :console:`docker compose up -d` and, after a few minutes, you will be able to access the
-UI at http://localhost:3000.
+Clone the Hub deployment repository :console:`git clone https://github.com/PrivateAIM/hub-deployment.git` and navigate
+to the ``docker-compose`` directory :console:`cd hub-deployment/docker-compose`. Copy the ``.env.example`` file with
+:console:`cp .env.example .env`. Edit the new ``.env`` file and change the ``HUB_IMAGE_TAG`` variable if you need a
+specific version of the Hub. The latest version of the FLAME Hub Client is tested with the Hub version |hub_version|.
+Now you can run :console:`docker compose up -d` and, after a few minutes, you will be able to access the UI at
+http://localhost:3000.
 
-In order for ``pytest`` to pick up on the locally deployed instance, run :console:`cp .env.test .env` and modify the
-:file:`.env` file such that ``PYTEST_USE_TESTCONTAINERS=0``. This will skip the creation of all test containers and make
-test setup much faster.
+In order for ``pytest`` to pick up on the locally deployed instance, run :console:`cp .env.test .env` inside the
+``hub-python-client`` directory and modify the :file:`.env` file such that ``PYTEST_USE_TESTCONTAINERS=0``. This will
+skip the creation of all test containers and make test setup much faster.

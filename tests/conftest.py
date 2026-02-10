@@ -299,13 +299,14 @@ def ui(storage, core, authup, network, use_testcontainers, hub_version):
 
 
 @pytest.fixture(scope="session")
-def nginx(
-    ui, core, authup, storage, messenger, network, analysis_manager, use_testcontainers, tmp_path_factory, hub_version
-):
+def nginx(ui, core, authup, storage, messenger, network, analysis_manager, use_testcontainers, tmp_path_factory):
     if not use_testcontainers:
         yield None
     else:
-        r = httpx.get(f"https://raw.githubusercontent.com/PrivateAIM/hub/refs/tags/v{hub_version}/nginx.conf")
+        r = httpx.get(
+            "https://raw.githubusercontent.com/PrivateAIM/hub-deployment/a3ef9dedbf857e09695b5f898979caadd3f1f1dc/"
+            "docker-compose/nginx.conf"
+        )
         assert r.status_code == 200
 
         nginx_conf_path = tmp_path_factory.mktemp("nginx-") / "nginx.conf"

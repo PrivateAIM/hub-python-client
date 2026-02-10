@@ -408,13 +408,15 @@ class BaseClient(object):
 
     def __init__(self, base_url: str, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
-        self._client = client or httpx.Client(auth=auth, base_url=base_url)
+        # Set a read timeout of 20 seconds here because the endpoint for registry projects is slow.
+        self._client = client or httpx.Client(auth=auth, base_url=base_url, timeout=httpx.Timeout(5, read=20))
 
     def _get_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
         include: IncludeParams = None,
+        expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
@@ -431,13 +433,14 @@ class BaseClient(object):
         Default pagination parameters are applied as explained in the return section of :py:meth:`_find_all_resources`.
         """
 
-        return self._find_all_resources(resource_type, *path, include=include, **params)
+        return self._find_all_resources(resource_type, *path, include=include, expected_code=expected_code, **params)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
         include: IncludeParams = None,
+        expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
@@ -451,7 +454,7 @@ class BaseClient(object):
         resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
             A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that
             validates all attributes a resource can have. In other terms, do not pass one of the models that start with
-            *Create* or *Update* since this method performs a ``GET`` request.
+            *Create* or *Update*.
         *path : :py:class:`str`
             A string or multiple strings that define the endpoint.
         fields : :py:type:`~flame_hub.types.FieldParams`, optional
@@ -459,6 +462,8 @@ class BaseClient(object):
         include : :py:type:`~flame_hub.types.IncludeParams`, optional
             Extend the default resource fields by explicitly list resource names to nest in the response. See the
             :doc:`model specifications <models_api>` which resources can be included in other resources.
+        expected_code : :py:class:`int`, optional
+            The expected status code of the response from the ``GET`` request. This defaults to ``200``.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.FindAllKwargs`]
             Further keyword arguments to define filtering, sorting and pagination conditions, adding optional fields
             to a response and returning meta information.
@@ -474,7 +479,7 @@ class BaseClient(object):
         Raises
         ------
         :py:exc:`.HubAPIError`
-            If the status code of the response does not match 200.
+            If the status code of the response does not match `expected_code`.
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resources returned by the Hub instance do not validate with the given ``resource_type``.
 
@@ -500,7 +505,7 @@ class BaseClient(object):
 
         r = self._client.get("/".join(path), params=request_params)
 
-        if r.status_code != httpx.codes.OK.value:
+        if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
 
         resource_list = ResourceList[resource_type](**r.json())
@@ -510,7 +515,13 @@ class BaseClient(object):
         else:
             return resource_list.data
 
-    def _create_resource(self, resource_type: type[ResourceT], resource: BaseModel, *path: str) -> ResourceT:
+    def _create_resource(
+        self,
+        resource_type: type[ResourceT],
+        resource: BaseModel,
+        *path: str,
+        expected_code: int = httpx.codes.CREATED.value,
+    ) -> ResourceT:
         """Create a resource of a certain type at the specified path.
 
         The FLAME Hub responds with the created resource which is then validated with ``resource_type`` and returned by
@@ -521,13 +532,15 @@ class BaseClient(object):
         resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
             A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that
             validates all attributes a resource can have. In other terms, do not pass one of the models that start with
-            *Create* or *Update* since this method performs a ``GET`` request.
+            *Create* or *Update*.
         resource : :py:class:`~pydantic.BaseModel`
             This has to be the corresponding creation model for ``resource_type``. All creation models follow a naming
             convention with a prefixed *Create*. See the :doc:`model specifications <models_api>` for a list of all
             available models.
         *path : :py:class:`str`
             Path to the endpoint where the resource should be created.
+        expected_code : :py:class:`int`, optional
+            The expected status code of the response from the ``POST`` request. This defaults to ``201``.
 
         Returns
         -------
@@ -537,7 +550,7 @@ class BaseClient(object):
         Raises
         ------
         :py:exc:`.HubAPIError`
-            If the status code of the response does not match 201.
+            If the status code of the response does not match ``expected_code``.
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
         """
@@ -546,7 +559,7 @@ class BaseClient(object):
             json=resource.model_dump(mode="json"),
         )
 
-        if r.status_code != httpx.codes.CREATED.value:
+        if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
@@ -556,6 +569,7 @@ class BaseClient(object):
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
         include: IncludeParams = None,
+        expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> ResourceT | None:
         """Get a single resource of a certain type at the specified path.
@@ -578,6 +592,10 @@ class BaseClient(object):
         include : :py:type:`~flame_hub.types.IncludeParams`, optional
             Extend the default resource fields by explicitly list resource names to nest in the response. See the
             :doc:`model specifications <models_api>` which resources can be included in other resources.
+        expected_code : :py:class:`int`, optional
+            The expected status code of the response from the ``GET`` request. This defaults to ``200``.
+        **params : :py:obj:`~typing.Unpack` [:py:class:`.GetKwargs`]
+            Further keyword arguments for adding optional fields to a response and returning meta information.
 
         Returns
         -------
@@ -588,7 +606,7 @@ class BaseClient(object):
         Raises
         ------
         :py:exc:`.HubAPIError`
-            If the status code of the response does not match 200 or 404.
+            If the status code of the response does not match ``expected_code`` or 404.
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
 
@@ -609,7 +627,7 @@ class BaseClient(object):
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
 
-        if r.status_code != httpx.codes.OK.value:
+        if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
@@ -619,6 +637,7 @@ class BaseClient(object):
         resource_type: type[ResourceT],
         resource: BaseModel,
         *path: str | UuidIdentifiable,
+        expected_code: int = httpx.codes.ACCEPTED.value,
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path.
 
@@ -630,7 +649,7 @@ class BaseClient(object):
         resource_type : :py:class:`type`\\[:py:type:`~flame_hub._base_client.ResourceT`]
             A Pydantic subclass used to validate the response from the FLAME Hub. This should be a model that validates
             all attributes a resource can have. In other terms, do not pass one of the models that start with *Create*
-            or *Update* since this method performs a ``GET`` request.
+            or *Update*.
         resource : :py:class:`~pydantic.BaseModel`
             This has to be the corresponding update model for ``resource_type``. All update models follow a naming
             convention with a prefixed *Update*. See the :doc:`model specifications <models_api>` for a list of all
@@ -639,6 +658,8 @@ class BaseClient(object):
             A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
             a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
             ``id`` attribute.
+        expected_code : :py:class:`int`, optional
+            The expected status code of the response from the ``POST`` request. This defaults to ``202``.
 
         Returns
         -------
@@ -648,7 +669,7 @@ class BaseClient(object):
         Raises
         ------
         :py:exc:`.HubAPIError`
-            If the status code of the response does not match 202.
+            If the status code of the response does not match ``expected_code``.
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
         """
@@ -658,12 +679,12 @@ class BaseClient(object):
             json=resource.model_dump(mode="json", exclude_defaults=True),
         )
 
-        if r.status_code != httpx.codes.ACCEPTED.value:
+        if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, *path: str | UuidIdentifiable):
+    def _delete_resource(self, *path: str | UuidIdentifiable, expected_code: int = httpx.codes.ACCEPTED.value) -> None:
         """Delete a resource of a certain type at the specified path.
 
         Parameters
@@ -672,13 +693,15 @@ class BaseClient(object):
             A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
             a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
             ``id`` attribute.
+        expected_code : :py:class:`int`, optional
+            The expected status code of the response from the ``DELETE`` request. This defaults to ``202``.
 
         Raises
         ------
         :py:exc:`.HubAPIError`
-            If the status code of the response does not match 202.
+            If the status code of the response does not match ``expected_code``.
         """
         r = self._client.delete("/".join(convert_path(path)))
 
-        if r.status_code != httpx.codes.ACCEPTED.value:
+        if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)

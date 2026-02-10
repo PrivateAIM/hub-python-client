@@ -80,7 +80,8 @@ print(my_node.model_dump_json(indent=2))
   "registry": null,
   "registry_project_id": null,
   "registry_project": null,
-  "robot_id": "200aab68-a686-407c-a6c1-2dd367ff6031",
+  "robot_id": null,
+  "client_id": "2d3e19b4-6708-4279-b2a7-34ad42638e4b",
   "created_at": "2025-05-19T15:43:57.859000Z",
   "updated_at": "2025-05-19T15:43:57.859000Z"
 }
