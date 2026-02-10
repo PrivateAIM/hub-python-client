@@ -408,6 +408,7 @@ class BaseClient(object):
 
     def __init__(self, base_url: str, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
+        # Set a read timeout of 20 seconds here because the endpoint for registry projects is slow.
         self._client = client or httpx.Client(auth=auth, base_url=base_url, timeout=httpx.Timeout(5, read=20))
 
     def _get_all_resources(
