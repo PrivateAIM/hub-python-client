@@ -8,13 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Authentication &mdash; Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8db09a1e"></script>
+      <script src="_static/documentation_options.js?v=29c81e07"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -59,6 +59,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.auth.RobotAuth"><code class="docutils literal notranslate"><span class="pre">RobotAuth</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.auth.RobotAuth.auth_flow"><code class="docutils literal notranslate"><span class="pre">RobotAuth.auth_flow()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.auth.ClientAuth"><code class="docutils literal notranslate"><span class="pre">ClientAuth</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.auth.ClientAuth.auth_flow"><code class="docutils literal notranslate"><span class="pre">ClientAuth.auth_flow()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -206,6 +210,55 @@ could be used for authentication to access the Hub endpoints via the clients.</p
 <dt class="sig sig-object py" id="flame_hub.auth.RobotAuth.auth_flow">
 <span class="sig-name descname"><span class="pre">auth_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Request</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub.auth.RobotAuth.auth_flow" title="Link to this definition"></a></dt>
 <dd><p>Executes the robot authentication flow.</p>
+<p>This method checks if the current access token is not set or expired and, if so, requests a new one from the Hub
+instance. It then yields the authentication request. Click
+<a class="reference external" href="https://www.python-httpx.org/advanced/authentication/#custom-authentication-schemes">here</a> for further
+information on this method.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="models_api.html#flame_hub.models.AccessToken" title="flame_hub.models.AccessToken"><code class="xref py py-class docutils literal notranslate"><span class="pre">AccessToken</span></code></a></dt><dd></dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.auth.ClientAuth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.auth.</span></span><span class="sig-name descname"><span class="pre">ClientAuth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'https://auth.privateaim.dev'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Client</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.auth.ClientAuth" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Auth</span></code></p>
+<p>Client authentication for the FLAME Hub.</p>
+<p>This class implements a client authentication flow which is one possible flow that is recognized by the FLAME Hub.
+It is derived from the <code class="docutils literal notranslate"><span class="pre">httpx</span></code> base class for all authentication flows <code class="docutils literal notranslate"><span class="pre">httpx.Auth</span></code>. For more information about
+this base class, click
+<a class="reference external" href="https://www.python-httpx.org/advanced/authentication/#custom-authentication-schemes">here</a>. Note that
+<code class="docutils literal notranslate"><span class="pre">base_url</span></code> is ignored if you pass your own client via the <code class="docutils literal notranslate"><span class="pre">client</span></code> keyword argument. An instance of this class
+could be used for authentication to access the Hub endpoints via the clients.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>client_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The ID of the client which is used to execute the authentication flow.</p>
+</dd>
+<dt><strong>client_secret</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>The secret which corresponds to the client with ID <code class="docutils literal notranslate"><span class="pre">client_id</span></code>.</p>
+</dd>
+<dt><strong>base_url</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, default=<a class="reference internal" href="defaults_api.html#flame_hub._defaults.DEFAULT_AUTH_BASE_URL" title="flame_hub._defaults.DEFAULT_AUTH_BASE_URL"><code class="xref py py-const docutils literal notranslate"><span class="pre">DEFAULT_AUTH_BASE_URL</span></code></a></span></dt><dd><p>The base URL for the authentication flow.</p>
+</dd>
+<dt><strong>client</strong><span class="classifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">httpx.Client</span></code></span></dt><dd><p>Pass your own client to avoid the instantiation of a client while initializing an instance of this class.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="clients_api.html#flame_hub.AuthClient" title="flame_hub.AuthClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthClient</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub.CoreClient" title="flame_hub.CoreClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoreClient</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub.StorageClient" title="flame_hub.StorageClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">StorageClient</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="flame_hub.auth.ClientAuth.auth_flow">
+<span class="sig-name descname"><span class="pre">auth_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Request</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#flame_hub.auth.ClientAuth.auth_flow" title="Link to this definition"></a></dt>
+<dd><p>Executes the client authentication flow.</p>
 <p>This method checks if the current access token is not set or expired and, if so, requests a new one from the Hub
 instance. It then yields the authentication request. Click
 <a class="reference external" href="https://www.python-httpx.org/advanced/authentication/#custom-authentication-schemes">here</a> for further

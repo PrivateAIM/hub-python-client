@@ -8,13 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Running tests &mdash; Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8db09a1e"></script>
+      <script src="_static/documentation_options.js?v=29c81e07"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -87,7 +87,7 @@
 <p class="admonition-title">Hint</p>
 <p>This assumes that an virtual environment has been setup and activated with <a class="reference external" href="https://python-poetry.org/">poetry</a>.</p>
 </div>
-<p>Furthermore, tests require access to a FLAME Hub instance. There are two way of accomplishing this - either by using
+<p>Furthermore, tests require access to a FLAME Hub instance. There are two ways of accomplishing this - either by using
 <a class="reference external" href="https://testcontainers-python.readthedocs.io/en/latest/">testcontainers</a> or by deploying your own instance.</p>
 <section id="using-testcontainers">
 <h2>Using testcontainers<a class="headerlink" href="#using-testcontainers" title="Link to this heading"></a></h2>
@@ -98,15 +98,15 @@ development, it is highly recommended to set up you own Hub instance instead.</p
 </section>
 <section id="deploying-your-own-hub-instance">
 <h2>Deploying your own Hub instance<a class="headerlink" href="#deploying-your-own-hub-instance" title="Link to this heading"></a></h2>
-<p>Grab the <a class="reference external" href="https://raw.githubusercontent.com/PrivateAIM/hub/refs/heads/master/docker-compose.yml">Docker compose file</a>
-from the Hub repository and store it somewhere warm and comfy. For <code class="docutils literal notranslate"><span class="pre">core</span></code>, <code class="docutils literal notranslate"><span class="pre">messenger</span></code>, <code class="docutils literal notranslate"><span class="pre">analysis-manager</span></code>,
-<code class="docutils literal notranslate"><span class="pre">storage</span></code> and <code class="docutils literal notranslate"><span class="pre">ui</span></code> services, remove the <code class="docutils literal notranslate"><span class="pre">build</span></code> property and replace it with
-<code class="docutils literal notranslate"><span class="pre">image:</span> <span class="pre">ghcr.io/privateaim/hub:HUB_VERSION</span></code>. The latest version of the FLAME Hub Client that is tested with the Hub is
-0.8.21. Now you can run <code class="code highlight console docutils literal highlight-console"><span class="go">docker compose up -d</span></code> and, after a few minutes, you will be able to access the
-UI at <a class="reference external" href="http://localhost:3000">http://localhost:3000</a>.</p>
-<p>In order for <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to pick up on the locally deployed instance, run <code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.test .env</span></code> and modify the
-<code class="file docutils literal notranslate"><span class="pre">.env</span></code> file such that <code class="docutils literal notranslate"><span class="pre">PYTEST_USE_TESTCONTAINERS=0</span></code>. This will skip the creation of all test containers and make
-test setup much faster.</p>
+<p>Clone the Hub deployment repository <code class="code highlight console docutils literal highlight-console"><span class="go">git clone https://github.com/PrivateAIM/hub-deployment.git</span></code> and navigate
+to the <code class="docutils literal notranslate"><span class="pre">docker-compose</span></code> directory <code class="code highlight console docutils literal highlight-console"><span class="go">cd hub-deployment/docker-compose</span></code>. Copy the <code class="docutils literal notranslate"><span class="pre">.env.example</span></code> file with
+<code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.example .env</span></code>. Edit the new <code class="docutils literal notranslate"><span class="pre">.env</span></code> file and change the <code class="docutils literal notranslate"><span class="pre">HUB_IMAGE_TAG</span></code> variable if you need a
+specific version of the Hub. The latest version of the FLAME Hub Client is tested with the Hub version 0.8.25.
+Now you can run <code class="code highlight console docutils literal highlight-console"><span class="go">docker compose up -d</span></code> and, after a few minutes, you will be able to access the UI at
+<a class="reference external" href="http://localhost:3000">http://localhost:3000</a>.</p>
+<p>In order for <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to pick up on the locally deployed instance, run <code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.test .env</span></code> inside the
+<code class="docutils literal notranslate"><span class="pre">hub-python-client</span></code> directory and modify the <code class="file docutils literal notranslate"><span class="pre">.env</span></code> file such that <code class="docutils literal notranslate"><span class="pre">PYTEST_USE_TESTCONTAINERS=0</span></code>. This will
+skip the creation of all test containers and make test setup much faster.</p>
 </section>
 </section>
 

@@ -7,13 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Index &mdash; Documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8db09a1e"></script>
+      <script src="_static/documentation_options.js?v=29c81e07"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -147,14 +147,16 @@
         <li><a href="models_api.html#flame_hub.models.UpdateRegistry.account_secret">(flame_hub.models.UpdateRegistry attribute)</a>
 </li>
       </ul></li>
-      <li><a href="models_api.html#flame_hub.models.CreateUser.active">active (flame_hub.models.CreateUser attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.active">active (flame_hub.models.CreateClient attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.CreateUser.active">(flame_hub.models.CreateUser attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.Robot.active">(flame_hub.models.Robot attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.UpdateUser.active">(flame_hub.models.UpdateUser attribute)</a>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.active">(flame_hub.models.UpdateClient attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.User.active">(flame_hub.models.User attribute)</a>
+        <li><a href="models_api.html#flame_hub.models.UpdateUser.active">(flame_hub.models.UpdateUser attribute)</a>
 </li>
       </ul></li>
       <li><a href="models_api.html#flame_hub.models.Bucket.actor_id">actor_id (flame_hub.models.Bucket attribute)</a>
@@ -183,10 +185,14 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models_api.html#flame_hub.models.AnalysisBucket.analysis_id">analysis_id (flame_hub.models.AnalysisBucket attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.analysis_bucket">analysis_bucket (flame_hub.models.AnalysisBucketFile attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.analysis_bucket_id">analysis_bucket_id (flame_hub.models.CreateAnalysisBucketFile attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.analysis_id">analysis_id (flame_hub.models.AnalysisBucketFile attribute)</a>
 
       <ul>
-        <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.analysis_id">(flame_hub.models.AnalysisBucketFile attribute)</a>
+        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucket.analysis_id">(flame_hub.models.CreateAnalysisBucket attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysisNode.analysis_id">(flame_hub.models.CreateAnalysisNode attribute)</a>
 </li>
@@ -199,19 +205,17 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile">AnalysisBucketFile (class in flame_hub.models)</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisBucketType">AnalysisBucketType (in module flame_hub.types)</a>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketType">AnalysisBucketType (class in flame_hub.models)</a>
+
+      <ul>
+        <li><a href="types_api.html#flame_hub.types.AnalysisBucketType">(class in flame_hub.types)</a>, <a href="types_api.html#id0">[1]</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisBuildStatus">AnalysisBuildStatus (in module flame_hub.types)</a>
-</li>
+      </ul></li>
       <li><a href="types_api.html#flame_hub.types.AnalysisCommand">AnalysisCommand (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode">AnalysisNode (class in flame_hub.models)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.AnalysisNodeApprovalStatus">AnalysisNodeApprovalStatus (in module flame_hub.types)</a>
-</li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisNodeRunStatus">AnalysisNodeRunStatus (in module flame_hub.types)</a>
-</li>
-      <li><a href="types_api.html#flame_hub.types.AnalysisRunStatus">AnalysisRunStatus (in module flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode.approval_status">approval_status (flame_hub.models.AnalysisNode attribute)</a>
 
@@ -225,9 +229,11 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.AnalysisNode.artifact_tag">artifact_tag (flame_hub.models.AnalysisNode attribute)</a>
 </li>
-      <li><a href="authentication_api.html#flame_hub.auth.PasswordAuth.auth_flow">auth_flow() (flame_hub.auth.PasswordAuth method)</a>
+      <li><a href="authentication_api.html#flame_hub.auth.ClientAuth.auth_flow">auth_flow() (flame_hub.auth.ClientAuth method)</a>
 
       <ul>
+        <li><a href="authentication_api.html#flame_hub.auth.PasswordAuth.auth_flow">(flame_hub.auth.PasswordAuth method)</a>
+</li>
         <li><a href="authentication_api.html#flame_hub.auth.RobotAuth.auth_flow">(flame_hub.auth.RobotAuth method)</a>
 </li>
       </ul></li>
@@ -241,31 +247,53 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.Client.base_url">base_url (flame_hub.models.Client attribute)</a>
+</li>
       <li><a href="clients_api.html#flame_hub._base_client.BaseClient">BaseClient (class in flame_hub._base_client)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.Bucket">Bucket (class in flame_hub.models)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.bucket">bucket (flame_hub.models.AnalysisBucketFile attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.BucketFile.bucket">(flame_hub.models.BucketFile attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.BucketFile.bucket">bucket (flame_hub.models.BucketFile attribute)</a>
 </li>
-      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.bucket_file_id">bucket_file_id (flame_hub.models.CreateAnalysisBucketFile attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.BucketFile.bucket_id">bucket_id (flame_hub.models.BucketFile attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucket.bucket_id">(flame_hub.models.CreateAnalysisBucket attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.bucket_id">(flame_hub.models.CreateAnalysisBucketFile attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.BucketFile">BucketFile (class in flame_hub.models)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.build_status">build_status (flame_hub.models.Analysis attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_hash">build_hash (flame_hub.models.Analysis attribute)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.Permission.built_in">built_in (flame_hub.models.Permission attribute)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_nodes_valid">build_nodes_valid (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_os">build_os (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_progress">build_progress (flame_hub.models.Analysis attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.MasterImage.build_progress">(flame_hub.models.MasterImage attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_size">build_size (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.build_status">build_status (flame_hub.models.Analysis attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.MasterImage.build_status">(flame_hub.models.MasterImage attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Client.built_in">built_in (flame_hub.models.Client attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.Permission.built_in">(flame_hub.models.Permission attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.Realm.built_in">(flame_hub.models.Realm attribute)</a>
 </li>
       </ul></li>
@@ -277,18 +305,32 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.Log.channel">channel (flame_hub.models.Log attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Client">Client (class in flame_hub.models)</a>
+</li>
       <li><a href="types_api.html#flame_hub._base_client.ClientKwargs.client">client (flame_hub._base_client.ClientKwargs attribute)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.Permission.client_id">client_id (flame_hub.models.Permission attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.client_id">client_id (flame_hub.models.AnalysisBucketFile attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.Node.client_id">(flame_hub.models.Node attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.Permission.client_id">(flame_hub.models.Permission attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="authentication_api.html#flame_hub.auth.ClientAuth">ClientAuth (class in flame_hub.auth)</a>
 </li>
       <li><a href="types_api.html#flame_hub._base_client.ClientKwargs">ClientKwargs (class in flame_hub._base_client)</a>
 </li>
       <li><a href="exceptions_api.html#flame_hub._exceptions.ErrorResponse.code">code (flame_hub._exceptions.ErrorResponse attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.code">(flame_hub.models.CreateAnalysisNodeLog attribute)</a>
 </li>
-      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketType.CODE">CODE (flame_hub.models.AnalysisBucketType attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.code">code (flame_hub.models.CreateAnalysisNodeLog attribute)</a>
+</li>
+      <li><a href="types_api.html#flame_hub.types.AnalysisBucketType.CODE">CODE (flame_hub.types.AnalysisBucketType attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.MasterImage.command">command (flame_hub.models.MasterImage attribute)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.MasterImage.command_arguments">command_arguments (flame_hub.models.MasterImage attribute)</a>
@@ -323,6 +365,8 @@
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.create_analysis">create_analysis() (flame_hub.CoreClient method)</a>
 </li>
+      <li><a href="clients_api.html#flame_hub.CoreClient.create_analysis_bucket">create_analysis_bucket() (flame_hub.CoreClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.CoreClient.create_analysis_bucket_file">create_analysis_bucket_file() (flame_hub.CoreClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.create_analysis_node">create_analysis_node() (flame_hub.CoreClient method)</a>
@@ -330,6 +374,8 @@
       <li><a href="clients_api.html#flame_hub.CoreClient.create_analysis_node_log">create_analysis_node_log() (flame_hub.CoreClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.StorageClient.create_bucket">create_bucket() (flame_hub.StorageClient method)</a>
+</li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.create_client">create_client() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.create_node">create_node() (flame_hub.CoreClient method)</a>
 </li>
@@ -357,14 +403,16 @@
 </li>
       <li><a href="clients_api.html#flame_hub.AuthClient.create_user">create_user() (flame_hub.AuthClient method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="clients_api.html#flame_hub.AuthClient.create_user_permission">create_user_permission() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.AuthClient.create_user_role">create_user_role() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysis">CreateAnalysis (class in flame_hub.models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucket">CreateAnalysisBucket (class in flame_hub.models)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile">CreateAnalysisBucketFile (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNode">CreateAnalysisNode (class in flame_hub.models)</a>
@@ -372,6 +420,8 @@
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog">CreateAnalysisNodeLog (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateBucket">CreateBucket (class in flame_hub.models)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient">CreateClient (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.Analysis.created_at">created_at (flame_hub.models.Analysis attribute)</a>
 
@@ -385,6 +435,8 @@
         <li><a href="models_api.html#flame_hub.models.Bucket.created_at">(flame_hub.models.Bucket attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.BucketFile.created_at">(flame_hub.models.BucketFile attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.Client.created_at">(flame_hub.models.Client attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.MasterImage.created_at">(flame_hub.models.MasterImage attribute)</a>
 </li>
@@ -469,6 +521,8 @@
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.delete_analysis">delete_analysis() (flame_hub.CoreClient method)</a>
 </li>
+      <li><a href="clients_api.html#flame_hub.CoreClient.delete_analysis_bucket">delete_analysis_bucket() (flame_hub.CoreClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.CoreClient.delete_analysis_bucket_file">delete_analysis_bucket_file() (flame_hub.CoreClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.delete_analysis_logs">delete_analysis_logs() (flame_hub.CoreClient method)</a>
@@ -480,6 +534,8 @@
       <li><a href="clients_api.html#flame_hub.StorageClient.delete_bucket">delete_bucket() (flame_hub.StorageClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.StorageClient.delete_bucket_file">delete_bucket_file() (flame_hub.StorageClient method)</a>
+</li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.delete_client">delete_client() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.delete_node">delete_node() (flame_hub.CoreClient method)</a>
 </li>
@@ -507,15 +563,17 @@
 </li>
       <li><a href="clients_api.html#flame_hub.AuthClient.delete_user">delete_user() (flame_hub.AuthClient method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="clients_api.html#flame_hub.AuthClient.delete_user_permission">delete_user_permission() (flame_hub.AuthClient method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="clients_api.html#flame_hub.AuthClient.delete_user_role">delete_user_role() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysis.description">description (flame_hub.models.CreateAnalysis attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.CreateClient.description">(flame_hub.models.CreateClient attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.CreatePermission.description">(flame_hub.models.CreatePermission attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateProject.description">(flame_hub.models.CreateProject attribute)</a>
@@ -528,6 +586,8 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysis.description">(flame_hub.models.UpdateAnalysis attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.description">(flame_hub.models.UpdateClient attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.UpdatePermission.description">(flame_hub.models.UpdatePermission attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateProject.description">(flame_hub.models.UpdateProject attribute)</a>
@@ -539,9 +599,11 @@
       </ul></li>
       <li><a href="models_api.html#flame_hub.models.BucketFile.directory">directory (flame_hub.models.BucketFile attribute)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.CreatePermission.display_name">display_name (flame_hub.models.CreatePermission attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.display_name">display_name (flame_hub.models.CreateClient attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.CreatePermission.display_name">(flame_hub.models.CreatePermission attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.CreateRealm.display_name">(flame_hub.models.CreateRealm attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateRobot.display_name">(flame_hub.models.CreateRobot attribute)</a>
@@ -549,6 +611,8 @@
         <li><a href="models_api.html#flame_hub.models.CreateRole.display_name">(flame_hub.models.CreateRole attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateUser.display_name">(flame_hub.models.CreateUser attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.display_name">(flame_hub.models.UpdateClient attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdatePermission.display_name">(flame_hub.models.UpdatePermission attribute)</a>
 </li>
@@ -560,9 +624,11 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.display_name">(flame_hub.models.UpdateUser attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.User.display_name">(flame_hub.models.User attribute)</a>
-</li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.distribution_progress">distribution_progress (flame_hub.models.Analysis attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.distribution_status">distribution_status (flame_hub.models.Analysis attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -574,25 +640,33 @@
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.email">(flame_hub.models.UpdateUser attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.User.email">(flame_hub.models.User attribute)</a>
-</li>
       </ul></li>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.eq">eq (flame_hub.types.FilterOperator attribute)</a>
 </li>
       <li><a href="exceptions_api.html#flame_hub._exceptions.ErrorResponse">ErrorResponse (class in flame_hub._exceptions)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.AccessToken.expires_in">expires_in (flame_hub.models.AccessToken attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models_api.html#flame_hub.models.AnalysisBucket.external_id">external_id (flame_hub.models.AnalysisBucket attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.Analysis.execution_progress">execution_progress (flame_hub.models.Analysis attribute)</a>
 
       <ul>
-        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.external_id">(flame_hub.models.CreateAnalysisBucketFile attribute)</a>
+        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_progress">(flame_hub.models.AnalysisNode attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.RegistryProject.external_id">(flame_hub.models.RegistryProject attribute)</a>
+        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_progress">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.execution_status">execution_status (flame_hub.models.Analysis attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.AnalysisNode.execution_status">(flame_hub.models.AnalysisNode attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.execution_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models_api.html#flame_hub.models.AccessToken.expires_in">expires_in (flame_hub.models.AccessToken attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.RegistryProject.external_id">external_id (flame_hub.models.RegistryProject attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.CreateNode.external_name">external_name (flame_hub.models.CreateNode attribute)</a>
 
       <ul>
@@ -641,6 +715,8 @@
 </li>
       <li><a href="clients_api.html#flame_hub.StorageClient.find_buckets">find_buckets() (flame_hub.StorageClient method)</a>
 </li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.find_clients">find_clients() (flame_hub.AuthClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.CoreClient.find_master_image_groups">find_master_image_groups() (flame_hub.CoreClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.find_master_images">find_master_images() (flame_hub.CoreClient method)</a>
@@ -651,10 +727,10 @@
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.find_project_nodes">find_project_nodes() (flame_hub.CoreClient method)</a>
 </li>
-      <li><a href="clients_api.html#flame_hub.CoreClient.find_projects">find_projects() (flame_hub.CoreClient method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="clients_api.html#flame_hub.CoreClient.find_projects">find_projects() (flame_hub.CoreClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.AuthClient.find_realms">find_realms() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.find_registries">find_registries() (flame_hub.CoreClient method)</a>
@@ -683,8 +759,6 @@
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.first_name">(flame_hub.models.UpdateUser attribute)</a>
-</li>
-        <li><a href="models_api.html#flame_hub.models.User.first_name">(flame_hub.models.User attribute)</a>
 </li>
       </ul></li>
       <li>
@@ -739,6 +813,10 @@
       <li><a href="clients_api.html#flame_hub.StorageClient.get_bucket_files">get_bucket_files() (flame_hub.StorageClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.StorageClient.get_buckets">get_buckets() (flame_hub.StorageClient method)</a>
+</li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.get_client">get_client() (flame_hub.AuthClient method)</a>
+</li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.get_clients">get_clients() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="utility_functions_api.html#flame_hub.get_field_names">get_field_names() (in module flame_hub)</a>
 </li>
@@ -816,6 +894,12 @@
 </li>
       <li><a href="types_api.html#flame_hub.types.GetKwargs">GetKwargs (class in flame_hub.types)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.grant_types">grant_types (flame_hub.models.CreateClient attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.grant_types">(flame_hub.models.UpdateClient attribute)</a>
+</li>
+      </ul></li>
       <li><a href="models_api.html#flame_hub.models.MasterImage.group_virtual_path">group_virtual_path (flame_hub.models.MasterImage attribute)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.gt">gt (flame_hub.types.FilterOperator attribute)</a>
@@ -865,6 +949,8 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.BucketFile.id">(flame_hub.models.BucketFile attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.Client.id">(flame_hub.models.Client attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.MasterImage.id">(flame_hub.models.MasterImage attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.MasterImageGroup.id">(flame_hub.models.MasterImageGroup attribute)</a>
@@ -910,6 +996,12 @@
       </ul></li>
       <li><a href="types_api.html#flame_hub.types.IncludeParams">IncludeParams (in module flame_hub.types)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.is_confidential">is_confidential (flame_hub.models.CreateClient attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.is_confidential">(flame_hub.models.UpdateClient attribute)</a>
+</li>
+      </ul></li>
       <li><a href="models_api.html#flame_hub.models.IsIncludable">IsIncludable (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.IsOptionalField">IsOptionalField (class in flame_hub.models)</a>
@@ -927,19 +1019,17 @@
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.last_name">(flame_hub.models.UpdateUser attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.User.last_name">(flame_hub.models.User attribute)</a>
-</li>
       </ul></li>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.le">le (flame_hub.types.FilterOperator attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.level">level (flame_hub.models.CreateAnalysisNodeLog attribute)</a>
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.Log.level">(flame_hub.models.Log attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.like">like (flame_hub.types.FilterOperator attribute)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.PageParams.limit">limit (flame_hub.types.PageParams attribute)</a>
@@ -1009,7 +1099,11 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.BucketFile.model_config">(flame_hub.models.BucketFile attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.Client.model_config">(flame_hub.models.Client attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysis.model_config">(flame_hub.models.CreateAnalysis attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucket.model_config">(flame_hub.models.CreateAnalysisBucket attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.model_config">(flame_hub.models.CreateAnalysisBucketFile attribute)</a>
 </li>
@@ -1018,6 +1112,8 @@
         <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.model_config">(flame_hub.models.CreateAnalysisNodeLog attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateBucket.model_config">(flame_hub.models.CreateBucket attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.CreateClient.model_config">(flame_hub.models.CreateClient attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateNode.model_config">(flame_hub.models.CreateNode attribute)</a>
 </li>
@@ -1093,6 +1189,8 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.model_config">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.model_config">(flame_hub.models.UpdateClient attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.UpdateNode.model_config">(flame_hub.models.UpdateNode attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdatePermission.model_config">(flame_hub.models.UpdatePermission attribute)</a>
@@ -1142,9 +1240,9 @@
       <ul>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysis.name">(flame_hub.models.CreateAnalysis attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.name">(flame_hub.models.CreateAnalysisBucketFile attribute)</a>
-</li>
         <li><a href="models_api.html#flame_hub.models.CreateBucket.name">(flame_hub.models.CreateBucket attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.CreateClient.name">(flame_hub.models.CreateClient attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateNode.name">(flame_hub.models.CreateNode attribute)</a>
 </li>
@@ -1170,6 +1268,8 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysis.name">(flame_hub.models.UpdateAnalysis attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.name">(flame_hub.models.UpdateClient attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.UpdatePermission.name">(flame_hub.models.UpdatePermission attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateProject.name">(flame_hub.models.UpdateProject attribute)</a>
@@ -1186,8 +1286,6 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.name">(flame_hub.models.UpdateUser attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.User.name">(flame_hub.models.User attribute)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1195,8 +1293,6 @@
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.UpdateUser.name_locked">(flame_hub.models.UpdateUser attribute)</a>
-</li>
-        <li><a href="models_api.html#flame_hub.models.User.name_locked">(flame_hub.models.User attribute)</a>
 </li>
       </ul></li>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.neq">neq (flame_hub.types.FilterOperator attribute)</a>
@@ -1231,6 +1327,8 @@
         <li><a href="models_api.html#flame_hub.models.Project.nodes">(flame_hub.models.Project attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Analysis.nodes_approved">nodes_approved (flame_hub.models.Analysis attribute)</a>
+</li>
       <li><a href="types_api.html#flame_hub.types.NodeType">NodeType (in module flame_hub.types)</a>
 </li>
   </ul></td>
@@ -1266,6 +1364,8 @@
       <li><a href="models_api.html#flame_hub.models.BucketFile.path">path (flame_hub.models.BucketFile attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.path">(flame_hub.models.CreateAnalysisBucketFile attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.MasterImage.path">(flame_hub.models.MasterImage attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.MasterImageGroup.path">(flame_hub.models.MasterImageGroup attribute)</a>
@@ -1359,9 +1459,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.Realm">Realm (class in flame_hub.models)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.Permission.realm">realm (flame_hub.models.Permission attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.Client.realm">realm (flame_hub.models.Client attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.Permission.realm">(flame_hub.models.Permission attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.Robot.realm">(flame_hub.models.Robot attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.Role.realm">(flame_hub.models.Role attribute)</a>
@@ -1377,6 +1479,10 @@
         <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.realm_id">(flame_hub.models.AnalysisBucketFile attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.Bucket.realm_id">(flame_hub.models.Bucket attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.BucketFile.realm_id">(flame_hub.models.BucketFile attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.CreateClient.realm_id">(flame_hub.models.CreateClient attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateNode.realm_id">(flame_hub.models.CreateNode attribute)</a>
 </li>
@@ -1397,6 +1503,12 @@
         <li><a href="models_api.html#flame_hub.models.UpdateRobot.realm_id">(flame_hub.models.UpdateRobot attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.User.realm_id">(flame_hub.models.User attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.redirect_uri">redirect_uri (flame_hub.models.CreateClient attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.redirect_uri">(flame_hub.models.UpdateClient attribute)</a>
 </li>
       </ul></li>
       <li><a href="models_api.html#flame_hub.models.RefreshToken.refresh_token">refresh_token (flame_hub.models.RefreshToken attribute)</a>
@@ -1433,18 +1545,24 @@
 </li>
       <li><a href="types_api.html#flame_hub.types.RegistryCommand">RegistryCommand (in module flame_hub.types)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.RegistryProject">RegistryProject (class in flame_hub.models)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.RegistryProjectType">RegistryProjectType (in module flame_hub.types)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.ResourceList">ResourceList (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.ResourceListMeta">ResourceListMeta (class in flame_hub.models)</a>
 </li>
       <li><a href="types_api.html#flame_hub._base_client.ResourceT">ResourceT (in module flame_hub._base_client)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketType.RESULT">RESULT (flame_hub.models.AnalysisBucketType attribute)</a>
+
+      <ul>
+        <li><a href="types_api.html#flame_hub.types.AnalysisBucketType.RESULT">(flame_hub.types.AnalysisBucketType attribute)</a>
+</li>
+      </ul></li>
       <li><a href="models_api.html#flame_hub.models.Robot">Robot (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.RobotPermission.robot">robot (flame_hub.models.RobotPermission attribute)</a>
@@ -1525,14 +1643,8 @@
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisBucketFile.root">(flame_hub.models.UpdateAnalysisBucketFile attribute)</a>
 </li>
       </ul></li>
-      <li><a href="models_api.html#flame_hub.models.Analysis.run_status">run_status (flame_hub.models.Analysis attribute)</a>
-
-      <ul>
-        <li><a href="models_api.html#flame_hub.models.AnalysisNode.run_status">(flame_hub.models.AnalysisNode attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.Client.root_url">root_url (flame_hub.models.Client attribute)</a>
 </li>
-        <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.run_status">(flame_hub.models.UpdateAnalysisNode attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1540,23 +1652,41 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.AccessToken.scope">scope (flame_hub.models.AccessToken attribute)</a>
-</li>
-      <li><a href="models_api.html#flame_hub.models.CreateRobot.secret">secret (flame_hub.models.CreateRobot attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.Client.scope">(flame_hub.models.Client attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.secret">secret (flame_hub.models.CreateClient attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.CreateRobot.secret">(flame_hub.models.CreateRobot attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.secret">(flame_hub.models.UpdateClient attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.UpdateRobot.secret">(flame_hub.models.UpdateRobot attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="models_api.html#flame_hub.models.Client.secret_encrypted">secret_encrypted (flame_hub.models.Client attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CreateClient.secret_hashed">secret_hashed (flame_hub.models.CreateClient attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.UpdateClient.secret_hashed">(flame_hub.models.UpdateClient attribute)</a>
 </li>
       </ul></li>
       <li><a href="clients_api.html#flame_hub.CoreClient.send_analysis_command">send_analysis_command() (flame_hub.CoreClient method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="clients_api.html#flame_hub.CoreClient.send_registry_command">send_registry_command() (flame_hub.CoreClient method)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.Log.service">service (flame_hub.models.Log attribute)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.BucketFile.size">size (flame_hub.models.BucketFile attribute)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.FindAllKwargs.sort">sort (flame_hub.types.FindAllKwargs attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="types_api.html#flame_hub.types.SortParams">SortParams (class in flame_hub.types)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.status">status (flame_hub.models.CreateAnalysisNodeLog attribute)</a>
@@ -1579,15 +1709,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.Role.target">target (flame_hub.models.Role attribute)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.AnalysisBucketType.TEMP">TEMP (flame_hub.models.AnalysisBucketType attribute)</a>
+
+      <ul>
+        <li><a href="types_api.html#flame_hub.types.AnalysisBucketType.TEMP">(flame_hub.types.AnalysisBucketType attribute)</a>
+</li>
+      </ul></li>
       <li><a href="models_api.html#flame_hub.models.Log.time">time (flame_hub.models.Log attribute)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.AccessToken.token_type">token_type (flame_hub.models.AccessToken attribute)</a>
 </li>
-      <li><a href="models_api.html#flame_hub.models.ResourceListMeta.total">total (flame_hub.models.ResourceListMeta attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models_api.html#flame_hub.models.AnalysisBucket.type">type (flame_hub.models.AnalysisBucket attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.ResourceListMeta.total">total (flame_hub.models.ResourceListMeta attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucket.type">type (flame_hub.models.CreateAnalysisBucket attribute)</a>
 
       <ul>
         <li><a href="models_api.html#flame_hub.models.CreateNode.type">(flame_hub.models.CreateNode attribute)</a>
@@ -1615,6 +1751,8 @@
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.update_analysis_node">update_analysis_node() (flame_hub.CoreClient method)</a>
 </li>
+      <li><a href="clients_api.html#flame_hub.AuthClient.update_client">update_client() (flame_hub.AuthClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.CoreClient.update_node">update_node() (flame_hub.CoreClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.AuthClient.update_permission">update_permission() (flame_hub.AuthClient method)</a>
@@ -1641,6 +1779,8 @@
 </li>
       <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode">UpdateAnalysisNode (class in flame_hub.models)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.UpdateClient">UpdateClient (class in flame_hub.models)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.Analysis.updated_at">updated_at (flame_hub.models.Analysis attribute)</a>
 
       <ul>
@@ -1653,6 +1793,8 @@
         <li><a href="models_api.html#flame_hub.models.Bucket.updated_at">(flame_hub.models.Bucket attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.BucketFile.updated_at">(flame_hub.models.BucketFile attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.Client.updated_at">(flame_hub.models.Client attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.MasterImage.updated_at">(flame_hub.models.MasterImage attribute)</a>
 </li>
