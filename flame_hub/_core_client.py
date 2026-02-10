@@ -25,7 +25,7 @@ from flame_hub._base_client import (
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._auth_flows import PasswordAuth, RobotAuth
-from flame_hub._storage_client import BucketFile
+from flame_hub._storage_client import Bucket, BucketFile
 
 RegistryCommand = t.Literal["setup", "cleanup"]
 
@@ -337,21 +337,25 @@ class AnalysisBucketType(str, Enum):
     TEMP = "TEMP"
 
 
-class AnalysisBucket(BaseModel):
-    id: uuid.UUID
+class CreateAnalysisBucket(BaseModel):
     type: AnalysisBucketType
-    external_id: uuid.UUID | None
+    bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+
+
+class AnalysisBucket(CreateAnalysisBucket):
+    id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    analysis_id: uuid.UUID
     analysis: t.Annotated[Analysis, IsIncludable] = None
     realm_id: uuid.UUID
 
 
 class CreateAnalysisBucketFile(BaseModel):
-    name: str
-    external_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    path: str
+    bucket_file_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
+    analysis_bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     root: bool
 
 
@@ -359,12 +363,13 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+    analysis_bucket: t.Annotated[AnalysisBucket, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID | None
     robot_id: uuid.UUID | None
+    client_id: uuid.UUID | None
     analysis_id: uuid.UUID
     analysis: t.Annotated[Analysis, IsIncludable] = None
-    bucket: t.Annotated[AnalysisBucket, IsIncludable] = None
 
 
 class UpdateAnalysisBucketFile(BaseModel):
@@ -708,6 +713,25 @@ class CoreClient(BaseClient):
     def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[Log]:
         return self._find_all_resources(Log, "analysis-node-logs", **params)
 
+    def create_analysis_bucket(
+        self,
+        bucket_type: AnalysisBucketType,
+        bucket_id: Bucket | uuid.UUID | str,
+        analysis_id: Analysis | uuid.UUID | str,
+    ) -> AnalysisBucket:
+        return self._create_resource(
+            AnalysisBucket,
+            CreateAnalysisBucket(
+                type=bucket_type,
+                bucket_id=bucket_id,
+                analysis_id=analysis_id,
+            ),
+            "analysis-buckets",
+        )
+
+    def delete_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str):
+        self._delete_resource("analysis-buckets", analysis_bucket_id)
+
     def get_analysis_buckets(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucket]:
         return self._get_all_resources(
             AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), **params
@@ -757,17 +781,19 @@ class CoreClient(BaseClient):
 
     def create_analysis_bucket_file(
         self,
-        name: str,
+        path: str,
         bucket_file_id: BucketFile | uuid.UUID | str,
+        bucket_id: Bucket | uuid.UUID | str,
         analysis_bucket_id: AnalysisBucket | uuid.UUID | str,
         is_entrypoint: bool = False,
     ) -> AnalysisBucketFile:
         return self._create_resource(
             AnalysisBucketFile,
             CreateAnalysisBucketFile(
-                external_id=bucket_file_id,
-                bucket_id=analysis_bucket_id,
-                name=name,
+                bucket_file_id=bucket_file_id,
+                bucket_id=bucket_id,
+                analysis_bucket_id=analysis_bucket_id,
+                path=path,
                 root=is_entrypoint,
             ),
             "analysis-bucket-files",
