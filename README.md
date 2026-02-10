@@ -105,4 +105,4 @@ assert core_client.get_node(my_node.id) is None
 ```
 
 Note that not all method types are implemented for each resource. Check out the
-[documentation](https://privateaim.github.io/hub-python-client/) which methods are available.
+[documentation](https://privateaim.github.io/hub-python-client/) to see which methods are available.
