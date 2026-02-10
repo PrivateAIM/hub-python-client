@@ -774,9 +774,7 @@ class CoreClient(BaseClient):
             **params,
         )
 
-    def delete_analysis_bucket_file(
-        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str
-    ) -> AnalysisBucketFile | None:
+    def delete_analysis_bucket_file(self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str):
         self._delete_resource("analysis-bucket-files", analysis_bucket_file_id)
 
     def create_analysis_bucket_file(
