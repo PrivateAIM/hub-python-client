@@ -37,6 +37,8 @@ def next_uuid():
 
 def next_random_number(lower: int | float = 0, upper: int | float = 1, is_integer: bool = False):
     if is_integer:
+        if not isinstance(lower, int) or not isinstance(upper, int):
+            raise TypeError("'lower' and 'upper' must be integers when is_integer=True.")
         return random.randint(lower, upper)
     else:
         return random.uniform(lower, upper)
