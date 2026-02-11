@@ -18,7 +18,7 @@ from flame_hub._base_client import (
     UNSET_T,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
-from flame_hub._auth_flows import RobotAuth, PasswordAuth
+from flame_hub._auth_flows import ClientAuth, PasswordAuth
 
 
 class CreateRealm(BaseModel):
@@ -281,7 +281,7 @@ class AuthClient(BaseClient):
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,
-        auth: RobotAuth | PasswordAuth = None,
+        auth: ClientAuth | PasswordAuth = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)

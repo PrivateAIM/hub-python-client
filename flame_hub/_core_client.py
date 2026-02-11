@@ -24,7 +24,7 @@ from flame_hub._base_client import (
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
-from flame_hub._auth_flows import PasswordAuth, RobotAuth
+from flame_hub._auth_flows import PasswordAuth, ClientAuth
 from flame_hub._storage_client import Bucket, BucketFile
 
 RegistryCommand = t.Literal["setup", "cleanup"]
@@ -390,7 +390,7 @@ class CoreClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_CORE_BASE_URL,
-        auth: PasswordAuth | RobotAuth = None,
+        auth: PasswordAuth | ClientAuth = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)

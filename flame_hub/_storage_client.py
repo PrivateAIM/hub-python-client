@@ -6,7 +6,7 @@ import httpx
 import typing_extensions as te
 from pydantic import BaseModel
 
-from flame_hub._auth_flows import PasswordAuth, RobotAuth
+from flame_hub._auth_flows import PasswordAuth, ClientAuth
 from flame_hub._base_client import (
     BaseClient,
     ResourceList,
@@ -78,7 +78,7 @@ class StorageClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_STORAGE_BASE_URL,
-        auth: PasswordAuth | RobotAuth = None,
+        auth: PasswordAuth | ClientAuth = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)

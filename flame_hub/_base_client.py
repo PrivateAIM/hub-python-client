@@ -9,7 +9,7 @@ import typing_extensions as te
 from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
 from flame_hub._exceptions import new_hub_api_error_from_response
-from flame_hub._auth_flows import PasswordAuth, RobotAuth
+from flame_hub._auth_flows import PasswordAuth, ClientAuth
 
 
 class UNSET(BaseModel):
@@ -395,7 +395,7 @@ class BaseClient(object):
     ----------
     base_url : :py:class:`str`
         Base URL of the Hub service.
-    auth : :py:class:`.PasswordAuth` | :py:class:`.RobotAuth`, optional
+    auth : :py:class:`.PasswordAuth` | :py:class:`.ClientAuth`, optional
         Authenticator which is used to authenticate the client at the FLAME Hub instance. Defaults to :any:`None`.
     **kwargs : :py:class:`Unpack`\\[:py:class:`~flame_hub._base_client.ClientKwargs`]
         Currently used to pass an already instantiated HTTP client via the ``client`` keyword argument to bypass the
@@ -406,7 +406,7 @@ class BaseClient(object):
     :py:class:`.AuthClient`, :py:class:`.CoreClient`, :py:class:`.StorageClient`
     """
 
-    def __init__(self, base_url: str, auth: PasswordAuth | RobotAuth = None, **kwargs: te.Unpack[ClientKwargs]):
+    def __init__(self, base_url: str, auth: PasswordAuth | ClientAuth = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
         # Set a read timeout of 20 seconds here because the endpoint for registry projects is slow.
         self._client = client or httpx.Client(auth=auth, base_url=base_url, timeout=httpx.Timeout(5, read=20))
