@@ -14,7 +14,7 @@ respectively. The signature of the clients is always the same since they inherit
 
 When initializing a client, there are some things to keep in mind.
 
-* You *should* provide an instance of either :py:class:`.PasswordAuth` or :py:class:`.RobotAuth` to the ``auth``
+* You *should* provide an instance of either :py:class:`.PasswordAuth` or :py:class:`.ClientAuth` to the ``auth``
   argument as these are the two main authentication schemes supported by the FLAME Hub.
 * You *can* provide a custom ``base_url`` if you're hosting your own instance of the FLAME Hub, otherwise the client
   will use the default publicly available Hub instance https://privateaim.dev to connect to.

@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=29c81e07"></script>
+      <script src="_static/documentation_options.js?v=1e30946d"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -98,7 +98,7 @@
 respectively. The signature of the clients is always the same since they inherit from the <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient" title="flame_hub._base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a> class.</p>
 <p>When initializing a client, there are some things to keep in mind.</p>
 <ul class="simple">
-<li><p>You <em>should</em> provide an instance of either <a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth" title="flame_hub.auth.PasswordAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordAuth</span></code></a> or <a class="reference internal" href="authentication_api.html#flame_hub.auth.RobotAuth" title="flame_hub.auth.RobotAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">RobotAuth</span></code></a> to the <code class="docutils literal notranslate"><span class="pre">auth</span></code>
+<li><p>You <em>should</em> provide an instance of either <a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth" title="flame_hub.auth.PasswordAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordAuth</span></code></a> or <a class="reference internal" href="authentication_api.html#flame_hub.auth.ClientAuth" title="flame_hub.auth.ClientAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClientAuth</span></code></a> to the <code class="docutils literal notranslate"><span class="pre">auth</span></code>
 argument as these are the two main authentication schemes supported by the FLAME Hub.</p></li>
 <li><p>You <em>can</em> provide a custom <code class="docutils literal notranslate"><span class="pre">base_url</span></code> if you’re hosting your own instance of the FLAME Hub, otherwise the client
 will use the default publicly available Hub instance <a class="reference external" href="https://privateaim.dev">https://privateaim.dev</a> to connect to.</p></li>

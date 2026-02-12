@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=29c81e07"></script>
+      <script src="_static/documentation_options.js?v=1e30946d"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -101,7 +101,7 @@ development, it is highly recommended to set up you own Hub instance instead.</p
 <p>Clone the Hub deployment repository <code class="code highlight console docutils literal highlight-console"><span class="go">git clone https://github.com/PrivateAIM/hub-deployment.git</span></code> and navigate
 to the <code class="docutils literal notranslate"><span class="pre">docker-compose</span></code> directory <code class="code highlight console docutils literal highlight-console"><span class="go">cd hub-deployment/docker-compose</span></code>. Copy the <code class="docutils literal notranslate"><span class="pre">.env.example</span></code> file with
 <code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.example .env</span></code>. Edit the new <code class="docutils literal notranslate"><span class="pre">.env</span></code> file and change the <code class="docutils literal notranslate"><span class="pre">HUB_IMAGE_TAG</span></code> variable if you need a
-specific version of the Hub. The latest version of the FLAME Hub Client is tested with the Hub version 0.8.25.
+specific version of the Hub. The latest version of the FLAME Hub Client is tested with the Hub version 0.8.27.
 Now you can run <code class="code highlight console docutils literal highlight-console"><span class="go">docker compose up -d</span></code> and, after a few minutes, you will be able to access the UI at
 <a class="reference external" href="http://localhost:3000">http://localhost:3000</a>.</p>
 <p>In order for <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to pick up on the locally deployed instance, run <code class="code highlight console docutils literal highlight-console"><span class="go">cp .env.test .env</span></code> inside the
