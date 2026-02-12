@@ -145,7 +145,7 @@ def ensure_position_none(value: t.Any) -> t.Any:
     return value
 
 
-ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "finished", "failed"]
+ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "executing", "executed", "failed"]
 
 
 class MasterImage(BaseModel):

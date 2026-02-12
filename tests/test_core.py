@@ -461,7 +461,7 @@ def test_build_analysis(core_client, configured_analysis):
                 analysis = core_client.get_analysis(analysis_id=configured_analysis.id)
             else:
                 raise e
-        assert analysis.build_status == "finished"
+        assert analysis.build_status == "executed"
         assert analysis.build_progress == 100
 
     assert_eventually(_wait_for_successful_build)
