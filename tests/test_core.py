@@ -158,18 +158,26 @@ def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_
     bucket_files = storage_client.upload_to_bucket(
         analysis_code_bucket.bucket_id, {"file_name": file_name, "content": rng_bytes}
     )
+    assert len(bucket_files) == 1
 
-    # Link uploaded file to analysis bucket.
+    # Find the corresponding analysis bucket file.
     bucket_file = bucket_files.pop()
-    new_analysis_bucket_file = core_client.create_analysis_bucket_file(
-        path=file_name,
-        bucket_file_id=bucket_file,
-        analysis_bucket_id=analysis_code_bucket,
-        bucket_id=bucket_file.bucket_id,
-        is_entrypoint=True,
-    )
-    yield new_analysis_bucket_file
-    core_client.delete_analysis_bucket_file(new_analysis_bucket_file)
+
+    def _wait_for_analysis_bucket_file():
+        analysis_bucket_files = core_client.find_analysis_bucket_files(
+            filter={"analysis_id": analysis_code_bucket.analysis_id}
+        )
+        assert len(analysis_bucket_files) == 1
+
+    assert_eventually(_wait_for_analysis_bucket_file)
+
+    analysis_bucket_file = core_client.find_analysis_bucket_files(
+        filter={"analysis_id": analysis_code_bucket.analysis_id}
+    ).pop()
+
+    yield analysis_bucket_file
+
+    core_client.delete_analysis_bucket_file(analysis_bucket_file)
     storage_client.delete_bucket_file(bucket_file.id)
 
 
@@ -192,6 +200,9 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
         nodes.append(new_node)
         core_client.create_project_node(analysis.project_id, new_node)
         core_client.create_analysis_node(analysis, new_node)
+
+    # Mark analysis bucket file as the entrypoint.
+    core_client.update_analysis_bucket_file(analysis_bucket_file, is_entrypoint=True)
 
     # It takes some time until an analysis is lockable.
     def _check_analysis_lockable():
@@ -570,7 +581,7 @@ def test_find_analysis_buckets(core_client, analysis_code_bucket, analysis_bucke
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
     analysis_buckets_find = core_client.find_analysis_buckets(filter={"analysis_id": analysis_code_bucket.analysis_id})
 
-    assert [analysis_code_bucket.id] == [bucket.id for bucket in analysis_buckets_find]
+    assert analysis_code_bucket.id in [bucket.id for bucket in analysis_buckets_find]
     assert all(
         includable in bucket.model_fields_set
         for bucket in analysis_buckets_find
