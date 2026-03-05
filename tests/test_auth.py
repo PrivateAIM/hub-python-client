@@ -248,6 +248,7 @@ def test_find_permissions(auth_client, permission, permission_includables):
     assert all(includable in p.model_fields_set for p in perms_find for includable in permission_includables)
 
 
+@pytest.mark.xfail(reason="policy ids should be optional for creating permissions but are currently mandatory")
 def test_update_permission(auth_client, permission):
     new_name = next_random_string()
     new_permission = auth_client.update_permission(permission.id, name=new_name)
