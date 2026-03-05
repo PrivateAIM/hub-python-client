@@ -490,6 +490,18 @@ class CoreClient(BaseClient):
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
 
+    def build_master_image(self, master_image_id: MasterImage | uuid.UUID | str):
+        """This method will command the Hub to start building a master image. Note that building a master image could
+        take some time.
+        """
+        r = self._client.post(
+            "master-images/command",
+            json={"command": "build", "id": str(obtain_uuid_from(master_image_id))},
+        )
+
+        if r.status_code != httpx.codes.ACCEPTED.value:
+            raise new_hub_api_error_from_response(r)
+
     def create_project(
         self, name: str, master_image_id: MasterImage | uuid.UUID | str = None, description: str = None
     ) -> Project:
