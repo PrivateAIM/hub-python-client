@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1e30946d"></script>
+      <script src="_static/documentation_options.js?v=ba481074"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -139,6 +139,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.get_projects"><code class="docutils literal notranslate"><span class="pre">CoreClient.get_projects()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.find_projects"><code class="docutils literal notranslate"><span class="pre">CoreClient.find_projects()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.sync_master_images"><code class="docutils literal notranslate"><span class="pre">CoreClient.sync_master_images()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.build_master_image"><code class="docutils literal notranslate"><span class="pre">CoreClient.build_master_image()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.create_project"><code class="docutils literal notranslate"><span class="pre">CoreClient.create_project()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.delete_project"><code class="docutils literal notranslate"><span class="pre">CoreClient.delete_project()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.get_project"><code class="docutils literal notranslate"><span class="pre">CoreClient.get_project()</span></code></a></li>
@@ -914,6 +915,13 @@ further information. Note that <code class="docutils literal notranslate"><span 
 <span class="sig-name descname"><span class="pre">sync_master_images</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.CoreClient.sync_master_images" title="Link to this definition"></a></dt>
 <dd><p>This method will start to synchronize the master images. Note that an error is raised if you request a
 synchronization while the Hub instance is still synchronizing master images.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flame_hub.CoreClient.build_master_image">
+<span class="sig-name descname"><span class="pre">build_master_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master_image_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models_api.html#flame_hub.models.MasterImage" title="flame_hub._core_client.MasterImage"><span class="pre">MasterImage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.CoreClient.build_master_image" title="Link to this definition"></a></dt>
+<dd><p>This method will command the Hub to start building a master image. Note that building a master image could
+take some time.</p>
 </dd></dl>
 
 <dl class="py method">
