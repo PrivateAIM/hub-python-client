@@ -8,7 +8,6 @@ import pytest
 from flame_hub import HubAPIError, get_field_names, get_includable_names
 from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType, LogLevel
 from flame_hub.models import (
-    Registry,
     RegistryProject,
     Node,
     Project,
@@ -242,11 +241,6 @@ def registry(core_client):
     )
     yield new_registry
     core_client.delete_registry(new_registry)
-
-
-@pytest.fixture(scope="session")
-def registry_fields():
-    return get_field_names(Registry)
 
 
 @pytest.fixture()
@@ -638,29 +632,26 @@ def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
     assert new_analysis_bucket_file.root is not analysis_bucket_file.root
 
 
-def test_get_registry(core_client, registry, registry_fields):
-    registry_get = core_client.get_registry(registry.id, fields=registry_fields)
+def test_get_registry(core_client, registry):
+    registry_get = core_client.get_registry(registry.id)
 
     assert registry_get.id == registry.id
-    assert all(field in registry_get.model_fields_set for field in registry_fields)
 
 
 def test_get_registry_not_found(core_client):
     assert core_client.get_registry(next_uuid()) is None
 
 
-def test_get_registries(core_client, registry, registry_fields):
-    registries_get = core_client.get_registries(fields=registry_fields)
+def test_get_registries(core_client, registry):
+    registries_get = core_client.get_registries()
 
     assert len(registries_get) > 0
-    assert all(field in r.model_fields_set for r in registries_get for field in registry_fields)
 
 
-def test_find_registries(core_client, registry, registry_fields):
-    registries_find = core_client.find_registries(filter={"id": registry.id}, fields=registry_fields)
+def test_find_registries(core_client, registry):
+    registries_find = core_client.find_registries(filter={"id": registry.id})
 
     assert [registry.id] == [r.id for r in registries_find]
-    assert all(field in r.model_fields_set for r in registries_find for field in registry_fields)
 
 
 def test_update_registry(core_client, registry):

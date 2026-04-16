@@ -37,7 +37,10 @@ class CreateRegistry(BaseModel):
     account_secret: t.Annotated[str | None, IsOptionalField] = None
 
 
-class Registry(CreateRegistry):
+class Registry(BaseModel):
+    name: str
+    host: str
+    account_name: str | None
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
