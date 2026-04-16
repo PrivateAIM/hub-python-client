@@ -196,7 +196,7 @@ class CreateProjectNode(BaseModel):
 
 class ProjectNode(CreateProjectNode):
     id: uuid.UUID
-    approval_status: ProjectNodeApprovalStatus
+    approval_status: ProjectNodeApprovalStatus | None
     comment: str | None
     created_at: datetime
     updated_at: datetime
