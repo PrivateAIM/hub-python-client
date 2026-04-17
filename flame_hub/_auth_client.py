@@ -503,7 +503,7 @@ class AuthClient(BaseClient):
         email: str,
         display_name: str = None,
         active: bool = True,
-        name_locked: bool = True,
+        name_locked: bool = False,
         first_name: str = None,
         last_name: str = None,
     ) -> User:
