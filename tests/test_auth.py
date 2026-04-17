@@ -26,8 +26,8 @@ def realm(auth_client):
 
 
 @pytest.fixture()
-def robot(auth_client, realm):
-    new_robot = auth_client.create_robot(next_random_string(), realm, next_random_string(length=64))
+def robot(auth_client, master_realm):
+    new_robot = auth_client.create_robot(next_random_string(), master_realm, next_random_string(length=64))
     yield new_robot
     auth_client.delete_robot(new_robot)
 
@@ -144,8 +144,8 @@ def robot_role_includables():
 
 
 @pytest.fixture()
-def client(auth_client, realm):
-    new_client = auth_client.create_client(name=next_random_string(), realm_id=realm)
+def client(auth_client, master_realm):
+    new_client = auth_client.create_client(name=next_random_string(), realm_id=master_realm)
     yield new_client
     auth_client.delete_client(client_id=new_client)
 
