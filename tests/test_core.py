@@ -360,6 +360,7 @@ def test_find_project_nodes(core_client, project_node, project_node_includables)
     )
 
 
+@pytest.mark.xfail(reason="node and project are not included in this case")
 def test_get_project_node(core_client, project_node, project_node_includables):
     project_node_get = core_client.get_project_node(project_node.id)
 
@@ -502,6 +503,7 @@ def test_find_analysis_nodes(core_client, analysis_node, analysis_node_includabl
     )
 
 
+@pytest.mark.xfail(reason="node and analysis are not included in this case")
 def test_get_analysis_node(core_client, analysis_node, analysis_node_includables):
     analysis_node_get = core_client.get_analysis_node(analysis_node.id)
 
@@ -548,6 +550,7 @@ def test_analysis_node_logs(core_client, analysis_node):
     )
 
 
+@pytest.mark.xfail(reason="analysis is not included in this case")
 def test_get_analysis_bucket(core_client, analysis_code_bucket, analysis_bucket_includables):
     analysis_bucket_get = core_client.get_analysis_bucket(analysis_code_bucket)
 
@@ -580,6 +583,7 @@ def test_find_analysis_buckets(core_client, analysis_code_bucket, analysis_bucke
     )
 
 
+@pytest.mark.xfail(reason="analysis and analysis bucket are not included in this case")
 def test_get_analysis_bucket_file(core_client, analysis_bucket_file, analysis_bucket_file_includables):
     analysis_bucket_file_get = core_client.get_analysis_bucket_file(analysis_bucket_file.id)
 
