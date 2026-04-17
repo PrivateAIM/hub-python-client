@@ -37,7 +37,10 @@ class CreateRegistry(BaseModel):
     account_secret: t.Annotated[str | None, IsOptionalField] = None
 
 
-class Registry(CreateRegistry):
+class Registry(BaseModel):
+    name: str
+    host: str
+    account_name: str | None
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -68,9 +71,6 @@ class RegistryProject(CreateRegistryProject):
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
     registry: t.Annotated[Registry, IsIncludable] = None
-    account_id: t.Annotated[str | None, IsOptionalField] = None
-    account_name: t.Annotated[str | None, IsOptionalField] = None
-    account_secret: t.Annotated[str | None, IsOptionalField] = None
     created_at: datetime
     updated_at: datetime
 
@@ -196,7 +196,7 @@ class CreateProjectNode(BaseModel):
 
 class ProjectNode(CreateProjectNode):
     id: uuid.UUID
-    approval_status: ProjectNodeApprovalStatus
+    approval_status: ProjectNodeApprovalStatus | None
     comment: str | None
     created_at: datetime
     updated_at: datetime

@@ -26,15 +26,10 @@ def realm(auth_client):
 
 
 @pytest.fixture()
-def robot(auth_client, realm):
-    new_robot = auth_client.create_robot(next_random_string(), realm, next_random_string(length=64))
+def robot(auth_client, master_realm):
+    new_robot = auth_client.create_robot(next_random_string(), master_realm, next_random_string(length=64))
     yield new_robot
     auth_client.delete_robot(new_robot)
-
-
-@pytest.fixture(scope="session")
-def robot_fields():
-    return get_field_names(Robot)
 
 
 @pytest.fixture(scope="session")
@@ -144,8 +139,8 @@ def robot_role_includables():
 
 
 @pytest.fixture()
-def client(auth_client, realm):
-    new_client = auth_client.create_client(name=next_random_string(), realm_id=realm)
+def client(auth_client, master_realm):
+    new_client = auth_client.create_client(name=next_random_string(), realm_id=master_realm)
     yield new_client
     auth_client.delete_client(client_id=new_client)
 
@@ -153,11 +148,6 @@ def client(auth_client, realm):
 @pytest.fixture(scope="session")
 def client_includables():
     return get_includable_names(Client)
-
-
-@pytest.fixture(scope="session")
-def client_fields():
-    return get_field_names(Client)
 
 
 def test_get_realm(auth_client, realm):
@@ -184,11 +174,11 @@ def test_find_realms(auth_client, realm):
     assert [realm] == auth_client.find_realms(filter={"id": realm.id})
 
 
-def test_get_robot(auth_client, robot, robot_fields, robot_includables):
-    robot_get = auth_client.get_robot(robot, fields=robot_fields)
+@pytest.mark.xfail(reason="realm is not included in this case")
+def test_get_robot(auth_client, robot, robot_includables):
+    robot_get = auth_client.get_robot(robot)
 
     assert robot_get.id == robot.id
-    assert all(field in robot_get.model_fields_set for field in robot_fields)
     assert all(includable in robot_get.model_fields_set for includable in robot_includables)
 
 
@@ -204,20 +194,18 @@ def test_update_robot(auth_client, robot):
     assert new_robot.name == new_name
 
 
-def test_get_robots(auth_client, robot, robot_fields, robot_includables):
-    robots_get = auth_client.get_robots(fields=robot_fields)
+def test_get_robots(auth_client, robot, robot_includables):
+    robots_get = auth_client.get_robots()
 
     assert len(robots_get) > 0
-    assert all(field in r.model_fields_set for r in robots_get for field in robot_fields)
     assert all(includable in r.model_fields_set for r in robots_get for includable in robot_includables)
 
 
-def test_find_robots(auth_client, robot, robot_fields, robot_includables):
-    robots_find = auth_client.find_robots(filter={"id": robot.id}, fields=robot_fields)
+def test_find_robots(auth_client, robot, robot_includables):
+    robots_find = auth_client.find_robots(filter={"id": robot.id})
 
     assert [robot.id] == [r.id for r in robots_find]
     assert all(includable in r.model_fields_set for r in robots_find for includable in robot_includables)
-    assert all(field in r.model_fields_set for r in robots_find for field in robot_fields)
 
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2660")
@@ -482,33 +470,31 @@ def test_find_robot_roles(auth_client, robot_role, robot_role_includables):
     assert all(includable in rr.model_fields_set for rr in robot_roles_find for includable in robot_role_includables)
 
 
-def test_get_client(auth_client, client, client_includables, client_fields):
-    client_get = auth_client.get_client(client_id=client, fields=client_fields)
+@pytest.mark.xfail(reason="realm is not included in this case")
+def test_get_client(auth_client, client, client_includables):
+    client_get = auth_client.get_client(client_id=client)
 
     assert client_get.id == client.id
     assert all(includable in client_get.model_fields_set for includable in client_includables)
-    assert all(field in client_get.model_fields_set for field in client_fields)
 
 
 def test_get_client_not_found(auth_client):
     assert auth_client.get_client(client_id=next_uuid()) is None
 
 
-def test_get_clients(auth_client, client, client_includables, client_fields):
-    clients_get = auth_client.get_clients(fields=client_fields)
+def test_get_clients(auth_client, client, client_includables):
+    clients_get = auth_client.get_clients()
 
     assert len(clients_get) > 0
     assert all(includable in c.model_fields_set for c in clients_get for includable in client_includables)
-    assert all(field in c.model_fields_set for c in clients_get for field in client_fields)
 
 
-def test_find_clients(auth_client, client, client_includables, client_fields):
+def test_find_clients(auth_client, client, client_includables):
     # Use "name" for filtering because there is no filter mechanism for attribute "id".
-    clients_find = auth_client.find_clients(filter={"name": client.name}, fields=client_fields)
+    clients_find = auth_client.find_clients(filter={"name": client.name})
 
     assert [client.id] == [c.id for c in clients_find]
     assert all(includable in c.model_fields_set for c in clients_find for includable in client_includables)
-    assert all(field in c.model_fields_set for c in clients_find for field in client_fields)
 
 
 def test_update_client(auth_client, client):

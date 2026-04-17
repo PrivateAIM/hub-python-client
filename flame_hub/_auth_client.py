@@ -74,12 +74,14 @@ class UpdateUser(BaseModel):
 class CreateRobot(BaseModel):
     name: str
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    secret: t.Annotated[str, IsOptionalField] = None
+    secret: str | None
     display_name: str | None
 
 
-class Robot(CreateRobot):
+class Robot(BaseModel):
     id: uuid.UUID
+    name: str
+    display_name: str | None
     description: str | None
     active: bool
     created_at: datetime
@@ -87,6 +89,7 @@ class Robot(CreateRobot):
     user_id: uuid.UUID | None
     user: t.Annotated[User | None, IsIncludable] = None
     realm: t.Annotated[Realm, IsIncludable] = None
+    realm_id: uuid.UUID
 
 
 class UpdateRobot(BaseModel):
@@ -232,7 +235,7 @@ class RobotRole(CreateRobotRole):
 
 class CreateClient(BaseModel):
     name: str
-    secret: t.Annotated[str | None, IsOptionalField] = None
+    secret: str | None
     display_name: str | None
     description: str | None
     redirect_uri: str | None
@@ -243,15 +246,24 @@ class CreateClient(BaseModel):
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
-class Client(CreateClient):
+class Client(BaseModel):
     id: uuid.UUID
+    name: str
     built_in: bool
+    display_name: str | None
+    description: str | None
+    redirect_uri: str | None
+    active: bool
+    is_confidential: bool
+    secret_hashed: bool
+    grant_types: str | None
     secret_encrypted: bool
     scope: str | None
     base_url: str | None
     root_url: str | None
     created_at: datetime
     updated_at: datetime
+    realm_id: uuid.UUID
     realm: t.Annotated[Realm, IsIncludable] = None
 
 
@@ -491,7 +503,7 @@ class AuthClient(BaseClient):
         email: str,
         display_name: str = None,
         active: bool = True,
-        name_locked: bool = True,
+        name_locked: bool = False,
         first_name: str = None,
         last_name: str = None,
     ) -> User:
