@@ -1,3 +1,5 @@
+![Code Coverage]()
+
 # FLAME Hub Python Client
 
 The FLAME Hub Python Client is a client which wraps the endpoints of [FLAME Hub](https://github.com/PrivateAIM/hub)

@@ -31,4 +31,13 @@ repos:
         language: system
         types: [python]
         always_run: true
+        pass_filenames: false
+        stages: [ pre-push ]
+      # Note that this hook fails if the README is updated by it. Push again with the updated README.
+      - id: readme-coverage-badger
+        name: readme-coverage-badger
+        entry: readme-cov
+        language: system
+        always_run: true
+        pass_filenames: false
         stages: [ pre-push ]
