@@ -57,7 +57,7 @@ env_files = [
 filterwarnings = [
     "ignore:^The @wait_container_is_ready decorator:DeprecationWarning"
 ]
-addopts = "--cov=flame_hub --cov-branch --cov-fail-under=90"
+addopts = "--cov=flame_hub --cov-branch"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
