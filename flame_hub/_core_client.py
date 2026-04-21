@@ -37,10 +37,7 @@ class CreateRegistry(BaseModel):
     account_secret: t.Annotated[str | None, IsOptionalField] = None
 
 
-class Registry(BaseModel):
-    name: str
-    host: str
-    account_name: str | None
+class Registry(CreateRegistry):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
@@ -61,12 +58,15 @@ class CreateRegistryProject(BaseModel):
     type: RegistryProjectType
     registry_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     external_name: str
+    account_name: str | None
+    account_secret: t.Annotated[str | None, IsOptionalField] = None
 
 
 class RegistryProject(CreateRegistryProject):
     id: uuid.UUID
     public: bool
     external_id: str | None
+    account_id: str | None
     webhook_name: str | None
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
@@ -80,6 +80,8 @@ class UpdateRegistryProject(BaseModel):
     type: RegistryProjectType | UNSET_T = UNSET
     registry_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
     external_name: str | UNSET_T = UNSET
+    account_name: str | None | UNSET_T = UNSET
+    account_secret: str | None | UNSET_T = UNSET
 
 
 NodeType = t.Literal["aggregator", "default"]
@@ -867,6 +869,8 @@ class CoreClient(BaseClient):
         registry_project_type: RegistryProjectType,
         registry_id: Registry | uuid.UUID | str,
         external_name: str,
+        account_name: str = None,
+        account_secret: str = None,
     ) -> RegistryProject:
         return self._create_resource(
             RegistryProject,
@@ -875,6 +879,8 @@ class CoreClient(BaseClient):
                 type=registry_project_type,
                 registry_id=registry_id,
                 external_name=external_name,
+                account_name=account_name,
+                account_secret=account_secret,
             ),
             "registry-projects",
         )
@@ -900,6 +906,8 @@ class CoreClient(BaseClient):
         registry_project_type: RegistryProjectType | UNSET_T = UNSET,
         registry_id: Registry | uuid.UUID | str | UNSET_T = UNSET,
         external_name: str | UNSET_T = UNSET,
+        account_name: str | None | UNSET_T = UNSET,
+        account_secret: str | None | UNSET_T = UNSET,
     ) -> RegistryProject:
         return self._update_resource(
             RegistryProject,
@@ -908,6 +916,8 @@ class CoreClient(BaseClient):
                 type=registry_project_type,
                 registry_id=registry_id,
                 external_name=external_name,
+                account_name=account_name,
+                account_secret=account_secret,
             ),
             "registry-projects",
             registry_project_id,

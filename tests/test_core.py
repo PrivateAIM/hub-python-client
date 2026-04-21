@@ -5,9 +5,10 @@ import typing as t
 
 import pytest
 
-from flame_hub import HubAPIError, get_includable_names
+from flame_hub import HubAPIError, get_includable_names, get_field_names
 from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType, LogLevel
 from flame_hub.models import (
+    Registry,
     RegistryProject,
     Node,
     Project,
@@ -243,6 +244,11 @@ def registry(core_client):
     core_client.delete_registry(new_registry)
 
 
+@pytest.fixture(scope="session")
+def registry_fields():
+    return get_field_names(Registry)
+
+
 @pytest.fixture()
 def registry_project(core_client, registry):
     new_registry_project = core_client.create_registry_project(
@@ -253,6 +259,11 @@ def registry_project(core_client, registry):
     )
     yield new_registry_project
     core_client.delete_registry_project(new_registry_project)
+
+
+@pytest.fixture(scope="session")
+def registry_project_fields():
+    return get_field_names(RegistryProject)
 
 
 @pytest.fixture(scope="session")
@@ -631,26 +642,29 @@ def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
     assert new_analysis_bucket_file.root is not analysis_bucket_file.root
 
 
-def test_get_registry(core_client, registry):
-    registry_get = core_client.get_registry(registry.id)
+def test_get_registry(core_client, registry, registry_fields):
+    registry_get = core_client.get_registry(registry.id, fields=registry_fields)
 
     assert registry_get.id == registry.id
+    assert all(field in registry_get.model_fields_set for field in registry_fields)
 
 
 def test_get_registry_not_found(core_client):
     assert core_client.get_registry(next_uuid()) is None
 
 
-def test_get_registries(core_client, registry):
-    registries_get = core_client.get_registries()
+def test_get_registries(core_client, registry, registry_fields):
+    registries_get = core_client.get_registries(fields=registry_fields)
 
     assert len(registries_get) > 0
+    assert all(field in r.model_fields_set for r in registries_get for field in registry_fields)
 
 
-def test_find_registries(core_client, registry):
-    registries_find = core_client.find_registries(filter={"id": registry.id})
+def test_find_registries(core_client, registry, registry_fields):
+    registries_find = core_client.find_registries(filter={"id": registry.id}, fields=registry_fields)
 
     assert [registry.id] == [r.id for r in registries_find]
+    assert all(field in r.model_fields_set for r in registries_find for field in registry_fields)
 
 
 def test_update_registry(core_client, registry):
@@ -672,28 +686,33 @@ def test_registry_setup(core_client, registry):
     assert_eventually(_check_setup)
 
 
-def test_get_registry_project(core_client, registry_project, registry_project_includables):
-    registry_project_get = core_client.get_registry_project(registry_project.id)
+def test_get_registry_project(core_client, registry_project, registry_project_includables, registry_project_fields):
+    registry_project_get = core_client.get_registry_project(registry_project.id, fields=registry_project_fields)
 
     assert registry_project.id == registry_project_get.id
     assert all(includable in registry_project_get.model_fields_set for includable in registry_project_includables)
+    assert all(field in registry_project_get.model_fields_set for field in registry_project_fields)
 
 
 def test_get_registry_project_not_found(core_client, registry_project):
     assert core_client.get_registry_project(next_uuid()) is None
 
 
-def test_get_registry_projects(core_client, registry_project, registry_project_includables):
-    registry_projects_get = core_client.get_registry_projects()
+def test_get_registry_projects(core_client, registry_project, registry_project_includables, registry_project_fields):
+    registry_projects_get = core_client.get_registry_projects(fields=registry_project_fields)
 
     assert len(registry_projects_get) > 0
     assert all(
         includable in rp.model_fields_set for rp in registry_projects_get for includable in registry_project_includables
     )
+    assert all(field in rp.model_fields_set for rp in registry_projects_get for field in registry_project_fields)
 
 
-def test_find_registry_projects(core_client, registry_project, registry_project_includables):
-    registry_projects_find = core_client.find_registry_projects(filter={"id": registry_project.id})
+def test_find_registry_projects(core_client, registry_project, registry_project_includables, registry_project_fields):
+    registry_projects_find = core_client.find_registry_projects(
+        filter={"id": registry_project.id},
+        fields=registry_project_fields,
+    )
 
     assert [registry_project.id] == [rp.id for rp in registry_projects_find]
     assert all(
@@ -701,6 +720,7 @@ def test_find_registry_projects(core_client, registry_project, registry_project_
         for rp in registry_projects_find
         for includable in registry_project_includables
     )
+    assert all(field in rp.model_fields_set for rp in registry_projects_find for field in registry_project_fields)
 
 
 def test_update_registry_project(core_client, registry_project):
