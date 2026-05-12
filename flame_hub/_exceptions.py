@@ -2,14 +2,15 @@ import typing as t
 from json import JSONDecodeError
 
 import httpx
-from pydantic import ValidationError, BaseModel, ConfigDict, Field
+from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
 
 
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Configuration so that extra properties may be available."""
-    status_code: t.Annotated[int, Field(validation_alias="statusCode")]
-    """The status code of the response. This attribute is mapped to the :python:`"statusCode"` field of the response."""
+    status_code: t.Annotated[int, Field(validation_alias=AliasChoices("statusCode", "status"))]
+    """The status code of the response. This attribute is mapped to the :python:`"statusCode"` or the
+    :python:`"status"` field of the response."""
     code: str
     """Written equivalent for ``status_code``."""
     message: str
