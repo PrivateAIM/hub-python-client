@@ -174,7 +174,6 @@ def test_find_realms(auth_client, realm):
     assert [realm] == auth_client.find_realms(filter={"id": realm.id})
 
 
-@pytest.mark.xfail(reason="realm is not included in this case")
 def test_get_robot(auth_client, robot, robot_includables):
     robot_get = auth_client.get_robot(robot)
 
@@ -470,7 +469,6 @@ def test_find_robot_roles(auth_client, robot_role, robot_role_includables):
     assert all(includable in rr.model_fields_set for rr in robot_roles_find for includable in robot_role_includables)
 
 
-@pytest.mark.xfail(reason="realm is not included in this case")
 def test_get_client(auth_client, client, client_includables):
     client_get = auth_client.get_client(client_id=client)
 
