@@ -20,14 +20,14 @@ pytestmark = pytest.mark.integration
 
 @pytest.fixture()
 def realm(auth_client):
-    new_realm = auth_client.create_realm(next_random_string())
+    new_realm = auth_client.create_realm(next_random_string().lower())
     yield new_realm
     auth_client.delete_realm(new_realm)
 
 
 @pytest.fixture()
 def robot(auth_client, master_realm):
-    new_robot = auth_client.create_robot(next_random_string(), master_realm, next_random_string(length=64))
+    new_robot = auth_client.create_robot(next_random_string().lower(), master_realm, next_random_string(length=64))
     yield new_robot
     auth_client.delete_robot(new_robot)
 
@@ -39,7 +39,7 @@ def robot_includables():
 
 @pytest.fixture()
 def permission(auth_client):
-    new_permission = auth_client.create_permission(next_random_string())
+    new_permission = auth_client.create_permission(next_random_string().lower())
     yield new_permission
     auth_client.delete_permission(new_permission)
 
@@ -51,7 +51,7 @@ def permission_includables():
 
 @pytest.fixture()
 def role(auth_client):
-    new_role = auth_client.create_role(next_random_string())
+    new_role = auth_client.create_role(next_random_string().lower())
     yield new_role
     auth_client.delete_role(new_role)
 
@@ -75,7 +75,7 @@ def role_permission_includables():
 
 @pytest.fixture()
 def user(auth_client):
-    new_user = auth_client.create_user(name=next_random_string(), email=f"{next_random_string()}@test.com")
+    new_user = auth_client.create_user(name=next_random_string().lower(), email=f"{next_random_string()}@test.com")
     yield new_user
     auth_client.delete_user(new_user)
 
@@ -140,7 +140,7 @@ def robot_role_includables():
 
 @pytest.fixture()
 def client(auth_client, master_realm):
-    new_client = auth_client.create_client(name=next_random_string(), realm_id=master_realm)
+    new_client = auth_client.create_client(name=next_random_string().lower(), realm_id=master_realm)
     yield new_client
     auth_client.delete_client(client_id=new_client)
 
@@ -159,7 +159,7 @@ def test_get_realm_not_found(auth_client, realm):
 
 
 def test_update_realm(auth_client, realm):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_realm = auth_client.update_realm(realm.id, name=new_name)
 
     assert realm != new_realm
@@ -174,7 +174,6 @@ def test_find_realms(auth_client, realm):
     assert [realm] == auth_client.find_realms(filter={"id": realm.id})
 
 
-@pytest.mark.xfail(reason="realm is not included in this case")
 def test_get_robot(auth_client, robot, robot_includables):
     robot_get = auth_client.get_robot(robot)
 
@@ -187,7 +186,7 @@ def test_get_robot_not_found(auth_client, robot):
 
 
 def test_update_robot(auth_client, robot):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_robot = auth_client.update_robot(robot.id, name=new_name)
 
     assert robot != new_robot
@@ -238,7 +237,7 @@ def test_find_permissions(auth_client, permission, permission_includables):
 
 @pytest.mark.xfail(reason="policy ids should be optional for creating permissions but are currently mandatory")
 def test_update_permission(auth_client, permission):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_permission = auth_client.update_permission(permission.id, name=new_name)
 
     assert permission != new_permission
@@ -274,7 +273,7 @@ def test_find_roles(auth_client, role, role_includables):
 
 
 def test_update_role(auth_client, role):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_role = auth_client.update_role(role.id, name=new_name)
 
     assert role != new_role
@@ -341,7 +340,7 @@ def test_find_users(auth_client, user, user_fields, user_includables):
 
 
 def test_update_user(auth_client, user):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_user = auth_client.update_user(user.id, name=new_name)
 
     assert user != new_user
@@ -470,7 +469,6 @@ def test_find_robot_roles(auth_client, robot_role, robot_role_includables):
     assert all(includable in rr.model_fields_set for rr in robot_roles_find for includable in robot_role_includables)
 
 
-@pytest.mark.xfail(reason="realm is not included in this case")
 def test_get_client(auth_client, client, client_includables):
     client_get = auth_client.get_client(client_id=client)
 
@@ -498,7 +496,7 @@ def test_find_clients(auth_client, client, client_includables):
 
 
 def test_update_client(auth_client, client):
-    new_name = next_random_string()
+    new_name = next_random_string().lower()
     new_client = auth_client.update_client(client_id=client, name=new_name)
 
     assert client != new_client

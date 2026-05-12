@@ -127,20 +127,13 @@ def analysis_node_includables():
 
 
 @pytest.fixture()
-def analysis_code_bucket(core_client, storage_client, analysis):
-    bucket = storage_client.create_bucket(name=next_random_string())
-    analysis_bucket = core_client.create_analysis_bucket(
-        bucket_type=AnalysisBucketType.CODE,
-        analysis_id=analysis,
-        bucket_id=bucket,
-    )
+def analysis_code_bucket(core_client, analysis):
+    analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
+    code_buckets = [bucket for bucket in analysis_buckets if bucket.type == AnalysisBucketType.CODE]
 
-    assert analysis_bucket.type == AnalysisBucketType.CODE
+    assert len(code_buckets) == 1
 
-    yield analysis_bucket
-
-    core_client.delete_analysis_bucket(analysis_bucket)
-    storage_client.delete_bucket(bucket)
+    return code_buckets[0]
 
 
 @pytest.fixture(scope="session")
@@ -466,17 +459,8 @@ def test_build_analysis(core_client, configured_analysis):
     )
 
     def _wait_for_successful_build():
-        try:
-            analysis = core_client.send_analysis_command(analysis_id=configured_analysis.id, command="buildCheck")
-        except HubAPIError as e:
-            if "The analysis build process has already been successfully completed." in str(e):
-                analysis = core_client.get_analysis(analysis_id=configured_analysis.id)
-            else:
-                raise e
+        analysis = core_client.get_analysis(analysis_id=configured_analysis.id)
         assert analysis.build_status == "executed"
-        # TODO: For some reason the Hub does not set the build_progress to 100 even if the analysis was successfully
-        # TODO: executed.
-        # TODO: assert analysis.build_progress == 100
 
     assert_eventually(_wait_for_successful_build)
 
