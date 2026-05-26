@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Poetry
         uses: ./.github/actions/setup-poetry
       - name: Install dependencies
@@ -17,7 +17,7 @@ jobs:
       - name: Build package
         run: poetry build --no-interaction
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           path: dist/
           name: package-dist
@@ -30,7 +30,7 @@ jobs:
       id-token: write
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: ${{ github.workspace }}/dist/
           name: package-dist
