@@ -1,20 +1,22 @@
-import typing as t
 from json import JSONDecodeError
 
 import httpx
-from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
+from pydantic import ValidationError, BaseModel, ConfigDict
 
 
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Configuration so that extra properties may be available."""
-    status_code: t.Annotated[int, Field(validation_alias=AliasChoices("statusCode", "status"))]
-    """The status code of the response. This attribute is mapped to the :python:`"statusCode"` or the
-    :python:`"status"` field of the response."""
+    name: str
+    """Name of the error."""
     code: str
-    """Written equivalent for ``status_code``."""
+    """Name of the error code."""
+    status_code: int
+    """HTTP code of the response."""
     message: str
     """The error message."""
+    issues: list
+    """List of issues."""
 
 
 class HubAPIError(httpx.HTTPError):
@@ -65,7 +67,7 @@ def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
     error_message = f"received status code {r.status_code}"
 
     try:
-        error_response = ErrorResponse(**r.json())
+        error_response = ErrorResponse(**({"status_code": r.status_code} | r.json()))
         error_message = f"received status code {error_response.status_code} ({error_response.code}): "
 
         if error_response.message.strip() == "":
