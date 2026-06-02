@@ -22,6 +22,7 @@ __all__ = [
     "UNSET_T",
     "ProcessStatus",
     "LogChannel",
+    "ReadableBinary",
 ]
 
 from ._base_client import (
@@ -50,4 +51,4 @@ from ._core_client import (
     ProcessStatus,
     LogChannel,
 )
-from ._storage_client import UploadFile
+from ._storage_client import ReadableBinary, UploadFile

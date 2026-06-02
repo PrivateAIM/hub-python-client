@@ -51,9 +51,13 @@ class BucketFile(BaseModel):
     bucket: t.Annotated[Bucket, IsIncludable] = None
 
 
+class ReadableBinary(t.Protocol):
+    def read(self, size: int = -1) -> bytes: ...
+
+
 class UploadFile(te.TypedDict):
     file_name: str
-    content: bytes | t.IO[bytes] | str
+    content: bytes | t.IO[bytes] | ReadableBinary | str
     content_type: te.NotRequired[str]
 
 
