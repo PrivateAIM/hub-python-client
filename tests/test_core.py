@@ -128,6 +128,11 @@ def analysis_node_includables():
 
 @pytest.fixture()
 def analysis_code_bucket(core_client, analysis):
+    def _wait_for_buckets():
+        assert len(core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})) != 0
+
+    assert_eventually(_wait_for_buckets)
+
     analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
     code_buckets = [bucket for bucket in analysis_buckets if bucket.type == AnalysisBucketType.CODE]
 
