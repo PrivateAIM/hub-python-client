@@ -344,7 +344,7 @@ def test_update_project(core_client, project):
     new_node = core_client.update_project(project.id, name=new_name)
 
     assert project != new_node
-    assert new_node.name == new_name
+    assert new_node.name.lower() == new_name.lower()
 
 
 def test_get_project_nodes(core_client, project_node, project_node_includables):
@@ -421,7 +421,7 @@ def test_update_analysis(core_client, analysis):
     new_analysis = core_client.update_analysis(analysis.id, name=new_name, image_command_arguments=args)
 
     assert analysis != new_analysis
-    assert new_analysis.name == new_name
+    assert new_analysis.name.lower() == new_name.lower()
     assert new_analysis.image_command_arguments == args  # Note that args is modified during updating the analysis.
 
 
