@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=d5b904a0"></script>
+      <script src="_static/documentation_options.js?v=e2418eca"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -54,9 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="authentication_api.html">Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html">Models</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Types</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.UNSET_T"><code class="docutils literal notranslate"><span class="pre">UNSET_T</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.ResourceT"><code class="docutils literal notranslate"><span class="pre">ResourceT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FilterParams"><code class="docutils literal notranslate"><span class="pre">FilterParams</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FieldParams"><code class="docutils literal notranslate"><span class="pre">FieldParams</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.IncludeParams"><code class="docutils literal notranslate"><span class="pre">IncludeParams</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.RegistryCommand"><code class="docutils literal notranslate"><span class="pre">RegistryCommand</span></code></a></li>
@@ -65,7 +63,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ProjectNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">ProjectNodeApprovalStatus</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisCommand"><code class="docutils literal notranslate"><span class="pre">AnalysisCommand</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisNodeApprovalStatus"><code class="docutils literal notranslate"><span class="pre">AnalysisNodeApprovalStatus</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ProcessStatus"><code class="docutils literal notranslate"><span class="pre">ProcessStatus</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.LogLevel"><code class="docutils literal notranslate"><span class="pre">LogLevel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.LogChannel"><code class="docutils literal notranslate"><span class="pre">LogChannel</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.PageParams"><code class="docutils literal notranslate"><span class="pre">PageParams</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.PageParams.limit"><code class="docutils literal notranslate"><span class="pre">PageParams.limit</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.PageParams.offset"><code class="docutils literal notranslate"><span class="pre">PageParams.offset</span></code></a></li>
@@ -104,7 +104,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.MasterImageCommandArgument.position"><code class="docutils literal notranslate"><span class="pre">MasterImageCommandArgument.position</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType.CODE"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType.CODE</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType.RESULT"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType.RESULT</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.AnalysisBucketType.TEMP"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType.TEMP</span></code></a></li>
@@ -114,6 +114,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.file_name"><code class="docutils literal notranslate"><span class="pre">UploadFile.file_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.content"><code class="docutils literal notranslate"><span class="pre">UploadFile.content</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.UploadFile.content_type"><code class="docutils literal notranslate"><span class="pre">UploadFile.content_type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ReadableBinary"><code class="docutils literal notranslate"><span class="pre">ReadableBinary</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.ReadableBinary.read"><code class="docutils literal notranslate"><span class="pre">ReadableBinary.read()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.UuidModel"><code class="docutils literal notranslate"><span class="pre">UuidModel</span></code></a><ul>
@@ -160,22 +164,10 @@
              
   <section id="types">
 <h1>Types<a class="headerlink" href="#types" title="Link to this heading"></a></h1>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="flame_hub.types.UNSET_T">
-<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">UNSET_T</span></span><a class="headerlink" href="#flame_hub.types.UNSET_T" title="Link to this definition"></a></dt>
-<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">type</span></code></a>[<a class="reference internal" href="models_api.html#flame_hub.models.UNSET" title="flame_hub._base_client.UNSET"><code class="xref py py-class docutils literal notranslate"><span class="pre">UNSET</span></code></a>]</p>
-</dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="flame_hub._base_client.ResourceT">
 <span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">ResourceT</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">typing.TypeVar</span></em><a class="headerlink" href="#flame_hub._base_client.ResourceT" title="Link to this definition"></a></dt>
 <dd><p>Base resource type which assumes <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> as the base class.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="flame_hub.types.FilterParams">
-<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FilterParams</span></span><a class="headerlink" href="#flame_hub.types.FilterParams" title="Link to this definition"></a></dt>
-<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub._base_client.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Any</span></code></a>]]</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -226,10 +218,22 @@
 <dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘rejected’, ‘approved’]</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="flame_hub.types.AnalysisBucketType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBucketType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.types.AnalysisBucketType" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.ProcessStatus">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">ProcessStatus</span></span><a class="headerlink" href="#flame_hub.types.ProcessStatus" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘starting’, ‘started’, ‘stopping’, ‘stopped’, ‘executing’, ‘executed’, ‘failed’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.LogLevel">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">LogLevel</span></span><a class="headerlink" href="#flame_hub.types.LogLevel" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘emerg’, ‘alert’, ‘crit’, ‘error’, ‘warn’, ‘notice’, ‘info’, ‘debug’]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.LogChannel">
+<span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">LogChannel</span></span><a class="headerlink" href="#flame_hub.types.LogChannel" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Literal</span></code></a>[‘http’, ‘websocket’, ‘background’, ‘system’]</p>
 </dd></dl>
 
 <span class="target" id="module-flame_hub.types"></span><dl class="py class">
@@ -290,7 +294,7 @@
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#flame_hub.types.FilterParams" title="flame_hub.types.FilterParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+<dt><code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code>, <a class="reference internal" href="#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
 </dl>
 </div>
 <dl class="py attribute">
@@ -338,7 +342,7 @@
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <a class="reference internal" href="#flame_hub.types.FilterParams" title="flame_hub.types.FilterParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">PageParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">SortParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FieldParams" title="flame_hub.types.FieldParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">flame_hub.types.FieldParams</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code>, <a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">PageParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">SortParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FieldParams" title="flame_hub.types.FieldParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">flame_hub.types.FieldParams</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
 </dl>
 </div>
 <dl class="py attribute">
@@ -408,8 +412,8 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="id0">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBucketType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="flame_hub.types.AnalysisBucketType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">AnalysisBucketType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names=&lt;not</span> <span class="pre">given&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.types.AnalysisBucketType" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.types.AnalysisBucketType.CODE">
@@ -439,12 +443,23 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.types.UploadFile.content">
-<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.14)"><span class="pre">IO</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.UploadFile.content" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.IO" title="(in Python v3.14)"><span class="pre">IO</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#flame_hub.types.ReadableBinary" title="flame_hub._storage_client.ReadableBinary"><span class="pre">ReadableBinary</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.types.UploadFile.content" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.types.UploadFile.content_type">
 <span class="sig-name descname"><span class="pre">content_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NotRequired" title="(in Python v3.14)"><span class="pre">NotRequired</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.types.UploadFile.content_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.ReadableBinary">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">ReadableBinary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.types.ReadableBinary" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="flame_hub.types.ReadableBinary.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#flame_hub.types.ReadableBinary.read" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
