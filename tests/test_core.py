@@ -346,10 +346,12 @@ def test_get_project_not_found(core_client):
 
 def test_update_project(core_client, project):
     new_name = next_random_string()
-    new_node = core_client.update_project(project.id, name=new_name)
+    new_display_name = next_random_string()
+    new_node = core_client.update_project(project.id, name=new_name, display_name=new_display_name)
 
     assert project != new_node
     assert new_node.name.lower() == new_name.lower()
+    assert new_node.display_name.lower() == new_display_name.lower()
 
 
 def test_get_project_nodes(core_client, project_node, project_node_includables):
@@ -423,10 +425,17 @@ def test_update_analysis(core_client, analysis):
         {"value": next_random_string(), "position": random.choice(("before", "after"))},
     ]
     new_name = next_random_string()
-    new_analysis = core_client.update_analysis(analysis.id, name=new_name, image_command_arguments=args)
+    new_display_name = next_random_string()
+    new_analysis = core_client.update_analysis(
+        analysis.id,
+        name=new_name,
+        display_name=new_display_name,
+        image_command_arguments=args,
+    )
 
     assert analysis != new_analysis
     assert new_analysis.name.lower() == new_name.lower()
+    assert new_analysis.display_name.lower() == new_display_name.lower()
     assert new_analysis.image_command_arguments == args  # Note that args is modified during updating the analysis.
 
 

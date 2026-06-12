@@ -168,6 +168,7 @@ class CreateProject(BaseModel):
     description: str | None
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     name: str
+    display_name: str | None
 
 
 class Project(CreateProject):
@@ -186,6 +187,7 @@ class UpdateProject(BaseModel):
     description: str | None | UNSET_T = UNSET
     master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
     name: str | UNSET_T = UNSET
+    display_name: str | None | UNSET_T = UNSET
 
 
 ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
@@ -229,6 +231,7 @@ class Log(BaseModel):
 class CreateAnalysis(BaseModel):
     description: str | None
     name: str | None
+    display_name: str | None
     project_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     registry_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
@@ -271,7 +274,8 @@ class Analysis(CreateAnalysis):
 
 class UpdateAnalysis(BaseModel):
     description: str | None | UNSET_T = UNSET
-    name: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    display_name: str | None | UNSET_T = UNSET
     master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
     image_command_arguments: (
         t.Annotated[
@@ -505,11 +509,20 @@ class CoreClient(BaseClient):
             raise new_hub_api_error_from_response(r)
 
     def create_project(
-        self, name: str, master_image_id: MasterImage | uuid.UUID | str = None, description: str = None
+        self,
+        name: str,
+        display_name: str = None,
+        master_image_id: MasterImage | uuid.UUID | str = None,
+        description: str = None,
     ) -> Project:
         return self._create_resource(
             Project,
-            CreateProject(name=name, master_image_id=master_image_id, description=description),
+            CreateProject(
+                name=name,
+                master_image_id=master_image_id,
+                description=description,
+                display_name=display_name,
+            ),
             "projects",
         )
 
@@ -527,10 +540,13 @@ class CoreClient(BaseClient):
         description: str | None | UNSET_T = UNSET,
         master_image_id: MasterImage | str | uuid.UUID | None | UNSET_T = UNSET,
         name: str | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
     ) -> Project:
         return self._update_resource(
             Project,
-            UpdateProject(description=description, master_image_id=master_image_id, name=name),
+            UpdateProject(
+                description=description, master_image_id=master_image_id, name=name, display_name=display_name
+            ),
             "projects",
             project_id,
         )
@@ -581,6 +597,7 @@ class CoreClient(BaseClient):
         self,
         project_id: Project | uuid.UUID | str,
         name: str = None,
+        display_name: str = None,
         description: str = None,
         master_image_id: MasterImage | uuid.UUID | str = None,
         registry_id: Registry | uuid.UUID | str = None,
@@ -591,6 +608,7 @@ class CoreClient(BaseClient):
             CreateAnalysis(
                 project_id=project_id,
                 name=name,
+                display_name=display_name,
                 description=description,
                 master_image_id=master_image_id,
                 registry_id=registry_id,
@@ -617,6 +635,7 @@ class CoreClient(BaseClient):
         self,
         analysis_id: Analysis | uuid.UUID | str,
         name: str | None | UNSET_T = UNSET,
+        display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
         master_image_id: MasterImage | uuid.UUID | str | None | UNSET_T = UNSET,
         image_command_arguments: list[MasterImageCommandArgument] | UNSET_T = UNSET,
@@ -625,6 +644,7 @@ class CoreClient(BaseClient):
             Analysis,
             UpdateAnalysis(
                 name=name,
+                display_name=display_name,
                 description=description,
                 master_image_id=master_image_id,
                 image_command_arguments=image_command_arguments,
