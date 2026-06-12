@@ -275,14 +275,14 @@ class GetKwargs(te.TypedDict, total=False):
     meta: bool
 
 
-def build_page_params(page_params: PageParams = None, default_page_params: PageParams = None) -> dict:
+def build_page_params(page_params: PageParams | None = None, default_page_params: PageParams | None = None) -> dict:
     """Build a dictionary of query parameters based on provided pagination parameters."""
     # use empty dict if None is provided
     if default_page_params is None:
         default_page_params = DEFAULT_PAGE_PARAMS
 
     if page_params is None:
-        page_params = {}
+        page_params: PageParams = {}
 
     # overwrite default values with user-defined ones
     page_params = default_page_params | page_params
@@ -290,7 +290,7 @@ def build_page_params(page_params: PageParams = None, default_page_params: PageP
     return {f"page[{k}]": v for k, v in page_params.items()}
 
 
-def build_filter_params(filter_params: FilterParams = None) -> dict:
+def build_filter_params(filter_params: FilterParams | None = None) -> dict:
     """Build a dictionary of query parameters based on provided filter parameters."""
     if filter_params is None:
         filter_params = {}
@@ -317,7 +317,7 @@ def build_filter_params(filter_params: FilterParams = None) -> dict:
     return query_params
 
 
-def build_sort_params(sort_params: SortParams = None) -> dict:
+def build_sort_params(sort_params: SortParams | None = None) -> dict:
     if sort_params is None:
         sort_params = {}
 
@@ -337,7 +337,7 @@ def build_sort_params(sort_params: SortParams = None) -> dict:
     return query_params
 
 
-def build_include_params(include_params: IncludeParams = None) -> dict:
+def build_include_params(include_params: IncludeParams | None = None) -> dict:
     if include_params is None:
         include_params = ()  # empty tuple
 
@@ -353,7 +353,7 @@ def build_include_params(include_params: IncludeParams = None) -> dict:
     return {"include": ",".join(include_params)}
 
 
-def build_field_params(field_params: FieldParams = None) -> dict:
+def build_field_params(field_params: FieldParams | None = None) -> dict:
     if field_params is None:
         field_params = ()  # empty tuple
 
@@ -406,16 +406,15 @@ class BaseClient(object):
     :py:class:`.AuthClient`, :py:class:`.CoreClient`, :py:class:`.StorageClient`
     """
 
-    def __init__(self, base_url: str, auth: PasswordAuth | ClientAuth = None, **kwargs: te.Unpack[ClientKwargs]):
+    def __init__(self, base_url: str, auth: PasswordAuth | ClientAuth | None = None, **kwargs: te.Unpack[ClientKwargs]):
         client = kwargs.get("client", None)
-        # Set a read timeout of 20 seconds here because the endpoint for registry projects is slow.
-        self._client = client or httpx.Client(auth=auth, base_url=base_url, timeout=httpx.Timeout(5, read=20))
+        self._client = client or httpx.Client(auth=auth, base_url=base_url)
 
     def _get_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
-        include: IncludeParams = None,
+        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
@@ -439,7 +438,7 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str,
-        include: IncludeParams = None,
+        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
@@ -568,7 +567,7 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
-        include: IncludeParams = None,
+        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> ResourceT | None:
