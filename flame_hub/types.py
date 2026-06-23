@@ -5,6 +5,8 @@ __all__ = [
     "FilterParams",
     "FindAllKwargs",
     "GetKwargs",
+    "RequestAuth",
+    "RequestAuthArg",
     "NodeType",
     "RegistryCommand",
     "IncludeParams",
@@ -35,6 +37,8 @@ from ._base_client import (
     FindAllKwargs,
     UuidIdentifiable,
     GetKwargs,
+    RequestAuth,
+    RequestAuthArg,
     ResourceT,
     UNSET_T,
 )

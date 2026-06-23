@@ -21,6 +21,9 @@ from flame_hub._base_client import (
     IsIncludable,
     get_includable_names,
     build_filter_params,
+    RequestAuthArg,
+    USE_CLIENT_DEFAULT,
+    resolve_request_auth,
 )
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
@@ -401,11 +404,13 @@ class CoreClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def get_nodes(self, **params: te.Unpack[GetKwargs]) -> list[Node]:
-        return self._get_all_resources(Node, "nodes", include=get_includable_names(Node), **params)
+    def get_nodes(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[Node]:
+        return self._get_all_resources(Node, "nodes", include=get_includable_names(Node), auth=auth, **params)
 
-    def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[Node]:
-        return self._find_all_resources(Node, "nodes", include=get_includable_names(Node), **params)
+    def find_nodes(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Node]:
+        return self._find_all_resources(Node, "nodes", include=get_includable_names(Node), auth=auth, **params)
 
     def create_node(
         self,
@@ -415,6 +420,8 @@ class CoreClient(BaseClient):
         external_name: str | None = None,
         node_type: NodeType = "default",
         hidden: bool = False,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Node:
         return self._create_resource(
             Node,
@@ -427,13 +434,22 @@ class CoreClient(BaseClient):
                 type=node_type,
             ),
             "nodes",
+            auth=auth,
         )
 
-    def get_node(self, node_id: Node | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Node | None:
-        return self._get_single_resource(Node, "nodes", node_id, include=get_includable_names(Node), **params)
+    def get_node(
+        self,
+        node_id: Node | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Node | None:
+        return self._get_single_resource(
+            Node, "nodes", node_id, include=get_includable_names(Node), auth=auth, **params
+        )
 
-    def delete_node(self, node_id: Node | uuid.UUID | str):
-        self._delete_resource("nodes", node_id)
+    def delete_node(self, node_id: Node | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("nodes", node_id, auth=auth)
 
     def update_node(
         self,
@@ -444,6 +460,8 @@ class CoreClient(BaseClient):
         realm_id: Realm | str | uuid.UUID | UNSET_T = UNSET,
         registry_id: Registry | str | uuid.UUID | None | UNSET_T = UNSET,
         public_key: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Node:
         return self._update_resource(
             Node,
@@ -457,52 +475,78 @@ class CoreClient(BaseClient):
             ),
             "nodes",
             node_id,
+            auth=auth,
         )
 
-    def get_master_image_groups(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageGroup]:
-        return self._get_all_resources(MasterImageGroup, "master-image-groups", **params)
+    def get_master_image_groups(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[MasterImageGroup]:
+        return self._get_all_resources(MasterImageGroup, "master-image-groups", auth=auth, **params)
 
     def get_master_image_group(
-        self, master_image_group_id: MasterImageGroup | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        master_image_group_id: MasterImageGroup | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> MasterImageGroup | None:
-        return self._get_single_resource(MasterImageGroup, "master-image-groups", master_image_group_id, **params)
+        return self._get_single_resource(
+            MasterImageGroup, "master-image-groups", master_image_group_id, auth=auth, **params
+        )
 
-    def find_master_image_groups(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImageGroup]:
-        return self._find_all_resources(MasterImageGroup, "master-image-groups", **params)
+    def find_master_image_groups(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[MasterImageGroup]:
+        return self._find_all_resources(MasterImageGroup, "master-image-groups", auth=auth, **params)
 
-    def get_master_images(self, **params: te.Unpack[GetKwargs]) -> list[MasterImage]:
-        return self._get_all_resources(MasterImage, "master-images", **params)
+    def get_master_images(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[MasterImage]:
+        return self._get_all_resources(MasterImage, "master-images", auth=auth, **params)
 
     def get_master_image(
-        self, master_image_id: MasterImage | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        master_image_id: MasterImage | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> MasterImage | None:
-        return self._get_single_resource(MasterImage, "master-images", master_image_id, **params)
+        return self._get_single_resource(MasterImage, "master-images", master_image_id, auth=auth, **params)
 
-    def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> list[MasterImage]:
-        return self._find_all_resources(MasterImage, "master-images", **params)
+    def find_master_images(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[MasterImage]:
+        return self._find_all_resources(MasterImage, "master-images", auth=auth, **params)
 
-    def get_projects(self, **params: te.Unpack[GetKwargs]) -> list[Project]:
-        return self._get_all_resources(Project, "projects", include=get_includable_names(Project), **params)
+    def get_projects(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[Project]:
+        return self._get_all_resources(Project, "projects", include=get_includable_names(Project), auth=auth, **params)
 
-    def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[Project]:
-        return self._find_all_resources(Project, "projects", include=get_includable_names(Project), **params)
+    def find_projects(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Project]:
+        return self._find_all_resources(Project, "projects", include=get_includable_names(Project), auth=auth, **params)
 
-    def sync_master_images(self):
+    def sync_master_images(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
         """This method will start to synchronize the master images. Note that an error is raised if you request a
         synchronization while the Hub instance is still synchronizing master images.
         """
-        r = self._client.post("master-images/command", json={"command": "sync"})
+        r = self._client.post("master-images/command", json={"command": "sync"}, auth=resolve_request_auth(auth))
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
 
-    def build_master_image(self, master_image_id: MasterImage | uuid.UUID | str):
+    def build_master_image(
+        self, master_image_id: MasterImage | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
         """This method will command the Hub to start building a master image. Note that building a master image could
         take some time.
         """
         r = self._client.post(
             "master-images/command",
             json={"command": "build", "id": str(obtain_uuid_from(master_image_id))},
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
@@ -514,6 +558,8 @@ class CoreClient(BaseClient):
         display_name: str = None,
         master_image_id: MasterImage | uuid.UUID | str = None,
         description: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Project:
         return self._create_resource(
             Project,
@@ -524,14 +570,21 @@ class CoreClient(BaseClient):
                 display_name=display_name,
             ),
             "projects",
+            auth=auth,
         )
 
-    def delete_project(self, project_id: Project | uuid.UUID | str):
-        self._delete_resource("projects", project_id)
+    def delete_project(self, project_id: Project | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("projects", project_id, auth=auth)
 
-    def get_project(self, project_id: Project | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Project | None:
+    def get_project(
+        self,
+        project_id: Project | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Project | None:
         return self._get_single_resource(
-            Project, "projects", project_id, include=get_includable_names(Project), **params
+            Project, "projects", project_id, include=get_includable_names(Project), auth=auth, **params
         )
 
     def update_project(
@@ -541,6 +594,8 @@ class CoreClient(BaseClient):
         master_image_id: MasterImage | str | uuid.UUID | None | UNSET_T = UNSET,
         name: str | UNSET_T = UNSET,
         display_name: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Project:
         return self._update_resource(
             Project,
@@ -549,35 +604,56 @@ class CoreClient(BaseClient):
             ),
             "projects",
             project_id,
+            auth=auth,
         )
 
     def create_project_node(
-        self, project_id: Project | uuid.UUID | str, node_id: Node | uuid.UUID | str
+        self,
+        project_id: Project | uuid.UUID | str,
+        node_id: Node | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> ProjectNode:
         return self._create_resource(
             ProjectNode,
             CreateProjectNode(project_id=project_id, node_id=node_id),
             "project-nodes",
+            auth=auth,
         )
 
-    def delete_project_node(self, project_node_id: ProjectNode | uuid.UUID | str):
-        self._delete_resource("project-nodes", project_node_id)
+    def delete_project_node(
+        self, project_node_id: ProjectNode | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("project-nodes", project_node_id, auth=auth)
 
-    def get_project_nodes(self, **params: te.Unpack[GetKwargs]) -> list[ProjectNode]:
+    def get_project_nodes(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[ProjectNode]:
         return self._get_all_resources(
-            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), **params
+            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), auth=auth, **params
         )
 
-    def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[ProjectNode]:
+    def find_project_nodes(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[ProjectNode]:
         return self._find_all_resources(
-            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), **params
+            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), auth=auth, **params
         )
 
     def get_project_node(
-        self, project_node_id: ProjectNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        project_node_id: ProjectNode | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> ProjectNode | None:
         return self._get_single_resource(
-            ProjectNode, "project-nodes", project_node_id, include=get_includable_names(ProjectNode), **params
+            ProjectNode,
+            "project-nodes",
+            project_node_id,
+            include=get_includable_names(ProjectNode),
+            auth=auth,
+            **params,
         )
 
     def update_project_node(
@@ -585,12 +661,15 @@ class CoreClient(BaseClient):
         project_node_id: ProjectNode | uuid.UUID | str,
         comment: str | None | UNSET_T = UNSET,
         approval_status: ProjectNodeApprovalStatus | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ):
         return self._update_resource(
             ProjectNode,
             UpdateProjectNode(comment=comment, approval_status=approval_status),
             "project-nodes",
             project_node_id,
+            auth=auth,
         )
 
     def create_analysis(
@@ -602,6 +681,8 @@ class CoreClient(BaseClient):
         master_image_id: MasterImage | uuid.UUID | str = None,
         registry_id: Registry | uuid.UUID | str = None,
         image_command_arguments: list[MasterImageCommandArgument] = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Analysis:
         return self._create_resource(
             Analysis,
@@ -615,20 +696,35 @@ class CoreClient(BaseClient):
                 image_command_arguments=image_command_arguments,
             ),
             "analyses",
+            auth=auth,
         )
 
-    def delete_analysis(self, analysis_id: Analysis | uuid.UUID | str):
-        self._delete_resource("analyses", analysis_id)
+    def delete_analysis(self, analysis_id: Analysis | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("analyses", analysis_id, auth=auth)
 
-    def get_analyses(self, **params: te.Unpack[GetKwargs]) -> list[Analysis]:
-        return self._get_all_resources(Analysis, "analyses", include=get_includable_names(Analysis), **params)
+    def get_analyses(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[Analysis]:
+        return self._get_all_resources(
+            Analysis, "analyses", include=get_includable_names(Analysis), auth=auth, **params
+        )
 
-    def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> list[Analysis]:
-        return self._find_all_resources(Analysis, "analyses", include=get_includable_names(Analysis), **params)
+    def find_analyses(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Analysis]:
+        return self._find_all_resources(
+            Analysis, "analyses", include=get_includable_names(Analysis), auth=auth, **params
+        )
 
-    def get_analysis(self, analysis_id: Analysis | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Analysis | None:
+    def get_analysis(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Analysis | None:
         return self._get_single_resource(
-            Analysis, "analyses", analysis_id, include=get_includable_names(Analysis), **params
+            Analysis, "analyses", analysis_id, include=get_includable_names(Analysis), auth=auth, **params
         )
 
     def update_analysis(
@@ -639,6 +735,8 @@ class CoreClient(BaseClient):
         description: str | None | UNSET_T = UNSET,
         master_image_id: MasterImage | uuid.UUID | str | None | UNSET_T = UNSET,
         image_command_arguments: list[MasterImageCommandArgument] | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Analysis:
         return self._update_resource(
             Analysis,
@@ -651,10 +749,21 @@ class CoreClient(BaseClient):
             ),
             "analyses",
             analysis_id,
+            auth=auth,
         )
 
-    def send_analysis_command(self, analysis_id: Analysis | uuid.UUID | str, command: AnalysisCommand) -> Analysis:
-        r = self._client.post(f"analyses/{obtain_uuid_from(analysis_id)}/command", json={"command": command})
+    def send_analysis_command(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        command: AnalysisCommand,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ) -> Analysis:
+        r = self._client.post(
+            f"analyses/{obtain_uuid_from(analysis_id)}/command",
+            json={"command": command},
+            auth=resolve_request_auth(auth),
+        )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
@@ -662,16 +771,23 @@ class CoreClient(BaseClient):
         return Analysis(**r.json())
 
     def create_analysis_node(
-        self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        node_id: Node | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> AnalysisNode:
         return self._create_resource(
             AnalysisNode,
             CreateAnalysisNode(analysis_id=analysis_id, node_id=node_id),
             "analysis-nodes",
+            auth=auth,
         )
 
-    def delete_analysis_node(self, analysis_node_id: AnalysisNode | uuid.UUID | str):
-        self._delete_resource("analysis-nodes", analysis_node_id)
+    def delete_analysis_node(
+        self, analysis_node_id: AnalysisNode | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("analysis-nodes", analysis_node_id, auth=auth)
 
     def update_analysis_node(
         self,
@@ -680,6 +796,8 @@ class CoreClient(BaseClient):
         approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET,
         execution_status: ProcessStatus | None | UNSET_T = UNSET,
         execution_progress: int | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> AnalysisNode:
         return self._update_resource(
             AnalysisNode,
@@ -691,23 +809,37 @@ class CoreClient(BaseClient):
             ),
             "analysis-nodes",
             analysis_node_id,
+            auth=auth,
         )
 
     def get_analysis_node(
-        self, analysis_node_id: AnalysisNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        analysis_node_id: AnalysisNode | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> AnalysisNode | None:
         return self._get_single_resource(
-            AnalysisNode, "analysis-nodes", analysis_node_id, include=get_includable_names(AnalysisNode), **params
+            AnalysisNode,
+            "analysis-nodes",
+            analysis_node_id,
+            include=get_includable_names(AnalysisNode),
+            auth=auth,
+            **params,
         )
 
-    def get_analysis_nodes(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisNode]:
+    def get_analysis_nodes(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[AnalysisNode]:
         return self._get_all_resources(
-            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), **params
+            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), auth=auth, **params
         )
 
-    def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisNode]:
+    def find_analysis_nodes(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[AnalysisNode]:
         return self._find_all_resources(
-            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), **params
+            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), auth=auth, **params
         )
 
     def create_analysis_node_log(
@@ -718,6 +850,8 @@ class CoreClient(BaseClient):
         message: str,
         status: str = None,
         code: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Log:
         return self._create_resource(
             Log,
@@ -731,27 +865,39 @@ class CoreClient(BaseClient):
             ),
             "analysis-node-logs",
             expected_code=httpx.codes.ACCEPTED.value,
+            auth=auth,
         )
 
-    def delete_analysis_node_logs(self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str):
+    def delete_analysis_node_logs(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        node_id: Node | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ):
         r = self._client.delete(
             "/analysis-node-logs",
             params=build_filter_params(
                 {"analysis_id": str(obtain_uuid_from(analysis_id)), "node_id": str(obtain_uuid_from(node_id))}
             ),
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
 
-    def find_analysis_node_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[Log]:
-        return self._find_all_resources(Log, "analysis-node-logs", **params)
+    def find_analysis_node_logs(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Log]:
+        return self._find_all_resources(Log, "analysis-node-logs", auth=auth, **params)
 
     def create_analysis_bucket(
         self,
         bucket_type: AnalysisBucketType,
         bucket_id: Bucket | uuid.UUID | str,
         analysis_id: Analysis | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> AnalysisBucket:
         return self._create_resource(
             AnalysisBucket,
@@ -761,55 +907,89 @@ class CoreClient(BaseClient):
                 analysis_id=analysis_id,
             ),
             "analysis-buckets",
+            auth=auth,
         )
 
-    def delete_analysis_bucket(self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str):
-        self._delete_resource("analysis-buckets", analysis_bucket_id)
+    def delete_analysis_bucket(
+        self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("analysis-buckets", analysis_bucket_id, auth=auth)
 
-    def get_analysis_buckets(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucket]:
+    def get_analysis_buckets(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[AnalysisBucket]:
         return self._get_all_resources(
-            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), **params
+            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), auth=auth, **params
         )
 
-    def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucket]:
+    def find_analysis_buckets(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[AnalysisBucket]:
         return self._find_all_resources(
-            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), **params
+            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), auth=auth, **params
         )
 
     def get_analysis_bucket(
-        self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        analysis_bucket_id: AnalysisBucket | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> AnalysisBucket | None:
         return self._get_single_resource(
             AnalysisBucket,
             "analysis-buckets",
             analysis_bucket_id,
             include=get_includable_names(AnalysisBucket),
+            auth=auth,
             **params,
         )
 
-    def get_analysis_bucket_files(self, **params: te.Unpack[GetKwargs]) -> list[AnalysisBucketFile]:
+    def get_analysis_bucket_files(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[AnalysisBucketFile]:
         return self._get_all_resources(
-            AnalysisBucketFile, "analysis-bucket-files", include=get_includable_names(AnalysisBucketFile), **params
+            AnalysisBucketFile,
+            "analysis-bucket-files",
+            include=get_includable_names(AnalysisBucketFile),
+            auth=auth,
+            **params,
         )
 
-    def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> list[AnalysisBucketFile]:
+    def find_analysis_bucket_files(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[AnalysisBucketFile]:
         return self._find_all_resources(
-            AnalysisBucketFile, "analysis-bucket-files", include=get_includable_names(AnalysisBucketFile), **params
+            AnalysisBucketFile,
+            "analysis-bucket-files",
+            include=get_includable_names(AnalysisBucketFile),
+            auth=auth,
+            **params,
         )
 
     def get_analysis_bucket_file(
-        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> AnalysisBucketFile | None:
         return self._get_single_resource(
             AnalysisBucketFile,
             "analysis-bucket-files",
             analysis_bucket_file_id,
             include=get_includable_names(AnalysisBucketFile),
+            auth=auth,
             **params,
         )
 
-    def delete_analysis_bucket_file(self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str):
-        self._delete_resource("analysis-bucket-files", analysis_bucket_file_id)
+    def delete_analysis_bucket_file(
+        self,
+        analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ):
+        self._delete_resource("analysis-bucket-files", analysis_bucket_file_id, auth=auth)
 
     def create_analysis_bucket_file(
         self,
@@ -818,6 +998,8 @@ class CoreClient(BaseClient):
         bucket_id: Bucket | uuid.UUID | str,
         analysis_bucket_id: AnalysisBucket | uuid.UUID | str,
         is_entrypoint: bool = False,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> AnalysisBucketFile:
         return self._create_resource(
             AnalysisBucketFile,
@@ -829,30 +1011,51 @@ class CoreClient(BaseClient):
                 root=is_entrypoint,
             ),
             "analysis-bucket-files",
+            auth=auth,
         )
 
     def update_analysis_bucket_file(
-        self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, is_entrypoint: bool | UNSET_T = UNSET
+        self,
+        analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str,
+        is_entrypoint: bool | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> AnalysisBucketFile:
         return self._update_resource(
             AnalysisBucketFile,
             UpdateAnalysisBucketFile(root=is_entrypoint),
             "analysis-bucket-files",
             analysis_bucket_file_id,
+            auth=auth,
         )
 
-    def create_registry(self, name: str, host: str, account_name: str = None, account_secret: str = None) -> Registry:
+    def create_registry(
+        self,
+        name: str,
+        host: str,
+        account_name: str = None,
+        account_secret: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ) -> Registry:
         return self._create_resource(
             Registry,
             CreateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
             "registries",
+            auth=auth,
         )
 
-    def get_registry(self, registry_id: Registry | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Registry | None:
-        return self._get_single_resource(Registry, "registries", registry_id, **params)
+    def get_registry(
+        self,
+        registry_id: Registry | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Registry | None:
+        return self._get_single_resource(Registry, "registries", registry_id, auth=auth, **params)
 
-    def delete_registry(self, registry_id: Registry | uuid.UUID | str):
-        self._delete_resource("registries", registry_id)
+    def delete_registry(self, registry_id: Registry | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("registries", registry_id, auth=auth)
 
     def update_registry(
         self,
@@ -861,23 +1064,38 @@ class CoreClient(BaseClient):
         host: str | UNSET_T = UNSET,
         account_name: str | None | UNSET_T = UNSET,
         account_secret: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Registry:
         return self._update_resource(
             Registry,
             UpdateRegistry(name=name, host=host, account_name=account_name, account_secret=account_secret),
             "registries",
             registry_id,
+            auth=auth,
         )
 
-    def get_registries(self, **params: te.Unpack[GetKwargs]) -> list[Registry]:
-        return self._get_all_resources(Registry, "registries", **params)
+    def get_registries(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[Registry]:
+        return self._get_all_resources(Registry, "registries", auth=auth, **params)
 
-    def find_registries(self, **params: te.Unpack[FindAllKwargs]) -> list[Registry]:
-        return self._find_all_resources(Registry, "registries", **params)
+    def find_registries(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Registry]:
+        return self._find_all_resources(Registry, "registries", auth=auth, **params)
 
-    def send_registry_command(self, registry_id: Registry | uuid.UUID | str, command: RegistryCommand):
+    def send_registry_command(
+        self,
+        registry_id: Registry | uuid.UUID | str,
+        command: RegistryCommand,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ):
         r = self._client.post(
-            "services/registry/command", json={"command": command, "id": str(obtain_uuid_from(registry_id))}
+            "services/registry/command",
+            json={"command": command, "id": str(obtain_uuid_from(registry_id))},
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
@@ -891,6 +1109,8 @@ class CoreClient(BaseClient):
         external_name: str,
         account_name: str = None,
         account_secret: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> RegistryProject:
         return self._create_resource(
             RegistryProject,
@@ -903,21 +1123,29 @@ class CoreClient(BaseClient):
                 account_secret=account_secret,
             ),
             "registry-projects",
+            auth=auth,
         )
 
     def get_registry_project(
-        self, registry_project_id: RegistryProject | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        registry_project_id: RegistryProject | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> RegistryProject | None:
         return self._get_single_resource(
             RegistryProject,
             "registry-projects",
             registry_project_id,
             include=get_includable_names(RegistryProject),
+            auth=auth,
             **params,
         )
 
-    def delete_registry_project(self, registry_project_id: RegistryProject | uuid.UUID | str):
-        self._delete_resource("registry-projects", registry_project_id)
+    def delete_registry_project(
+        self, registry_project_id: RegistryProject | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("registry-projects", registry_project_id, auth=auth)
 
     def update_registry_project(
         self,
@@ -928,6 +1156,8 @@ class CoreClient(BaseClient):
         external_name: str | UNSET_T = UNSET,
         account_name: str | None | UNSET_T = UNSET,
         account_secret: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> RegistryProject:
         return self._update_resource(
             RegistryProject,
@@ -941,32 +1171,44 @@ class CoreClient(BaseClient):
             ),
             "registry-projects",
             registry_project_id,
+            auth=auth,
         )
 
-    def get_registry_projects(self, **params: te.Unpack[GetKwargs]) -> list[RegistryProject]:
+    def get_registry_projects(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[RegistryProject]:
         return self._get_all_resources(
             RegistryProject,
             "registry-projects",
             include=get_includable_names(RegistryProject),
+            auth=auth,
             **params,
         )
 
-    def find_registry_projects(self, **params: te.Unpack[FindAllKwargs]) -> list[RegistryProject]:
+    def find_registry_projects(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[RegistryProject]:
         return self._find_all_resources(
             RegistryProject,
             "registry-projects",
             include=get_includable_names(RegistryProject),
+            auth=auth,
             **params,
         )
 
-    def delete_analysis_logs(self, analysis_id: Analysis | uuid.UUID | str):
+    def delete_analysis_logs(
+        self, analysis_id: Analysis | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
         r = self._client.delete(
             "/analysis-logs",
             params=build_filter_params({"analysis_id": str(obtain_uuid_from(analysis_id))}),
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != httpx.codes.ACCEPTED.value:
             raise new_hub_api_error_from_response(r)
 
-    def find_analysis_logs(self, **params: te.Unpack[FindAllKwargs]) -> list[Log]:
-        return self._find_all_resources(Log, "analysis-logs", **params)
+    def find_analysis_logs(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Log]:
+        return self._find_all_resources(Log, "analysis-logs", auth=auth, **params)

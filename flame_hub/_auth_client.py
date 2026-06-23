@@ -16,6 +16,8 @@ from flame_hub._base_client import (
     get_includable_names,
     UNSET,
     UNSET_T,
+    RequestAuthArg,
+    USE_CLIENT_DEFAULT,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 from flame_hub._auth_flows import ClientAuth, PasswordAuth
@@ -298,13 +300,17 @@ class AuthClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def get_realms(self, **params: te.Unpack[GetKwargs]) -> list[Realm]:
-        return self._get_all_resources(Realm, "realms", **params)
+    def get_realms(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[Realm]:
+        return self._get_all_resources(Realm, "realms", auth=auth, **params)
 
-    def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> list[Realm]:
-        return self._find_all_resources(Realm, "realms", **params)
+    def find_realms(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Realm]:
+        return self._find_all_resources(Realm, "realms", auth=auth, **params)
 
-    def create_realm(self, name: str, display_name: str = None, description: str = None) -> Realm:
+    def create_realm(
+        self, name: str, display_name: str = None, description: str = None, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ) -> Realm:
         return self._create_resource(
             Realm,
             CreateRealm(
@@ -313,13 +319,20 @@ class AuthClient(BaseClient):
                 description=description,
             ),
             "realms",
+            auth=auth,
         )
 
-    def delete_realm(self, realm_id: Realm | uuid.UUID | str):
-        self._delete_resource("realms", realm_id)
+    def delete_realm(self, realm_id: Realm | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("realms", realm_id, auth=auth)
 
-    def get_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Realm | None:
-        return self._get_single_resource(Realm, "realms", realm_id, **params)
+    def get_realm(
+        self,
+        realm_id: Realm | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Realm | None:
+        return self._get_single_resource(Realm, "realms", realm_id, auth=auth, **params)
 
     def update_realm(
         self,
@@ -327,6 +340,8 @@ class AuthClient(BaseClient):
         name: str | UNSET_T = UNSET,
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Realm:
         return self._update_resource(
             Realm,
@@ -337,22 +352,38 @@ class AuthClient(BaseClient):
             ),
             "realms",
             realm_id,
+            auth=auth,
         )
 
     def create_robot(
-        self, name: str, realm_id: Realm | str | uuid.UUID, secret: str, display_name: str = None
+        self,
+        name: str,
+        realm_id: Realm | str | uuid.UUID,
+        secret: str,
+        display_name: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Robot:
         return self._create_resource(
             Robot,
             CreateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
             "robots",
+            auth=auth,
         )
 
-    def delete_robot(self, robot_id: Robot | str | uuid.UUID):
-        self._delete_resource("robots", robot_id)
+    def delete_robot(self, robot_id: Robot | str | uuid.UUID, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("robots", robot_id, auth=auth)
 
-    def get_robot(self, robot_id: Robot | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Robot | None:
-        return self._get_single_resource(Robot, "robots", robot_id, include=get_includable_names(Robot), **params)
+    def get_robot(
+        self,
+        robot_id: Robot | str | uuid.UUID,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Robot | None:
+        return self._get_single_resource(
+            Robot, "robots", robot_id, include=get_includable_names(Robot), auth=auth, **params
+        )
 
     def update_robot(
         self,
@@ -361,19 +392,24 @@ class AuthClient(BaseClient):
         display_name: str | None | UNSET_T = UNSET,
         realm_id: Realm | str | uuid.UUID | UNSET_T = UNSET,
         secret: str | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Robot:
         return self._update_resource(
             Robot,
             UpdateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
             "robots",
             robot_id,
+            auth=auth,
         )
 
-    def get_robots(self, **params: te.Unpack[GetKwargs]) -> list[Robot]:
-        return self._get_all_resources(Robot, "robots", include=get_includable_names(Robot), **params)
+    def get_robots(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[Robot]:
+        return self._get_all_resources(Robot, "robots", include=get_includable_names(Robot), auth=auth, **params)
 
-    def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", include=get_includable_names(Robot), **params)
+    def find_robots(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Robot]:
+        return self._find_all_resources(Robot, "robots", include=get_includable_names(Robot), auth=auth, **params)
 
     def create_permission(
         self,
@@ -381,6 +417,8 @@ class AuthClient(BaseClient):
         display_name: str = None,
         description: str = None,
         realm_id: Realm | uuid.UUID | str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Permission:
         return self._create_resource(
             Permission,
@@ -392,17 +430,24 @@ class AuthClient(BaseClient):
                 policy_id=None,  # TODO: add policies when hub implements them
             ),
             "permissions",
+            auth=auth,
         )
 
     def get_permission(
-        self, permission_id: Permission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        permission_id: Permission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> Permission | None:
         return self._get_single_resource(
-            Permission, "permissions", permission_id, include=get_includable_names(Permission), **params
+            Permission, "permissions", permission_id, include=get_includable_names(Permission), auth=auth, **params
         )
 
-    def delete_permission(self, permission_id: Permission | uuid.UUID | str):
-        self._delete_resource("permissions", permission_id)
+    def delete_permission(
+        self, permission_id: Permission | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("permissions", permission_id, auth=auth)
 
     def update_permission(
         self,
@@ -411,32 +456,54 @@ class AuthClient(BaseClient):
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
         realm_id: Realm | uuid.UUID | str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Permission:
         return self._update_resource(
             Permission,
             UpdatePermission(name=name, display_name=display_name, description=description, realm_id=realm_id),
             "permissions",
             permission_id,
+            auth=auth,
         )
 
-    def get_permissions(self, **params: te.Unpack[GetKwargs]) -> list[Permission]:
-        return self._get_all_resources(Permission, "permissions", include=get_includable_names(Permission), **params)
+    def get_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[Permission]:
+        return self._get_all_resources(
+            Permission, "permissions", include=get_includable_names(Permission), auth=auth, **params
+        )
 
-    def find_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[Permission]:
-        return self._find_all_resources(Permission, "permissions", include=get_includable_names(Permission), **params)
+    def find_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Permission]:
+        return self._find_all_resources(
+            Permission, "permissions", include=get_includable_names(Permission), auth=auth, **params
+        )
 
-    def create_role(self, name: str, display_name: str = None, description: str = None) -> Role:
+    def create_role(
+        self, name: str, display_name: str = None, description: str = None, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ) -> Role:
         return self._create_resource(
             Role,
             CreateRole(name=name, display_name=display_name, description=description),
             "roles",
+            auth=auth,
         )
 
-    def get_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Role | None:
-        return self._get_single_resource(Role, "roles", role_id, include=get_includable_names(Role), **params)
+    def get_role(
+        self,
+        role_id: Role | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Role | None:
+        return self._get_single_resource(
+            Role, "roles", role_id, include=get_includable_names(Role), auth=auth, **params
+        )
 
-    def delete_role(self, role_id: Role | uuid.UUID | str):
-        self._delete_resource("roles", role_id)
+    def delete_role(self, role_id: Role | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("roles", role_id, auth=auth)
 
     def update_role(
         self,
@@ -444,56 +511,79 @@ class AuthClient(BaseClient):
         name: str | UNSET_T = UNSET,
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Role:
         return self._update_resource(
             Role,
             UpdateRole(name=name, display_name=display_name, description=description),
             "roles",
             role_id,
+            auth=auth,
         )
 
-    def get_roles(self, **params: te.Unpack[GetKwargs]) -> list[Role]:
-        return self._get_all_resources(Role, "roles", include=get_includable_names(Role), **params)
+    def get_roles(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[Role]:
+        return self._get_all_resources(Role, "roles", include=get_includable_names(Role), auth=auth, **params)
 
-    def find_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[Role]:
-        return self._find_all_resources(Role, "roles", include=get_includable_names(Role), **params)
+    def find_roles(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Role]:
+        return self._find_all_resources(Role, "roles", include=get_includable_names(Role), auth=auth, **params)
 
     def create_role_permission(
-        self, role_id: Role | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
+        self,
+        role_id: Role | uuid.UUID | str,
+        permission_id: Permission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> RolePermission:
         return self._create_resource(
             RolePermission,
             CreateRolePermission(role_id=role_id, permission_id=permission_id),
             "role-permissions",
+            auth=auth,
         )
 
     def get_role_permission(
-        self, role_permission_id: RolePermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        role_permission_id: RolePermission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> RolePermission | None:
         return self._get_single_resource(
             RolePermission,
             "role-permissions",
             role_permission_id,
             include=get_includable_names(RolePermission),
+            auth=auth,
             **params,
         )
 
-    def delete_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str):
-        self._delete_resource("role-permissions", role_permission_id)
+    def delete_role_permission(
+        self, role_permission_id: RolePermission | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("role-permissions", role_permission_id, auth=auth)
 
-    def get_role_permissions(self, **params: te.Unpack[GetKwargs]) -> list[RolePermission]:
+    def get_role_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[RolePermission]:
         return self._get_all_resources(
             RolePermission,
             "role-permissions",
             include=get_includable_names(RolePermission),
+            auth=auth,
             **params,
         )
 
-    def find_role_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RolePermission]:
+    def find_role_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[RolePermission]:
         return self._find_all_resources(
             RolePermission,
             "role-permissions",
             include=get_includable_names(RolePermission),
+            auth=auth,
             **params,
         )
 
@@ -506,6 +596,8 @@ class AuthClient(BaseClient):
         name_locked: bool = False,
         first_name: str = None,
         last_name: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> User:
         return self._create_resource(
             User,
@@ -519,13 +611,22 @@ class AuthClient(BaseClient):
                 last_name=last_name,
             ),
             "users",
+            auth=auth,
         )
 
-    def get_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> User | None:
-        return self._get_single_resource(User, "users", user_id, include=get_includable_names(User), **params)
+    def get_user(
+        self,
+        user_id: User | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> User | None:
+        return self._get_single_resource(
+            User, "users", user_id, include=get_includable_names(User), auth=auth, **params
+        )
 
-    def delete_user(self, user_id: User | uuid.UUID | str):
-        self._delete_resource("users", user_id)
+    def delete_user(self, user_id: User | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("users", user_id, auth=auth)
 
     def update_user(
         self,
@@ -537,6 +638,8 @@ class AuthClient(BaseClient):
         name_locked: bool | UNSET_T = UNSET,
         first_name: str | None | UNSET_T = UNSET,
         last_name: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> User:
         return self._update_resource(
             User,
@@ -551,139 +654,216 @@ class AuthClient(BaseClient):
             ),
             "users",
             user_id,
+            auth=auth,
         )
 
-    def get_users(self, **params: te.Unpack[GetKwargs]) -> list[User]:
-        return self._get_all_resources(User, "users", include=get_includable_names(User), **params)
+    def get_users(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[User]:
+        return self._get_all_resources(User, "users", include=get_includable_names(User), auth=auth, **params)
 
-    def find_users(self, **params: te.Unpack[FindAllKwargs]) -> list[User]:
-        return self._find_all_resources(User, "users", include=get_includable_names(User), **params)
+    def find_users(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[User]:
+        return self._find_all_resources(User, "users", include=get_includable_names(User), auth=auth, **params)
 
     def create_user_permission(
         self,
         user_id: User | uuid.UUID | str,
         permission_id: Permission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> UserPermission:
         return self._create_resource(
             UserPermission,
             CreateUserPermission(user_id=user_id, permission_id=permission_id),
             "user-permissions",
+            auth=auth,
         )
 
     def get_user_permission(
-        self, user_permission_id: UserPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        user_permission_id: UserPermission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> UserPermission | None:
         return self._get_single_resource(
             UserPermission,
             "user-permissions",
             user_permission_id,
             include=get_includable_names(UserPermission),
+            auth=auth,
             **params,
         )
 
-    def delete_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str):
-        self._delete_resource("user-permissions", user_permission_id)
+    def delete_user_permission(
+        self, user_permission_id: UserPermission | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("user-permissions", user_permission_id, auth=auth)
 
-    def get_user_permissions(self, **params: te.Unpack[GetKwargs]) -> list[UserPermission]:
+    def get_user_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[UserPermission]:
         return self._get_all_resources(
             UserPermission,
             "user-permissions",
             include=get_includable_names(UserPermission),
+            auth=auth,
             **params,
         )
 
-    def find_user_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[UserPermission]:
+    def find_user_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[UserPermission]:
         return self._find_all_resources(
             UserPermission,
             "user-permissions",
             include=get_includable_names(UserPermission),
+            auth=auth,
             **params,
         )
 
-    def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
+    def create_user_role(
+        self,
+        user_id: User | uuid.UUID | str,
+        role_id: Role | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ) -> UserRole:
         return self._create_resource(
             UserRole,
             CreateUserRole(user_id=user_id, role_id=role_id),
             "user-roles",
+            auth=auth,
         )
 
     def get_user_role(
-        self, user_role_id: UserRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        user_role_id: UserRole | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> UserRole | None:
         return self._get_single_resource(
-            UserRole, "user-roles", user_role_id, include=get_includable_names(UserRole), **params
+            UserRole, "user-roles", user_role_id, include=get_includable_names(UserRole), auth=auth, **params
         )
 
-    def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str):
-        self._delete_resource("user-roles", user_role_id)
+    def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("user-roles", user_role_id, auth=auth)
 
-    def get_user_roles(self, **params: te.Unpack[GetKwargs]) -> list[UserRole]:
-        return self._get_all_resources(UserRole, "user-roles", include=get_includable_names(UserRole), **params)
+    def get_user_roles(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[UserRole]:
+        return self._get_all_resources(
+            UserRole, "user-roles", include=get_includable_names(UserRole), auth=auth, **params
+        )
 
-    def find_user_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[UserRole]:
-        return self._find_all_resources(UserRole, "user-roles", include=get_includable_names(UserRole), **params)
+    def find_user_roles(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[UserRole]:
+        return self._find_all_resources(
+            UserRole, "user-roles", include=get_includable_names(UserRole), auth=auth, **params
+        )
 
     def create_robot_permission(
-        self, robot_id: Robot | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
+        self,
+        robot_id: Robot | uuid.UUID | str,
+        permission_id: Permission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> RobotPermission:
         return self._create_resource(
             RobotPermission,
             CreateRobotPermission(robot_id=robot_id, permission_id=permission_id),
             "robot-permissions",
+            auth=auth,
         )
 
     def get_robot_permission(
-        self, robot_permission_id: RobotPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        robot_permission_id: RobotPermission | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> RobotPermission | None:
         return self._get_single_resource(
             RobotPermission,
             "robot-permissions",
             robot_permission_id,
             include=get_includable_names(RobotPermission),
+            auth=auth,
             **params,
         )
 
-    def delete_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str):
-        self._delete_resource("robot-permissions", robot_permission_id)
+    def delete_robot_permission(
+        self, robot_permission_id: RobotPermission | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("robot-permissions", robot_permission_id, auth=auth)
 
-    def get_robot_permissions(self, **params: te.Unpack[GetKwargs]) -> list[RobotPermission]:
+    def get_robot_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[RobotPermission]:
         return self._get_all_resources(
             RobotPermission,
             "robot-permissions",
             include=get_includable_names(RobotPermission),
+            auth=auth,
             **params,
         )
 
-    def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
+    def find_robot_permissions(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[RobotPermission]:
         return self._find_all_resources(
             RobotPermission,
             "robot-permissions",
             include=get_includable_names(RobotPermission),
+            auth=auth,
             **params,
         )
 
-    def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
+    def create_robot_role(
+        self,
+        robot_id: Robot | uuid.UUID | str,
+        role_id: Role | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ) -> RobotRole:
         return self._create_resource(
             RobotRole,
             CreateRobotRole(robot_id=robot_id, role_id=role_id),
             "robot-roles",
+            auth=auth,
         )
 
     def get_robot_role(
-        self, robot_role_id: RobotRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
+        self,
+        robot_role_id: RobotRole | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
     ) -> RobotRole | None:
         return self._get_single_resource(
-            RobotRole, "robot-roles", robot_role_id, include=get_includable_names(RobotRole), **params
+            RobotRole, "robot-roles", robot_role_id, include=get_includable_names(RobotRole), auth=auth, **params
         )
 
-    def delete_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str):
-        self._delete_resource("robot-roles", robot_role_id)
+    def delete_robot_role(
+        self, robot_role_id: RobotRole | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
+    ):
+        self._delete_resource("robot-roles", robot_role_id, auth=auth)
 
-    def get_robot_roles(self, **params: te.Unpack[GetKwargs]) -> list[RobotRole]:
-        return self._get_all_resources(RobotRole, "robot-roles", include=get_includable_names(RobotRole), **params)
+    def get_robot_roles(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]
+    ) -> list[RobotRole]:
+        return self._get_all_resources(
+            RobotRole, "robot-roles", include=get_includable_names(RobotRole), auth=auth, **params
+        )
 
-    def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
-        return self._find_all_resources(RobotRole, "robot-roles", include=get_includable_names(RobotRole), **params)
+    def find_robot_roles(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[RobotRole]:
+        return self._find_all_resources(
+            RobotRole, "robot-roles", include=get_includable_names(RobotRole), auth=auth, **params
+        )
 
     def create_client(
         self,
@@ -697,6 +877,8 @@ class AuthClient(BaseClient):
         is_confidential: bool = True,
         secret_hashed: bool = False,
         grant_types: str = None,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Client:
         return self._create_resource(
             Client,
@@ -713,19 +895,30 @@ class AuthClient(BaseClient):
                 grant_types=grant_types,
             ),
             "clients",
+            auth=auth,
         )
 
-    def delete_client(self, client_id: Client | uuid.UUID | str):
-        self._delete_resource("clients", client_id)
+    def delete_client(self, client_id: Client | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT):
+        self._delete_resource("clients", client_id, auth=auth)
 
-    def get_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Client | None:
-        return self._get_single_resource(Client, "clients", client_id, include=get_includable_names(Client), **params)
+    def get_client(
+        self,
+        client_id: Client | uuid.UUID | str,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+        **params: te.Unpack[GetKwargs],
+    ) -> Client | None:
+        return self._get_single_resource(
+            Client, "clients", client_id, include=get_includable_names(Client), auth=auth, **params
+        )
 
-    def get_clients(self, **params: te.Unpack[GetKwargs]) -> list[Client]:
-        return self._get_all_resources(Client, "clients", include=get_includable_names(Client), **params)
+    def get_clients(self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[GetKwargs]) -> list[Client]:
+        return self._get_all_resources(Client, "clients", include=get_includable_names(Client), auth=auth, **params)
 
-    def find_clients(self, **params: te.Unpack[FindAllKwargs]) -> list[Client]:
-        return self._find_all_resources(Client, "clients", include=get_includable_names(Client), **params)
+    def find_clients(
+        self, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT, **params: te.Unpack[FindAllKwargs]
+    ) -> list[Client]:
+        return self._find_all_resources(Client, "clients", include=get_includable_names(Client), auth=auth, **params)
 
     def update_client(
         self,
@@ -739,6 +932,8 @@ class AuthClient(BaseClient):
         is_confidential: bool | UNSET_T = UNSET,
         secret_hashed: bool | UNSET_T = UNSET,
         grant_types: str | None | UNSET_T = UNSET,
+        *,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> Client:
         return self._update_resource(
             Client,
@@ -755,4 +950,5 @@ class AuthClient(BaseClient):
             ),
             "clients",
             client_id,
+            auth=auth,
         )

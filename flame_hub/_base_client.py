@@ -6,10 +6,86 @@ from enum import Enum
 
 import httpx
 import typing_extensions as te
+from httpx._client import USE_CLIENT_DEFAULT, UseClientDefault
 from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
 from flame_hub._exceptions import new_hub_api_error_from_response
 from flame_hub._auth_flows import PasswordAuth, ClientAuth
+
+
+RequestAuth = httpx.Auth | tuple[str | bytes, str | bytes] | str
+"""Authentication override accepted for a single request.
+
+One of:
+
+* an :py:class:`httpx.Auth` instance (e.g. :py:class:`.PasswordAuth`, :py:class:`.ClientAuth`),
+* a ``(username, password)`` tuple for HTTP basic authentication, or
+* a string which is sent verbatim as the value of the ``Authorization`` header.
+
+See Also
+--------
+:py:data:`.RequestAuthArg`, :py:func:`.resolve_request_auth`
+"""
+
+RequestAuthArg = RequestAuth | None | UseClientDefault
+"""Type of the ``auth`` parameter accepted by client methods.
+
+In addition to the override forms described by :py:type:`.RequestAuth`, two sentinels are accepted:
+
+* :py:data:`httpx.USE_CLIENT_DEFAULT` (the default) keeps the authentication bound to the client, and
+* :any:`None` disables authentication for the request, i.e. no ``Authorization`` header is sent.
+
+See Also
+--------
+:py:type:`.RequestAuth`, :py:func:`.resolve_request_auth`
+"""
+
+
+class _StaticAuthorization(httpx.Auth):
+    """Authentication flow which sets a fixed ``Authorization`` header on every request.
+
+    This is used to support passing a raw header value (e.g. ``"Bearer <token>"``) as a per-request authentication
+    override.
+
+    See Also
+    --------
+    :py:func:`.resolve_request_auth`, :py:type:`.RequestAuth`
+    """
+
+    def __init__(self, authorization: str):
+        self._authorization = authorization
+
+    def auth_flow(self, request):
+        request.headers["Authorization"] = self._authorization
+        yield request
+
+
+def resolve_request_auth(auth: RequestAuthArg) -> RequestAuthArg:
+    """Translate a per-request ``auth`` argument into a value understood by ``httpx``.
+
+    A string is wrapped in :py:class:`._StaticAuthorization` so that it is sent verbatim as the ``Authorization``
+    header. Every other value is passed through unchanged, relying on ``httpx`` semantics:
+    :py:data:`httpx.USE_CLIENT_DEFAULT` keeps the client's bound authentication, :any:`None` disables authentication for
+    the request, and an :py:class:`httpx.Auth` (or ``(username, password)`` tuple) overrides it.
+
+    Parameters
+    ----------
+    auth : :py:data:`.RequestAuthArg`
+        The per-request authentication argument.
+
+    Returns
+    -------
+    :py:data:`.RequestAuthArg`
+        A value suitable to pass as the ``auth`` argument of an ``httpx`` request.
+
+    See Also
+    --------
+    :py:type:`.RequestAuth`, :py:data:`.RequestAuthArg`, :py:class:`._StaticAuthorization`
+    """
+    if isinstance(auth, str):
+        return _StaticAuthorization(auth)
+
+    return auth
 
 
 class UNSET(BaseModel):
@@ -416,6 +492,7 @@ class BaseClient(object):
         *path: str,
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
         **params: te.Unpack[GetKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
@@ -432,7 +509,9 @@ class BaseClient(object):
         Default pagination parameters are applied as explained in the return section of :py:meth:`_find_all_resources`.
         """
 
-        return self._find_all_resources(resource_type, *path, include=include, expected_code=expected_code, **params)
+        return self._find_all_resources(
+            resource_type, *path, include=include, expected_code=expected_code, auth=auth, **params
+        )
 
     def _find_all_resources(
         self,
@@ -440,6 +519,7 @@ class BaseClient(object):
         *path: str,
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
         **params: te.Unpack[FindAllKwargs],
     ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
@@ -463,6 +543,9 @@ class BaseClient(object):
             :doc:`model specifications <models_api>` which resources can be included in other resources.
         expected_code : :py:class:`int`, optional
             The expected status code of the response from the ``GET`` request. This defaults to ``200``.
+        auth : :py:data:`.RequestAuthArg`, optional
+            Override the authentication for this request. Defaults to :py:data:`httpx.USE_CLIENT_DEFAULT` so the
+            client's bound authentication is used.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.FindAllKwargs`]
             Further keyword arguments to define filtering, sorting and pagination conditions, adding optional fields
             to a response and returning meta information.
@@ -502,7 +585,7 @@ class BaseClient(object):
             | build_field_params(field_params)
         )
 
-        r = self._client.get("/".join(path), params=request_params)
+        r = self._client.get("/".join(path), params=request_params, auth=resolve_request_auth(auth))
 
         if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
@@ -520,6 +603,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str,
         expected_code: int = httpx.codes.CREATED.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> ResourceT:
         """Create a resource of a certain type at the specified path.
 
@@ -540,6 +624,9 @@ class BaseClient(object):
             Path to the endpoint where the resource should be created.
         expected_code : :py:class:`int`, optional
             The expected status code of the response from the ``POST`` request. This defaults to ``201``.
+        auth : :py:data:`.RequestAuthArg`, optional
+            Override the authentication for this request. Defaults to :py:data:`httpx.USE_CLIENT_DEFAULT` so the
+            client's bound authentication is used.
 
         Returns
         -------
@@ -556,6 +643,7 @@ class BaseClient(object):
         r = self._client.post(
             "/".join(path),
             json=resource.model_dump(mode="json"),
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != expected_code:
@@ -569,6 +657,7 @@ class BaseClient(object):
         *path: str | UuidIdentifiable,
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
         **params: te.Unpack[GetKwargs],
     ) -> ResourceT | None:
         """Get a single resource of a certain type at the specified path.
@@ -593,6 +682,9 @@ class BaseClient(object):
             :doc:`model specifications <models_api>` which resources can be included in other resources.
         expected_code : :py:class:`int`, optional
             The expected status code of the response from the ``GET`` request. This defaults to ``200``.
+        auth : :py:data:`.RequestAuthArg`, optional
+            Override the authentication for this request. Defaults to :py:data:`httpx.USE_CLIENT_DEFAULT` so the
+            client's bound authentication is used.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.GetKwargs`]
             Further keyword arguments for adding optional fields to a response and returning meta information.
 
@@ -621,7 +713,7 @@ class BaseClient(object):
 
         request_params = build_field_params(field_params) | build_include_params(include)
 
-        r = self._client.get("/".join(convert_path(path)), params=request_params)
+        r = self._client.get("/".join(convert_path(path)), params=request_params, auth=resolve_request_auth(auth))
 
         if r.status_code == httpx.codes.NOT_FOUND.value:
             return None
@@ -637,6 +729,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str | UuidIdentifiable,
         expected_code: int = httpx.codes.ACCEPTED.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path.
 
@@ -659,6 +752,9 @@ class BaseClient(object):
             ``id`` attribute.
         expected_code : :py:class:`int`, optional
             The expected status code of the response from the ``POST`` request. This defaults to ``202``.
+        auth : :py:data:`.RequestAuthArg`, optional
+            Override the authentication for this request. Defaults to :py:data:`httpx.USE_CLIENT_DEFAULT` so the
+            client's bound authentication is used.
 
         Returns
         -------
@@ -676,6 +772,7 @@ class BaseClient(object):
             "/".join(convert_path(path)),
             # Exclude defaults so that properties that are set to UNSET are excluded from update models.
             json=resource.model_dump(mode="json", exclude_defaults=True),
+            auth=resolve_request_auth(auth),
         )
 
         if r.status_code != expected_code:
@@ -683,7 +780,12 @@ class BaseClient(object):
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, *path: str | UuidIdentifiable, expected_code: int = httpx.codes.ACCEPTED.value) -> None:
+    def _delete_resource(
+        self,
+        *path: str | UuidIdentifiable,
+        expected_code: int = httpx.codes.ACCEPTED.value,
+        auth: RequestAuthArg = USE_CLIENT_DEFAULT,
+    ) -> None:
         """Delete a resource of a certain type at the specified path.
 
         Parameters
@@ -694,13 +796,16 @@ class BaseClient(object):
             ``id`` attribute.
         expected_code : :py:class:`int`, optional
             The expected status code of the response from the ``DELETE`` request. This defaults to ``202``.
+        auth : :py:data:`.RequestAuthArg`, optional
+            Override the authentication for this request. Defaults to :py:data:`httpx.USE_CLIENT_DEFAULT` so the
+            client's bound authentication is used.
 
         Raises
         ------
         :py:exc:`.HubAPIError`
             If the status code of the response does not match ``expected_code``.
         """
-        r = self._client.delete("/".join(convert_path(path)))
+        r = self._client.delete("/".join(convert_path(path)), auth=resolve_request_auth(auth))
 
         if r.status_code != expected_code:
             raise new_hub_api_error_from_response(r)
