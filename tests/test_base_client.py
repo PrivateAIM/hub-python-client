@@ -385,3 +385,21 @@ def test_public_write_method_forwards_auth(auth, expected):
 
     auth_client.delete_realm(uuid.uuid4(), auth=auth)
     assert recorder["authorization"] == expected
+
+
+@pytest.mark.parametrize("stream_method", ["stream_bucket_tarball", "stream_bucket_file"])
+def test_stream_raises_on_error_response(stream_method):
+    # An error response (e.g. caused by auth=None or an invalid override) must raise instead of being
+    # yielded as file content.
+    from flame_hub import StorageClient
+    from flame_hub import HubAPIError
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(httpx.codes.FORBIDDEN.value, json={})
+
+    probe_client = httpx.Client(base_url="http://testserver", transport=httpx.MockTransport(handler))
+    storage_client = StorageClient(client=probe_client)
+
+    with pytest.raises(HubAPIError):
+        # consume the generator so the request is actually performed
+        list(getattr(storage_client, stream_method)(uuid.uuid4(), auth=None))

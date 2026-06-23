@@ -119,6 +119,10 @@ class StorageClient(BaseClient):
         with self._client.stream(
             "GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream", auth=resolve_request_auth(auth)
         ) as r:
+            if r.status_code != httpx.codes.OK.value:
+                r.read()
+                raise new_hub_api_error_from_response(r)
+
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b
 
@@ -181,5 +185,9 @@ class StorageClient(BaseClient):
         with self._client.stream(
             "GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream", auth=resolve_request_auth(auth)
         ) as r:
+            if r.status_code != httpx.codes.OK.value:
+                r.read()
+                raise new_hub_api_error_from_response(r)
+
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b

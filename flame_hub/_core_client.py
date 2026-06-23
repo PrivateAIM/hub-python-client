@@ -876,7 +876,7 @@ class CoreClient(BaseClient):
         auth: RequestAuthArg = USE_CLIENT_DEFAULT,
     ):
         r = self._client.delete(
-            "/analysis-node-logs",
+            "analysis-node-logs",
             params=build_filter_params(
                 {"analysis_id": str(obtain_uuid_from(analysis_id)), "node_id": str(obtain_uuid_from(node_id))}
             ),
@@ -1200,7 +1200,7 @@ class CoreClient(BaseClient):
         self, analysis_id: Analysis | uuid.UUID | str, *, auth: RequestAuthArg = USE_CLIENT_DEFAULT
     ):
         r = self._client.delete(
-            "/analysis-logs",
+            "analysis-logs",
             params=build_filter_params({"analysis_id": str(obtain_uuid_from(analysis_id))}),
             auth=resolve_request_auth(auth),
         )
