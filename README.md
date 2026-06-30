@@ -106,5 +106,26 @@ core_client.delete_node(my_node)
 assert core_client.get_node(my_node.id) is None
 ```
 
+## Overriding authentication per request
+
+By default every request uses the authentication you passed to the client. Every client method also accepts a
+keyword-only `auth` argument to override authentication for that single request. It accepts either an `httpx.Auth`
+instance (such as another `PasswordAuth`/`ClientAuth`), a `(username, password)` tuple for HTTP basic authentication,
+or a string that is sent verbatim as the `Authorization` header.
+
+```python
+# use a raw header value for this request only
+core_client.get_nodes(auth="Bearer <token>")
+
+# or use a dedicated authenticator for this request only
+core_client.create_node(name="my-node", realm_id=master_realm, auth=other_auth)
+```
+
+The `auth` argument follows `httpx` conventions:
+
+- omit it (the default) to use the authentication bound to the client,
+- pass an override (`httpx.Auth`, `(username, password)` tuple or `Authorization` header string) to replace it, or
+- pass `auth=None` to send the request without any authentication.
+
 Note that not all method types are implemented for each resource. Check out the
 [documentation](https://privateaim.github.io/hub-python-client/) to see which methods are available.
