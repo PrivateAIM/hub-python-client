@@ -52,7 +52,7 @@ def test_robot_auth(auth_client, auth_base_url, master_realm):
 
 def test_client_auth(auth_client, auth_base_url, master_realm):
     client_secret = next_random_string(length=64)
-    client_resource = auth_client.create_client(name=next_random_string(), realm_id=master_realm, secret=client_secret)
+    client_resource = auth_client.create_client(name=next_random_string(), realmId=master_realm, secret=client_secret)
     client_id = str(client_resource.id)
 
     client_auth = ClientAuth(
