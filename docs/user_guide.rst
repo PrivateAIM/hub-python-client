@@ -296,12 +296,12 @@ the resource you are requesting.
     794f2375-f043-4789-bd0c-e5534e8deeaa
     {
       "name": "master",
-      "display_name": null,
+      "displayName": null,
       "description": null,
       "id": "794f2375-f043-4789-bd0c-e5534e8deeaa",
-      "built_in": true,
-      "created_at": "2025-05-12T09:44:08.284000Z",
-      "updated_at": "2025-05-12T09:44:08.284000Z"
+      "builtIn": true,
+      "createdAt": "2025-05-12T09:44:08.284000Z",
+      "updatedAt": "2025-05-12T09:44:08.284000Z"
     }
 
 Since the realm ID is present, we can use the ``realm`` property too. And just to be extremely sure, we verify that the
