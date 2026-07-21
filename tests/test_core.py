@@ -314,6 +314,26 @@ def test_get_node_registry_credentials(core_client, node, registry):
     assert credentials.account_secret == registry.account_secret
 
 
+def test_get_node_client_credentials(core_client, auth_client, node):
+    client = auth_client.get_client(client_id=node.client_id)
+    credentials = core_client.get_node_client_credentials(node_id=node.id)
+
+    assert credentials.id == client.id
+    assert credentials.name == client.name
+    assert credentials.display_name == client.display_name
+
+
+def test_update_node_client_credentials(core_client, node):
+    new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
+    new_credentials = core_client.update_node_client_credentials(
+        node_id=node.id, name=new_name, display_name=new_display_name, secret=new_secret
+    )
+
+    assert new_credentials.name == new_name
+    assert new_credentials.display_name == new_display_name
+    assert new_credentials.secret == new_secret
+
+
 def test_get_master_image(core_client, master_image):
     assert master_image == core_client.get_master_image(master_image.id)
 
@@ -488,6 +508,24 @@ def test_build_analysis(core_client, configured_analysis):
         assert analysis.build_status == "executed"
 
     assert_eventually(_wait_for_successful_build)
+
+
+def test_get_analysis_client_credentials(core_client, auth_client, analysis):
+    client = auth_client.get_client(client_id=analysis.client_id)
+    credentials = core_client.get_analysis_client_credentials(analysis_id=analysis.id)
+
+    assert credentials.id == client.id
+    assert credentials.name == client.name
+    assert credentials.display_name == client.display_name
+
+
+def test_update_analysis_client_credentials(core_client, analysis):
+    new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
+    new_credentials = core_client.update_analysis_client_credentials(
+        analysis_id=analysis.id, name=new_name, display_name=new_display_name, secret=new_secret
+    )
+
+    assert new_credentials.secret == new_secret
 
 
 def test_update_analysis_node(core_client, analysis_node):

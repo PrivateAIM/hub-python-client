@@ -125,6 +125,19 @@ class NodeRegistryCredentials(BaseModel):
     account_secret: str | None
 
 
+class ClientCredentials(BaseModel):
+    id: uuid.UUID
+    secret: str | None
+    name: str
+    display_name: str
+
+
+class UpdateClientCredentials(BaseModel):
+    secret: str | None | UNSET_T = UNSET
+    name: str | UNSET_T = UNSET
+    display_name: str | UNSET_T = UNSET
+
+
 class MasterImageGroup(BaseModel):
     id: uuid.UUID
     name: str
@@ -274,6 +287,7 @@ class Analysis(CreateAnalysis):
     registry: t.Annotated[Registry | None, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID
+    client_id: uuid.UUID
     project_id: uuid.UUID
     project: t.Annotated[Project, IsIncludable] = None
     master_image: t.Annotated[MasterImage | None, IsIncludable] = None
@@ -477,6 +491,41 @@ class CoreClient(BaseClient):
             "credentials",
         )
 
+    def get_node_client_credentials(self, node_id: Node | uuid.UUID | str) -> ClientCredentials | None:
+        """Returns the node's client credentials."""
+
+        return self._get_single_resource(
+            ClientCredentials,
+            "nodes",
+            node_id,
+            "client",
+            "credentials",
+        )
+
+    def update_node_client_credentials(
+        self,
+        node_id: Node | uuid.UUID | str,
+        secret: str | None | UNSET_T = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | UNSET_T = UNSET,
+    ) -> ClientCredentials:
+        """Update the node's client credentials. If ``secret`` is set to :any:`None`, then the Hub will create and set
+        a random secret."""
+
+        return self._update_resource(
+            ClientCredentials,
+            UpdateClientCredentials(
+                secret=secret,
+                name=name,
+                display_name=display_name,
+            ),
+            "nodes",
+            node_id,
+            "client",
+            "credentials",
+            expected_code=httpx.codes.OK.value,
+        )
+
     def get_master_image_groups(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageGroup]:
         return self._get_all_resources(MasterImageGroup, "master-image-groups", **params)
 
@@ -678,6 +727,41 @@ class CoreClient(BaseClient):
             raise new_hub_api_error_from_response(r)
 
         return Analysis(**r.json())
+
+    def get_analysis_client_credentials(self, analysis_id: Analysis | uuid.UUID | str) -> ClientCredentials | None:
+        """Returns the client credentials of the analysis."""
+
+        return self._get_single_resource(
+            ClientCredentials,
+            "analyses",
+            analysis_id,
+            "client",
+            "credentials",
+        )
+
+    def update_analysis_client_credentials(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        secret: str | None | UNSET_T = UNSET,
+        name: str | UNSET_T = UNSET,
+        display_name: str | UNSET_T = UNSET,
+    ) -> ClientCredentials:
+        """Update the client credentials of the analysis. If ``secret`` is set to :any:`None`, then the Hub will create
+        and set a random secret."""
+
+        return self._update_resource(
+            ClientCredentials,
+            UpdateClientCredentials(
+                secret=secret,
+                name=name,
+                display_name=display_name,
+            ),
+            "analyses",
+            analysis_id,
+            "client",
+            "credentials",
+            expected_code=httpx.codes.OK.value,
+        )
 
     def create_analysis_node(
         self, analysis_id: Analysis | uuid.UUID | str, node_id: Node | uuid.UUID | str
