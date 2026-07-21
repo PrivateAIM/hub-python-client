@@ -28,9 +28,12 @@ class UuidModel(t.Protocol[ResourceT]):
 
     id: uuid.UUID
 
+    def __str__(self) -> str:
+        return str(self.id)
+
 
 # union which encompasses all types where a UUID can be extracted from
-UuidIdentifiable = UuidModel | uuid.UUID | str
+UuidIdentifiable: t.TypeAlias = UuidModel | uuid.UUID | str
 
 
 def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
@@ -113,6 +116,10 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
     """Attribute which holds all retrieved resources as a list."""
     meta: ResourceListMeta
     """Attribute which holds meta information about the result and the requested resource type."""
+
+
+# Generic type alias for all get and find methods.
+ResourceListResult: t.TypeAlias = list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]
 
 
 class SortParams(te.TypedDict, total=False):
@@ -285,7 +292,7 @@ def build_page_params(page_params: PageParams | None = None, default_page_params
         page_params: PageParams = {}
 
     # overwrite default values with user-defined ones
-    page_params = default_page_params | page_params
+    page_params = {**default_page_params, **page_params}
 
     return {f"page[{k}]": v for k, v in page_params.items()}
 
@@ -332,7 +339,7 @@ def build_sort_params(sort_params: SortParams | None = None) -> dict:
         # property gets a "-" prepended if sorting in descending order
         param_sort_prefix = "-" if param_sort_order == "descending" else ""
         # construct the actual query params
-        query_params["sort"] = param_sort_prefix + param_sort_by
+        query_params["sort"] = f"{param_sort_prefix}{param_sort_by}"
 
     return query_params
 
@@ -417,7 +424,7 @@ class BaseClient(object):
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
-    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
+    ) -> ResourceListResult[ResourceT]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
 
         This method passes its arguments through to :py:meth:`_find_all_resources`. Check the documentation of that
@@ -441,7 +448,7 @@ class BaseClient(object):
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[FindAllKwargs],
-    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
+    ) -> ResourceListResult[ResourceT]:
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
 
         This method accesses the endpoint ``*path`` and returns all resources of type ``resource_type`` that match
@@ -492,7 +499,7 @@ class BaseClient(object):
         filter_params = params.get("filter", None)
         sort_params = params.get("sort", None)
         field_params = params.get("fields", None)
-        meta = params.get("meta", False)
+        meta_flag = params.get("meta", False)
 
         request_params = (
             build_page_params(page_params)
@@ -509,7 +516,7 @@ class BaseClient(object):
 
         resource_list = ResourceList[resource_type](**r.json())
 
-        if meta:
+        if meta_flag:
             return resource_list.data, resource_list.meta
         else:
             return resource_list.data

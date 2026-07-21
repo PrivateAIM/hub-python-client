@@ -36,7 +36,7 @@ class HubAPIError(httpx.HTTPError):
     :py:exc:`.HubAPIError`, :py:func:`.new_hub_api_error_from_response`
     """
 
-    def __init__(self, message: str, request: httpx.Request, error: ErrorResponse = None) -> None:
+    def __init__(self, message: str, request: httpx.Request, error: ErrorResponse | None = None) -> None:
         super().__init__(message)
         self._request = request
         self.error_response = error
