@@ -118,6 +118,13 @@ class UpdateNode(BaseModel):
     registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
 
 
+class NodeRegistryCredentials(BaseModel):
+    host: str
+    external_name: str
+    account_name: str | None
+    account_secret: str | None
+
+
 class MasterImageGroup(BaseModel):
     id: uuid.UUID
     name: str
@@ -457,6 +464,17 @@ class CoreClient(BaseClient):
             ),
             "nodes",
             node_id,
+        )
+
+    def get_node_registry_credentials(self, node_id: Node | uuid.UUID | str) -> NodeRegistryCredentials | None:
+        """Returns the node's registry project credentials."""
+
+        return self._get_single_resource(
+            NodeRegistryCredentials,
+            "nodes",
+            node_id,
+            "registry",
+            "credentials",
         )
 
     def get_master_image_groups(self, **params: te.Unpack[GetKwargs]) -> list[MasterImageGroup]:

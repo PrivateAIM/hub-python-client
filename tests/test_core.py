@@ -236,6 +236,7 @@ def registry(core_client):
     new_registry = core_client.create_registry(
         name=next_random_string(),
         host=next_random_string(),
+        # account_name=next_random_string(),
         account_secret=next_random_string(),
     )
     yield new_registry
@@ -301,6 +302,16 @@ def test_update_node(core_client, node):
 
     assert node != new_node
     assert new_node.external_name == new_name
+
+
+@pytest.mark.xfail(reason="Hub returns properties of another registry")
+def test_get_node_registry_credentials(core_client, node, registry):
+    core_client.update_node(node.id, registry_id=registry.id)
+    credentials = core_client.get_node_registry_credentials(node.id)
+
+    assert credentials.host == registry.host
+    assert credentials.account_name == registry.account_name
+    assert credentials.account_secret == registry.account_secret
 
 
 def test_get_master_image(core_client, master_image):
