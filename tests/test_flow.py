@@ -55,8 +55,8 @@ def test_client_auth_raise_error(nginx, auth_base_url):
     with pytest.raises(HubAPIError) as e:
         client.get(auth_base_url)
 
-    assert "The client credentials are invalid" in str(e.value)
-    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
+    assert "Client authentication failed" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.UNAUTHORIZED.value
 
 
 def test_password_auth_raise_error(nginx, auth_base_url):
