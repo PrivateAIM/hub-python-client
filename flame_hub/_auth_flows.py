@@ -54,7 +54,7 @@ class ClientAuth(httpx.Auth):
         client_id: str,
         client_secret: str,
         base_url: str = DEFAULT_AUTH_BASE_URL,
-        client: httpx.Client = None,
+        client: httpx.Client | None = None,
     ):
         self._client_id = client_id
         self._client_secret = client_secret
@@ -131,7 +131,7 @@ class PasswordAuth(httpx.Auth):
         username: str,
         password: str,
         base_url: str = DEFAULT_AUTH_BASE_URL,
-        client: httpx.Client = None,
+        client: httpx.Client | None = None,
     ):
         self._username = username
         self._password = password
