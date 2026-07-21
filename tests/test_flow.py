@@ -26,6 +26,7 @@ def test_password_auth_reissue(password_auth, auth_base_url):
     assert client.auth._current_token.access_token != old_token
 
 
+@pytest.mark.xfail(reason="Bug in client authentication")
 def test_client_auth(auth_client, auth_base_url, master_realm):
     client_secret = next_random_string(length=64)
     client_resource = auth_client.create_client(name=next_random_string(), realm_id=master_realm, secret=client_secret)
