@@ -254,7 +254,6 @@ class Client(BaseModel):
     description: str | None
     redirect_uri: str | None
     active: bool
-    is_confidential: bool
     secret_hashed: bool
     grant_types: str | None
     secret_encrypted: bool
