@@ -71,34 +71,6 @@ class UpdateUser(BaseModel):
     password: str | None | UNSET_T = UNSET
 
 
-class CreateRobot(BaseModel):
-    name: str
-    realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    secret: str | None
-    display_name: str | None
-
-
-class Robot(BaseModel):
-    id: uuid.UUID
-    name: str
-    display_name: str | None
-    description: str | None
-    active: bool
-    created_at: datetime
-    updated_at: datetime
-    user_id: uuid.UUID | None
-    user: t.Annotated[User | None, IsIncludable] = None
-    realm: t.Annotated[Realm, IsIncludable] = None
-    realm_id: uuid.UUID
-
-
-class UpdateRobot(BaseModel):
-    display_name: str | None | UNSET_T = UNSET
-    name: str | UNSET_T = UNSET
-    realm_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
-    secret: str | UNSET_T = UNSET
-
-
 class CreatePermission(BaseModel):
     name: str
     display_name: str | None
@@ -198,41 +170,6 @@ class UserRole(CreateUserRole):
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class CreateRobotPermission(BaseModel):
-    robot_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-
-
-class RobotPermission(CreateRobotPermission):
-    id: uuid.UUID
-    robot_realm_id: uuid.UUID | None
-    permission_realm_id: uuid.UUID | None
-    policy_id: uuid.UUID | None
-    created_at: datetime
-    updated_at: datetime
-    robot: t.Annotated[Robot, IsIncludable] = None
-    permission: t.Annotated[Permission, IsIncludable] = None
-    robot_realm: t.Annotated[Realm | None, IsIncludable] = None
-    permission_realm: t.Annotated[Realm | None, IsIncludable] = None
-
-
-class CreateRobotRole(BaseModel):
-    robot_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-    role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
-
-
-class RobotRole(CreateRobotRole):
-    id: uuid.UUID
-    robot_realm_id: uuid.UUID | None
-    role_realm_id: uuid.UUID | None
-    created_at: datetime
-    updated_at: datetime
-    robot: t.Annotated[Robot, IsIncludable] = None
-    role: t.Annotated[Role, IsIncludable] = None
-    robot_realm: t.Annotated[Realm | None, IsIncludable] = None
-    role_realm: t.Annotated[Realm | None, IsIncludable] = None
-
-
 class CreateClient(BaseModel):
     name: str
     secret: str | None
@@ -254,7 +191,6 @@ class Client(BaseModel):
     description: str | None
     redirect_uri: str | None
     active: bool
-    is_confidential: bool
     secret_hashed: bool
     grant_types: str | None
     secret_encrypted: bool
@@ -338,42 +274,6 @@ class AuthClient(BaseClient):
             "realms",
             realm_id,
         )
-
-    def create_robot(
-        self, name: str, realm_id: Realm | str | uuid.UUID, secret: str, display_name: str = None
-    ) -> Robot:
-        return self._create_resource(
-            Robot,
-            CreateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
-            "robots",
-        )
-
-    def delete_robot(self, robot_id: Robot | str | uuid.UUID):
-        self._delete_resource("robots", robot_id)
-
-    def get_robot(self, robot_id: Robot | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Robot | None:
-        return self._get_single_resource(Robot, "robots", robot_id, include=get_includable_names(Robot), **params)
-
-    def update_robot(
-        self,
-        robot_id: Robot | str | uuid.UUID,
-        name: str | UNSET_T = UNSET,
-        display_name: str | None | UNSET_T = UNSET,
-        realm_id: Realm | str | uuid.UUID | UNSET_T = UNSET,
-        secret: str | UNSET_T = UNSET,
-    ) -> Robot:
-        return self._update_resource(
-            Robot,
-            UpdateRobot(name=name, display_name=display_name, realm_id=realm_id, secret=secret),
-            "robots",
-            robot_id,
-        )
-
-    def get_robots(self, **params: te.Unpack[GetKwargs]) -> list[Robot]:
-        return self._get_all_resources(Robot, "robots", include=get_includable_names(Robot), **params)
-
-    def find_robots(self, **params: te.Unpack[FindAllKwargs]) -> list[Robot]:
-        return self._find_all_resources(Robot, "robots", include=get_includable_names(Robot), **params)
 
     def create_permission(
         self,
@@ -622,68 +522,6 @@ class AuthClient(BaseClient):
 
     def find_user_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[UserRole]:
         return self._find_all_resources(UserRole, "user-roles", include=get_includable_names(UserRole), **params)
-
-    def create_robot_permission(
-        self, robot_id: Robot | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
-    ) -> RobotPermission:
-        return self._create_resource(
-            RobotPermission,
-            CreateRobotPermission(robot_id=robot_id, permission_id=permission_id),
-            "robot-permissions",
-        )
-
-    def get_robot_permission(
-        self, robot_permission_id: RobotPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> RobotPermission | None:
-        return self._get_single_resource(
-            RobotPermission,
-            "robot-permissions",
-            robot_permission_id,
-            include=get_includable_names(RobotPermission),
-            **params,
-        )
-
-    def delete_robot_permission(self, robot_permission_id: RobotPermission | uuid.UUID | str):
-        self._delete_resource("robot-permissions", robot_permission_id)
-
-    def get_robot_permissions(self, **params: te.Unpack[GetKwargs]) -> list[RobotPermission]:
-        return self._get_all_resources(
-            RobotPermission,
-            "robot-permissions",
-            include=get_includable_names(RobotPermission),
-            **params,
-        )
-
-    def find_robot_permissions(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotPermission]:
-        return self._find_all_resources(
-            RobotPermission,
-            "robot-permissions",
-            include=get_includable_names(RobotPermission),
-            **params,
-        )
-
-    def create_robot_role(self, robot_id: Robot | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> RobotRole:
-        return self._create_resource(
-            RobotRole,
-            CreateRobotRole(robot_id=robot_id, role_id=role_id),
-            "robot-roles",
-        )
-
-    def get_robot_role(
-        self, robot_role_id: RobotRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> RobotRole | None:
-        return self._get_single_resource(
-            RobotRole, "robot-roles", robot_role_id, include=get_includable_names(RobotRole), **params
-        )
-
-    def delete_robot_role(self, robot_role_id: RobotRole | uuid.UUID | str):
-        self._delete_resource("robot-roles", robot_role_id)
-
-    def get_robot_roles(self, **params: te.Unpack[GetKwargs]) -> list[RobotRole]:
-        return self._get_all_resources(RobotRole, "robot-roles", include=get_includable_names(RobotRole), **params)
-
-    def find_robot_roles(self, **params: te.Unpack[FindAllKwargs]) -> list[RobotRole]:
-        return self._find_all_resources(RobotRole, "robot-roles", include=get_includable_names(RobotRole), **params)
 
     def create_client(
         self,

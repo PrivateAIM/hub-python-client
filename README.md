@@ -16,7 +16,7 @@ python -m pip install flame-hub-client
 ## Quickstart
 
 The FLAME Hub Python Client offers *get*, *find*, *update*, *create* and *delete* methods for the core, storage and auth
-endpoints. It is capable of authenticating against the API using either password or robot authentication. Pick one,
+endpoints. It is capable of authenticating against the API using either password or client authentication. Pick one,
 provide your credentials and plug them into the class for the service you want to use. Note that the client will
 automatically reauthenticate if necessary.
 

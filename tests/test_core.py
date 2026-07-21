@@ -236,6 +236,7 @@ def registry(core_client):
     new_registry = core_client.create_registry(
         name=next_random_string(),
         host=next_random_string(),
+        # account_name=next_random_string(),
         account_secret=next_random_string(),
     )
     yield new_registry
@@ -301,6 +302,36 @@ def test_update_node(core_client, node):
 
     assert node != new_node
     assert new_node.external_name == new_name
+
+
+@pytest.mark.xfail(reason="Hub returns properties of another registry")
+def test_get_node_registry_credentials(core_client, node, registry):
+    core_client.update_node(node.id, registry_id=registry.id)
+    credentials = core_client.get_node_registry_credentials(node.id)
+
+    assert credentials.host == registry.host
+    assert credentials.account_name == registry.account_name
+    assert credentials.account_secret == registry.account_secret
+
+
+def test_get_node_client_credentials(core_client, auth_client, node):
+    client = auth_client.get_client(client_id=node.client_id)
+    credentials = core_client.get_node_client_credentials(node_id=node.id)
+
+    assert credentials.id == client.id
+    assert credentials.name == client.name
+    assert credentials.display_name == client.display_name
+
+
+def test_update_node_client_credentials(core_client, node):
+    new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
+    new_credentials = core_client.update_node_client_credentials(
+        node_id=node.id, name=new_name, display_name=new_display_name, secret=new_secret
+    )
+
+    assert new_credentials.name == new_name
+    assert new_credentials.display_name == new_display_name
+    assert new_credentials.secret == new_secret
 
 
 def test_get_master_image(core_client, master_image):
@@ -477,6 +508,24 @@ def test_build_analysis(core_client, configured_analysis):
         assert analysis.build_status == "executed"
 
     assert_eventually(_wait_for_successful_build)
+
+
+def test_get_analysis_client_credentials(core_client, auth_client, analysis):
+    client = auth_client.get_client(client_id=analysis.client_id)
+    credentials = core_client.get_analysis_client_credentials(analysis_id=analysis.id)
+
+    assert credentials.id == client.id
+    assert credentials.name == client.name
+    assert credentials.display_name == client.display_name
+
+
+def test_update_analysis_client_credentials(core_client, analysis):
+    new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
+    new_credentials = core_client.update_analysis_client_credentials(
+        analysis_id=analysis.id, name=new_name, display_name=new_display_name, secret=new_secret
+    )
+
+    assert new_credentials.secret == new_secret
 
 
 def test_update_analysis_node(core_client, analysis_node):
