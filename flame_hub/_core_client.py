@@ -103,7 +103,6 @@ class Node(CreateNode):
     registry: t.Annotated[Registry | None, IsIncludable] = None
     registry_project_id: uuid.UUID | None
     registry_project: t.Annotated[RegistryProject | None, IsIncludable] = None
-    robot_id: uuid.UUID | None
     client_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
@@ -200,7 +199,6 @@ class Project(CreateProject):
     updated_at: datetime
     realm_id: uuid.UUID
     user_id: uuid.UUID | None
-    robot_id: uuid.UUID | None
 
 
 class UpdateProject(BaseModel):
@@ -393,7 +391,6 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     analysis_bucket: t.Annotated[AnalysisBucket, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID | None
-    robot_id: uuid.UUID | None
     client_id: uuid.UUID | None
     analysis_id: uuid.UUID
     analysis: t.Annotated[Analysis, IsIncludable] = None
