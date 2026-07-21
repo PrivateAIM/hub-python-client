@@ -63,6 +63,9 @@ __all__ = [
     "CreateClient",
     "UpdateClient",
     "Client",
+    "NodeRegistryCredentials",
+    "ClientCredentials",
+    "UpdateClientCredentials",
 ]
 
 from ._core_client import (
@@ -99,6 +102,9 @@ from ._core_client import (
     CreateRegistryProject,
     RegistryProject,
     UpdateRegistryProject,
+    NodeRegistryCredentials,
+    ClientCredentials,
+    UpdateClientCredentials,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UNSET, IsOptionalField, IsIncludable, ResourceListMeta, ResourceList
