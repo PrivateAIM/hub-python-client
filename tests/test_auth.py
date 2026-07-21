@@ -3,14 +3,11 @@ import pytest
 from flame_hub import get_field_names, get_includable_names
 from flame_hub.models import (
     User,
-    Robot,
     Permission,
     Role,
     RolePermission,
     UserPermission,
     UserRole,
-    RobotPermission,
-    RobotRole,
     Client,
 )
 from tests.helpers import next_random_string, next_uuid
@@ -23,18 +20,6 @@ def realm(auth_client):
     new_realm = auth_client.create_realm(next_random_string().lower())
     yield new_realm
     auth_client.delete_realm(new_realm)
-
-
-@pytest.fixture()
-def robot(auth_client, master_realm):
-    new_robot = auth_client.create_robot(next_random_string().lower(), master_realm, next_random_string(length=64))
-    yield new_robot
-    auth_client.delete_robot(new_robot)
-
-
-@pytest.fixture(scope="session")
-def robot_includables():
-    return get_includable_names(Robot)
 
 
 @pytest.fixture()
@@ -115,30 +100,6 @@ def user_role_includables():
 
 
 @pytest.fixture()
-def robot_permission(auth_client, robot, permission):
-    new_robot_permission = auth_client.create_robot_permission(robot, permission)
-    yield new_robot_permission
-    auth_client.delete_robot_permission(new_robot_permission)
-
-
-@pytest.fixture(scope="session")
-def robot_permission_includables():
-    return get_includable_names(RobotPermission)
-
-
-@pytest.fixture()
-def robot_role(auth_client, robot, role):
-    new_robot_role = auth_client.create_robot_role(robot, role)
-    yield new_robot_role
-    auth_client.delete_robot_role(new_robot_role)
-
-
-@pytest.fixture(scope="session")
-def robot_role_includables():
-    return get_includable_names(RobotRole)
-
-
-@pytest.fixture()
 def client(auth_client, master_realm):
     new_client = auth_client.create_client(name=next_random_string().lower(), realm_id=master_realm)
     yield new_client
@@ -172,39 +133,6 @@ def test_get_realms(auth_client, realm):
 
 def test_find_realms(auth_client, realm):
     assert [realm] == auth_client.find_realms(filter={"id": realm.id})
-
-
-def test_get_robot(auth_client, robot, robot_includables):
-    robot_get = auth_client.get_robot(robot)
-
-    assert robot_get.id == robot.id
-    assert all(includable in robot_get.model_fields_set for includable in robot_includables)
-
-
-def test_get_robot_not_found(auth_client, robot):
-    assert auth_client.get_robot(next_uuid()) is None
-
-
-def test_update_robot(auth_client, robot):
-    new_name = next_random_string().lower()
-    new_robot = auth_client.update_robot(robot.id, name=new_name)
-
-    assert robot != new_robot
-    assert new_robot.name == new_name
-
-
-def test_get_robots(auth_client, robot, robot_includables):
-    robots_get = auth_client.get_robots()
-
-    assert len(robots_get) > 0
-    assert all(includable in r.model_fields_set for r in robots_get for includable in robot_includables)
-
-
-def test_find_robots(auth_client, robot, robot_includables):
-    robots_find = auth_client.find_robots(filter={"id": robot.id})
-
-    assert [robot.id] == [r.id for r in robots_find]
-    assert all(includable in r.model_fields_set for r in robots_find for includable in robot_includables)
 
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2660")
@@ -405,68 +333,6 @@ def test_find_user_roles(auth_client, user_role, user_role_includables):
 
     assert len(user_roles_find) > 0
     assert all(includable in ur.model_fields_set for ur in user_roles_find for includable in user_role_includables)
-
-
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2647")
-def test_get_robot_permission(auth_client, robot_permission, robot_permission_includables):
-    robot_perm_get = auth_client.get_robot_permission(robot_permission.id)
-
-    assert robot_perm_get.id == robot_permission.id
-    assert all(includable in robot_perm_get.model_fields_set for includable in robot_permission_includables)
-
-
-def test_get_robot_permission_not_found(auth_client):
-    assert auth_client.get_permission(next_uuid()) is None
-
-
-@pytest.mark.xfail(reason="bug in authup")
-def test_get_robot_permissions(auth_client, robot_permission, robot_permission_includables):
-    robot_perms_get = auth_client.get_robot_permissions()
-
-    assert len(robot_perms_get) > 0
-    assert all(
-        includable in rp.model_fields_set for rp in robot_perms_get for includable in robot_permission_includables
-    )
-
-
-@pytest.mark.xfail(reason="bug in authup")
-def test_find_robot_permissions(auth_client, robot_permission, robot_permission_includables):
-    # Use "robot_id" for filtering because there is no filter mechanism for attribute "id".
-    robot_perms_find = auth_client.find_robot_permissions(filter={"robot_id": robot_permission.robot_id})
-
-    assert [robot_permission.id] == [rp.id for rp in robot_perms_find]
-    assert all(
-        includable in rp.model_fields_set for rp in robot_perms_find for includable in robot_permission_includables
-    )
-
-
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2650")
-def test_get_robot_role(auth_client, robot_role, robot_role_includables):
-    robot_role_get = auth_client.get_robot_role(robot_role.id)
-
-    assert robot_role_get.id == robot_role.id
-    assert all(includable in robot_role_get.model_fields_set for includable in robot_role_includables)
-
-
-def test_get_robot_role_not_found(auth_client):
-    assert auth_client.get_robot_role(next_uuid()) is None
-
-
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2649")
-def test_get_robot_roles(auth_client, robot_role, robot_role_includables):
-    robot_roles_get = auth_client.get_robot_roles()
-
-    assert len(robot_roles_get) > 0
-    assert all(includable in rr.model_fields_set for rr in robot_roles_get for includable in robot_role_includables)
-
-
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2649")
-def test_find_robot_roles(auth_client, robot_role, robot_role_includables):
-    # Use "robot_id" for filtering because there is no filter mechanism for attribute "id".
-    robot_roles_find = auth_client.find_robot_roles(filter={"robot_id": robot_role.robot_id})
-
-    assert [robot_role.id] == [rr.id for rr in robot_roles_find]
-    assert all(includable in rr.model_fields_set for rr in robot_roles_find for includable in robot_role_includables)
 
 
 def test_get_client(auth_client, client, client_includables):
