@@ -1,7 +1,7 @@
 import time
 import typing as t
 
-import httpx
+import httpx2 as httpx
 from pydantic import BaseModel
 
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL

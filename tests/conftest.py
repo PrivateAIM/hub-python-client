@@ -1,7 +1,7 @@
 import os
 import random
 
-import httpx
+import httpx2 as httpx
 import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.network import Network

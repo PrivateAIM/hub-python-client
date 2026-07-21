@@ -2,7 +2,7 @@ import typing as t
 import uuid
 from datetime import datetime
 
-import httpx
+import httpx2 as httpx
 import typing_extensions as te
 from pydantic import BaseModel
 

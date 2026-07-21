@@ -4,7 +4,7 @@ import uuid
 from collections.abc import Iterable
 from enum import Enum
 
-import httpx
+import httpx2 as httpx
 import typing_extensions as te
 from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
