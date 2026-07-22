@@ -1,17 +1,15 @@
 from json import JSONDecodeError
 
 import httpx2 as httpx
-from pydantic import ValidationError, BaseModel, ConfigDict
+from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
 
 
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Configuration so that extra properties may be available."""
-    name: str
-    """Name of the error."""
     code: str
     """Name of the error code."""
-    status_code: int
+    status_code: int | None = Field(validation_alias=AliasChoices("status_code", "statusCode"), default=None)
     """HTTP code of the response."""
     message: str
     """The error message."""
@@ -67,7 +65,10 @@ def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
     error_message = f"received status code {r.status_code}"
 
     try:
-        error_response = ErrorResponse(**({"status_code": r.status_code} | r.json()))
+        error_response = ErrorResponse(**r.json())
+        # Sometimes the status code is not part of the payload.
+        if error_response.status_code is None:
+            error_response.status_code = r.status_code
         error_message = f"received status code {error_response.status_code} ({error_response.code}): "
 
         if error_response.message.strip() == "":
