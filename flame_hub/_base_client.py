@@ -487,6 +487,8 @@ class BaseClient(object):
         r = self._client.send(request, stream=stream, auth=resolve_auth(auth))
 
         if r.status_code != expected_code:
+            if stream:
+                r.read()
             raise new_hub_api_error_from_response(r)
 
         return r
