@@ -327,6 +327,35 @@ It is also possible to retrieve all names of includable properties for a specifi
     ('registry', 'registry_project')
 
 
+Overriding authentication per request
+=====================================
+
+By default every request uses the authentication you passed to the client. Every client method also accepts a keyword-
+only ``auth`` argument to override authentication for that single request. It accepts either an :py:class:`httpx2.Auth`
+instance (see :doc:`Authentication <authentication_api>` for all implemented authentication flows) or a valid Bearer
+token as a string.
+
+.. code-block:: python
+
+    import flame_hub
+
+    # Use a raw header value for this request only.
+    core_client.get_nodes(auth="<token>")
+
+    # Or use a dedicated authenticator for this request only.
+    core_client.create_node(
+        name="my-node",
+        realm_id=master_realm,
+        auth=flame_hub.auth.PasswordAuth(
+            username="admin",
+            password="start123",
+            base_url="http://localhost:3000/auth/",
+        ),
+    )
+
+If :py:obj:`None` is passed to ``auth``, then the request is sent without any authentication.
+
+
 Handling exceptions
 ===================
 

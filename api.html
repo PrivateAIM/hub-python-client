@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e2418eca"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -106,8 +106,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="authentication_api.html">Authentication</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth"><code class="docutils literal notranslate"><span class="pre">PasswordAuth</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="authentication_api.html#flame_hub.auth.RobotAuth"><code class="docutils literal notranslate"><span class="pre">RobotAuth</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="authentication_api.html#flame_hub.auth.ClientAuth"><code class="docutils literal notranslate"><span class="pre">ClientAuth</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="authentication_api.html#flame_hub.auth.StaticAuth"><code class="docutils literal notranslate"><span class="pre">StaticAuth</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models_api.html">Models</a><ul>
@@ -148,9 +148,6 @@
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateRealm"><code class="docutils literal notranslate"><span class="pre">CreateRealm</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UpdateRealm"><code class="docutils literal notranslate"><span class="pre">UpdateRealm</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.Realm"><code class="docutils literal notranslate"><span class="pre">Realm</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateRobot"><code class="docutils literal notranslate"><span class="pre">CreateRobot</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.Robot"><code class="docutils literal notranslate"><span class="pre">Robot</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UpdateRobot"><code class="docutils literal notranslate"><span class="pre">UpdateRobot</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreatePermission"><code class="docutils literal notranslate"><span class="pre">CreatePermission</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.Permission"><code class="docutils literal notranslate"><span class="pre">Permission</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UpdatePermission"><code class="docutils literal notranslate"><span class="pre">UpdatePermission</span></code></a></li>
@@ -166,10 +163,6 @@
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UserPermission"><code class="docutils literal notranslate"><span class="pre">UserPermission</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateUserRole"><code class="docutils literal notranslate"><span class="pre">CreateUserRole</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UserRole"><code class="docutils literal notranslate"><span class="pre">UserRole</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateRobotPermission"><code class="docutils literal notranslate"><span class="pre">CreateRobotPermission</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.RobotPermission"><code class="docutils literal notranslate"><span class="pre">RobotPermission</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateRobotRole"><code class="docutils literal notranslate"><span class="pre">CreateRobotRole</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.RobotRole"><code class="docutils literal notranslate"><span class="pre">RobotRole</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.IsOptionalField"><code class="docutils literal notranslate"><span class="pre">IsOptionalField</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.IsIncludable"><code class="docutils literal notranslate"><span class="pre">IsIncludable</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.ResourceListMeta"><code class="docutils literal notranslate"><span class="pre">ResourceListMeta</span></code></a></li>
@@ -179,10 +172,14 @@
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.CreateClient"><code class="docutils literal notranslate"><span class="pre">CreateClient</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UpdateClient"><code class="docutils literal notranslate"><span class="pre">UpdateClient</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.Client"><code class="docutils literal notranslate"><span class="pre">Client</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.NodeRegistryCredentials"><code class="docutils literal notranslate"><span class="pre">NodeRegistryCredentials</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.ClientCredentials"><code class="docutils literal notranslate"><span class="pre">ClientCredentials</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="models_api.html#flame_hub.models.UpdateClientCredentials"><code class="docutils literal notranslate"><span class="pre">UpdateClientCredentials</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="types_api.html">Types</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub._base_client.ResourceT"><code class="docutils literal notranslate"><span class="pre">ResourceT</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub._base_client.ResourceListResult"><code class="docutils literal notranslate"><span class="pre">ResourceListResult</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.FieldParams"><code class="docutils literal notranslate"><span class="pre">FieldParams</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.IncludeParams"><code class="docutils literal notranslate"><span class="pre">IncludeParams</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.RegistryCommand"><code class="docutils literal notranslate"><span class="pre">RegistryCommand</span></code></a></li>
@@ -203,6 +200,7 @@
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.AnalysisBucketType"><code class="docutils literal notranslate"><span class="pre">AnalysisBucketType</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.UploadFile"><code class="docutils literal notranslate"><span class="pre">UploadFile</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.ReadableBinary"><code class="docutils literal notranslate"><span class="pre">ReadableBinary</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.BaseKwargs"><code class="docutils literal notranslate"><span class="pre">BaseKwargs</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub._base_client.UuidModel"><code class="docutils literal notranslate"><span class="pre">UuidModel</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub.types.UuidIdentifiable"><code class="docutils literal notranslate"><span class="pre">UuidIdentifiable</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="types_api.html#flame_hub._base_client.ClientKwargs"><code class="docutils literal notranslate"><span class="pre">ClientKwargs</span></code></a></li>

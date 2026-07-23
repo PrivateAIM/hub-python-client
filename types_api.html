@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e2418eca"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -55,6 +55,7 @@
 <li class="toctree-l2"><a class="reference internal" href="models_api.html">Models</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Types</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.ResourceT"><code class="docutils literal notranslate"><span class="pre">ResourceT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.ResourceListResult"><code class="docutils literal notranslate"><span class="pre">ResourceListResult</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.FieldParams"><code class="docutils literal notranslate"><span class="pre">FieldParams</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.IncludeParams"><code class="docutils literal notranslate"><span class="pre">IncludeParams</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.RegistryCommand"><code class="docutils literal notranslate"><span class="pre">RegistryCommand</span></code></a></li>
@@ -90,6 +91,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.filter"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.filter</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.page"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.page</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.sort"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.auth"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.auth</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.fields"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.FindAllKwargs.meta"><code class="docutils literal notranslate"><span class="pre">FindAllKwargs.meta</span></code></a></li>
 </ul>
@@ -97,6 +99,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.GetKwargs"><code class="docutils literal notranslate"><span class="pre">GetKwargs</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.GetKwargs.fields"><code class="docutils literal notranslate"><span class="pre">GetKwargs.fields</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.GetKwargs.meta"><code class="docutils literal notranslate"><span class="pre">GetKwargs.meta</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.GetKwargs.auth"><code class="docutils literal notranslate"><span class="pre">GetKwargs.auth</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.MasterImageCommandArgument"><code class="docutils literal notranslate"><span class="pre">MasterImageCommandArgument</span></code></a><ul>
@@ -118,6 +121,10 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.ReadableBinary"><code class="docutils literal notranslate"><span class="pre">ReadableBinary</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.ReadableBinary.read"><code class="docutils literal notranslate"><span class="pre">ReadableBinary.read()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.types.BaseKwargs"><code class="docutils literal notranslate"><span class="pre">BaseKwargs</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.types.BaseKwargs.auth"><code class="docutils literal notranslate"><span class="pre">BaseKwargs.auth</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#flame_hub._base_client.UuidModel"><code class="docutils literal notranslate"><span class="pre">UuidModel</span></code></a><ul>
@@ -168,6 +175,12 @@
 <dt class="sig sig-object py" id="flame_hub._base_client.ResourceT">
 <span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">ResourceT</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">typing.TypeVar</span></em><a class="headerlink" href="#flame_hub._base_client.ResourceT" title="Link to this definition"></a></dt>
 <dd><p>Base resource type which assumes <a class="reference external" href="https://pydantic.dev/docs/validation/latest/api/pydantic/base_model/#pydantic.BaseModel" title="(in Pydantic v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> as the base class.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub._base_client.ResourceListResult">
+<span class="sig-prename descclassname"><span class="pre">flame_hub._base_client.</span></span><span class="sig-name descname"><span class="pre">ResourceListResult</span></span><a class="headerlink" href="#flame_hub._base_client.ResourceListResult" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#flame_hub._base_client.ResourceT" title="flame_hub._base_client.ResourceT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResourceT</span></code></a>] | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#flame_hub._base_client.ResourceT" title="flame_hub._base_client.ResourceT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ResourceT</span></code></a>], <a class="reference internal" href="models_api.html#flame_hub.models.ResourceListMeta" title="flame_hub._base_client.ResourceListMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResourceListMeta</span></code></a>]</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -337,12 +350,12 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">FindAllKwargs</span></span><a class="headerlink" href="#flame_hub.types.FindAllKwargs" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#flame_hub.types.GetKwargs" title="flame_hub._base_client.GetKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">GetKwargs</span></code></a></p>
 <p>Keyword arguments that can be used for finding resources.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code>, <a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">PageParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">SortParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.FieldParams" title="flame_hub.types.FieldParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">flame_hub.types.FieldParams</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
+<dt><a class="reference internal" href="#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a>, <code class="xref py py-type docutils literal notranslate"><span class="pre">FilterParams</span></code>, <a class="reference internal" href="#flame_hub.types.PageParams" title="flame_hub.types.PageParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">PageParams</span></code></a>, <a class="reference internal" href="#flame_hub.types.SortParams" title="flame_hub.types.SortParams"><code class="xref py py-type docutils literal notranslate"><span class="pre">SortParams</span></code></a>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient._find_all_resources" title="flame_hub._base_client.BaseClient._find_all_resources"><code class="xref py py-meth docutils literal notranslate"><span class="pre">_find_all_resources()</span></code></a></dt><dd></dd>
 </dl>
 </div>
 <dl class="py attribute">
@@ -361,6 +374,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.auth">
+<span class="sig-name descname"><span class="pre">auth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AuthParam</span></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.auth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.types.FindAllKwargs.fields">
 <span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">FieldParams</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.FindAllKwargs.fields" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -375,7 +393,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="flame_hub.types.GetKwargs">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">GetKwargs</span></span><a class="headerlink" href="#flame_hub.types.GetKwargs" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#flame_hub.types.BaseKwargs" title="flame_hub._base_client.BaseKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseKwargs</span></code></a></p>
 <p>Keyword arguments that can be used for getting resources.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -391,6 +409,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.types.GetKwargs.meta">
 <span class="sig-name descname"><span class="pre">meta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#flame_hub.types.GetKwargs.meta" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.GetKwargs.auth">
+<span class="sig-name descname"><span class="pre">auth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">AuthParam</span></em><a class="headerlink" href="#flame_hub.types.GetKwargs.auth" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -460,6 +483,25 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="flame_hub.types.ReadableBinary.read">
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></span><a class="headerlink" href="#flame_hub.types.ReadableBinary.read" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.types.BaseKwargs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.types.</span></span><span class="sig-name descname"><span class="pre">BaseKwargs</span></span><a class="headerlink" href="#flame_hub.types.BaseKwargs" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://typing-extensions.readthedocs.io/en/latest/index.html#typing_extensions.TypedDict" title="(in typing_extensions)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Base keyword arguments that apply to all high-level methods of the <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient" title="flame_hub._base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a> and should be
+configurable by the user.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-type docutils literal notranslate"><span class="pre">AuthParam</span></code>, <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient" title="flame_hub._base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a></dt><dd></dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.types.BaseKwargs.auth">
+<span class="sig-name descname"><span class="pre">auth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="authentication_api.html#flame_hub.auth.ClientAuth" title="flame_hub._auth_flows.ClientAuth"><span class="pre">ClientAuth</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth" title="flame_hub._auth_flows.PasswordAuth"><span class="pre">PasswordAuth</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="authentication_api.html#flame_hub.auth.StaticAuth" title="flame_hub._auth_flows.StaticAuth"><span class="pre">StaticAuth</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#flame_hub.types.BaseKwargs.auth" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e2418eca"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -74,7 +74,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <p><img alt="Code Coverage" src="https://img.shields.io/badge/Coverage-95%25-brightgreen.svg" /></p>
+  <p><img alt="Code Coverage" src="https://img.shields.io/badge/Coverage-97%25-brightgreen.svg" /></p>
 <section id="flame-hub-python-client">
 <h1>FLAME Hub Python Client<a class="headerlink" href="#flame-hub-python-client" title="Link to this heading"></a></h1>
 <p>The FLAME Hub Python Client is a client which wraps the endpoints of <a class="reference external" href="https://github.com/PrivateAIM/hub">FLAME Hub</a>
@@ -89,7 +89,7 @@ API. This repository is part of the <a class="reference external" href="https://
 <section id="quickstart">
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h2>
 <p>The FLAME Hub Python Client offers <em>get</em>, <em>find</em>, <em>update</em>, <em>create</em> and <em>delete</em> methods for the core, storage and auth
-endpoints. It is capable of authenticating against the API using either password or robot authentication. Pick one,
+endpoints. It is capable of authenticating against the API using either password or client authentication. Pick one,
 provide your credentials and plug them into the class for the service you want to use. Note that the client will
 automatically reauthenticate if necessary.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
@@ -179,6 +179,7 @@ successful, we have to request the updated node from the Hub.</p>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#optional-fields">Optional fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#meta-information">Meta information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#nested-resources">Nested resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_guide.html#overriding-authentication-per-request">Overriding authentication per request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#handling-exceptions">Handling exceptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="user_guide.html#types">Types</a></li>

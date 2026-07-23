@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e2418eca"></script>
+      <script src="_static/documentation_options.js?v=e259d695"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -53,6 +53,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#optional-fields">Optional fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#meta-information">Meta information</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#nested-resources">Nested resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overriding-authentication-per-request">Overriding authentication per request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#handling-exceptions">Handling exceptions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#types">Types</a></li>
@@ -390,6 +391,31 @@ admin’s realm is the master realm.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;registry&#39;</span><span class="p">,</span> <span class="s1">&#39;registry_project&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="overriding-authentication-per-request">
+<h2>Overriding authentication per request<a class="headerlink" href="#overriding-authentication-per-request" title="Link to this heading"></a></h2>
+<p>By default every request uses the authentication you passed to the client. Every client method also accepts a keyword-
+only <code class="docutils literal notranslate"><span class="pre">auth</span></code> argument to override authentication for that single request. It accepts either an <code class="xref py py-class docutils literal notranslate"><span class="pre">httpx2.Auth</span></code>
+instance (see <a class="reference internal" href="authentication_api.html"><span class="doc">Authentication</span></a> for all implemented authentication flows) or a valid Bearer
+token as a string.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
+
+<span class="c1"># Use a raw header value for this request only.</span>
+<span class="n">core_client</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="s2">&quot;&lt;token&gt;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Or use a dedicated authenticator for this request only.</span>
+<span class="n">core_client</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-node&quot;</span><span class="p">,</span>
+    <span class="n">realm_id</span><span class="o">=</span><span class="n">master_realm</span><span class="p">,</span>
+    <span class="n">auth</span><span class="o">=</span><span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
+        <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span>
+        <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is passed to <code class="docutils literal notranslate"><span class="pre">auth</span></code>, then the request is sent without any authentication.</p>
 </section>
 <section id="handling-exceptions">
 <h2>Handling exceptions<a class="headerlink" href="#handling-exceptions" title="Link to this heading"></a></h2>
