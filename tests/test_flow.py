@@ -1,8 +1,9 @@
 import httpx2 as httpx
 import pytest
 
-from flame_hub import HubAPIError
-from flame_hub.auth import PasswordAuth, ClientAuth
+from flame_hub import HubAPIError, AuthClient
+from flame_hub.auth import PasswordAuth, ClientAuth, StaticAuth
+from flame_hub.models import RefreshToken
 from tests.helpers import next_random_string
 
 pytestmark = pytest.mark.integration
@@ -95,6 +96,37 @@ def test_password_auth_reissue_raise_error(password_auth, auth_base_url):
     # that would require forging it. no clue how to feasibly do that.
     with pytest.raises(HubAPIError) as e:
         new_client.get(auth_base_url)
+
+    assert "The JWT is invalid" in str(e.value)
+    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
+
+
+def test_static_auth(auth_base_url, auth_admin_username, auth_admin_password):
+    r = httpx.post(
+        f"{auth_base_url}/token",
+        json={
+            "grant_type": "password",
+            "username": auth_admin_username,
+            "password": auth_admin_password,
+        },
+    )
+
+    assert r.status_code == httpx.codes.OK.value
+
+    token = RefreshToken(**r.json())
+    auth = StaticAuth(access_token=token.access_token)
+
+    r = httpx.get(auth_base_url, auth=auth)
+
+    assert r.status_code == httpx.codes.OK.value
+
+
+def test_static_auth_raise_error(auth_base_url):
+    auth = StaticAuth(access_token=next_random_string())
+    client = AuthClient(base_url=auth_base_url, auth=auth)
+
+    with pytest.raises(HubAPIError) as e:
+        client.get_users()
 
     assert "The JWT is invalid" in str(e.value)
     assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
