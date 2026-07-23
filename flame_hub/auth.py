@@ -1,3 +1,3 @@
-__all__ = ["PasswordAuth", "ClientAuth"]
+__all__ = ["PasswordAuth", "ClientAuth", "StaticAuth"]
 
-from ._auth_flows import PasswordAuth, ClientAuth
+from ._auth_flows import PasswordAuth, ClientAuth, StaticAuth

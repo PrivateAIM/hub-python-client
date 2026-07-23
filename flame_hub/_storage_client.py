@@ -6,7 +6,6 @@ import httpx2 as httpx
 import typing_extensions as te
 from pydantic import BaseModel
 
-from flame_hub._auth_flows import PasswordAuth, ClientAuth
 from flame_hub._base_client import (
     BaseClient,
     ResourceList,
@@ -17,9 +16,10 @@ from flame_hub._base_client import (
     IsIncludable,
     get_includable_names,
     ResourceListResult,
+    AuthParam,
+    BaseKwargs,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
-from flame_hub._exceptions import new_hub_api_error_from_response
 
 
 class CreateBucket(BaseModel):
@@ -83,16 +83,16 @@ class StorageClient(BaseClient):
     def __init__(
         self,
         base_url: str = DEFAULT_STORAGE_BASE_URL,
-        auth: PasswordAuth | ClientAuth | None = None,
+        auth: AuthParam = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def create_bucket(self, name: str, region: str | None = None) -> Bucket:
-        return self._create_resource(Bucket, CreateBucket(name=name, region=region), "buckets")
+    def create_bucket(self, name: str, region: str | None = None, **params: te.Unpack[BaseKwargs]) -> Bucket:
+        return self._create_resource(Bucket, CreateBucket(name=name, region=region), "buckets", **params)
 
-    def delete_bucket(self, bucket_id: Bucket | str | uuid.UUID):
-        self._delete_resource("buckets", bucket_id)
+    def delete_bucket(self, bucket_id: Bucket | str | uuid.UUID, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("buckets", bucket_id, **params)
 
     def get_buckets(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Bucket]:
         return self._get_all_resources(Bucket, "buckets", **params)
@@ -103,29 +103,53 @@ class StorageClient(BaseClient):
     def get_bucket(self, bucket_id: Bucket | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Bucket | None:
         return self._get_single_resource(Bucket, "buckets", bucket_id, **params)
 
-    def stream_bucket_tarball(self, bucket_id: Bucket | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
-        with self._client.stream("GET", f"buckets/{obtain_uuid_from(bucket_id)}/stream") as r:
+    def stream_bucket_tarball(
+        self,
+        bucket_id: Bucket | str | uuid.UUID,
+        chunk_size: int = 1024,
+        **params: te.Unpack[BaseKwargs],
+    ) -> t.Iterator[bytes]:
+        r = self._request(
+            "GET",
+            "buckets",
+            str(obtain_uuid_from(bucket_id)),
+            "stream",
+            expected_code=httpx.codes.OK.value,
+            stream=True,
+            **params,
+        )
+
+        try:
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b
+        finally:
+            r.close()
 
-    def upload_to_bucket(self, bucket_id: Bucket | str | uuid.UUID, *upload_file: UploadFile) -> list[BucketFile]:
+    def upload_to_bucket(
+        self,
+        bucket_id: Bucket | str | uuid.UUID,
+        *upload_file: UploadFile,
+        **params: te.Unpack[BaseKwargs],
+    ) -> list[BucketFile]:
         upload_file_tpl = tuple(apply_upload_file_defaults(uf) for uf in upload_file)
         upload_file_dict = {
             str(uuid.uuid4()): (uf["file_name"], uf["content"], uf["content_type"]) for uf in upload_file_tpl
         }
 
-        r = self._client.post(
-            f"buckets/{obtain_uuid_from(bucket_id)}/upload",
+        r = self._request(
+            "POST",
+            "buckets",
+            str(obtain_uuid_from(bucket_id)),
+            "upload",
+            expected_code=httpx.codes.CREATED.value,
             files=upload_file_dict,
+            **params,
         )
-
-        if r.status_code != httpx.codes.CREATED.value:
-            raise new_hub_api_error_from_response(r)
 
         return ResourceList[BucketFile](**r.json()).data
 
-    def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID):
-        self._delete_resource("bucket-files", bucket_file_id)
+    def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("bucket-files", bucket_file_id, **params)
 
     def get_bucket_file(
         self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
@@ -140,7 +164,24 @@ class StorageClient(BaseClient):
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[BucketFile]:
         return self._find_all_resources(BucketFile, "bucket-files", include=get_includable_names(BucketFile), **params)
 
-    def stream_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, chunk_size=1024) -> t.Iterator[bytes]:
-        with self._client.stream("GET", f"bucket-files/{obtain_uuid_from(bucket_file_id)}/stream") as r:
+    def stream_bucket_file(
+        self,
+        bucket_file_id: BucketFile | str | uuid.UUID,
+        chunk_size: int = 1024,
+        **params: te.Unpack[BaseKwargs],
+    ) -> t.Iterator[bytes]:
+        r = self._request(
+            "GET",
+            "bucket-files",
+            str(obtain_uuid_from(bucket_file_id)),
+            "stream",
+            expected_code=httpx.codes.OK.value,
+            stream=True,
+            **params,
+        )
+
+        try:
             for b in r.iter_bytes(chunk_size=chunk_size):
                 yield b
+        finally:
+            r.close()

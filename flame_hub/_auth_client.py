@@ -17,9 +17,10 @@ from flame_hub._base_client import (
     UNSET,
     UNSET_T,
     ResourceListResult,
+    AuthParam,
+    BaseKwargs,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
-from flame_hub._auth_flows import ClientAuth, PasswordAuth
 
 
 class CreateRealm(BaseModel):
@@ -230,7 +231,7 @@ class AuthClient(BaseClient):
     def __init__(
         self,
         base_url=DEFAULT_AUTH_BASE_URL,
-        auth: ClientAuth | PasswordAuth | None = None,
+        auth: AuthParam = None,
         **kwargs: te.Unpack[ClientKwargs],
     ):
         super().__init__(base_url, auth, **kwargs)
@@ -241,7 +242,13 @@ class AuthClient(BaseClient):
     def find_realms(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Realm]:
         return self._find_all_resources(Realm, "realms", **params)
 
-    def create_realm(self, name: str, display_name: str | None = None, description: str | None = None) -> Realm:
+    def create_realm(
+        self,
+        name: str,
+        display_name: str | None = None,
+        description: str | None = None,
+        **params: te.Unpack[BaseKwargs],
+    ) -> Realm:
         return self._create_resource(
             Realm,
             CreateRealm(
@@ -250,10 +257,11 @@ class AuthClient(BaseClient):
                 description=description,
             ),
             "realms",
+            **params,
         )
 
-    def delete_realm(self, realm_id: Realm | uuid.UUID | str):
-        self._delete_resource("realms", realm_id)
+    def delete_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("realms", realm_id, **params)
 
     def get_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Realm | None:
         return self._get_single_resource(Realm, "realms", realm_id, **params)
@@ -264,6 +272,7 @@ class AuthClient(BaseClient):
         name: str | UNSET_T = UNSET,
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
+        **params: te.Unpack[BaseKwargs],
     ) -> Realm:
         return self._update_resource(
             Realm,
@@ -274,6 +283,7 @@ class AuthClient(BaseClient):
             ),
             "realms",
             realm_id,
+            **params,
         )
 
     def create_permission(
@@ -282,6 +292,7 @@ class AuthClient(BaseClient):
         display_name: str | None = None,
         description: str | None = None,
         realm_id: Realm | uuid.UUID | str | None = None,
+        **params: te.Unpack[BaseKwargs],
     ) -> Permission:
         return self._create_resource(
             Permission,
@@ -293,6 +304,7 @@ class AuthClient(BaseClient):
                 policy_id=None,  # TODO: add policies when hub implements them
             ),
             "permissions",
+            **params,
         )
 
     def get_permission(
@@ -302,8 +314,8 @@ class AuthClient(BaseClient):
             Permission, "permissions", permission_id, include=get_includable_names(Permission), **params
         )
 
-    def delete_permission(self, permission_id: Permission | uuid.UUID | str):
-        self._delete_resource("permissions", permission_id)
+    def delete_permission(self, permission_id: Permission | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("permissions", permission_id, **params)
 
     def update_permission(
         self,
@@ -312,12 +324,14 @@ class AuthClient(BaseClient):
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
         realm_id: Realm | uuid.UUID | str | None | UNSET_T = UNSET,
+        **params: te.Unpack[BaseKwargs],
     ) -> Permission:
         return self._update_resource(
             Permission,
             UpdatePermission(name=name, display_name=display_name, description=description, realm_id=realm_id),
             "permissions",
             permission_id,
+            **params,
         )
 
     def get_permissions(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Permission]:
@@ -326,18 +340,25 @@ class AuthClient(BaseClient):
     def find_permissions(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Permission]:
         return self._find_all_resources(Permission, "permissions", include=get_includable_names(Permission), **params)
 
-    def create_role(self, name: str, display_name: str | None = None, description: str | None = None) -> Role:
+    def create_role(
+        self,
+        name: str,
+        display_name: str | None = None,
+        description: str | None = None,
+        **params: te.Unpack[BaseKwargs],
+    ) -> Role:
         return self._create_resource(
             Role,
             CreateRole(name=name, display_name=display_name, description=description),
             "roles",
+            **params,
         )
 
     def get_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Role | None:
         return self._get_single_resource(Role, "roles", role_id, include=get_includable_names(Role), **params)
 
-    def delete_role(self, role_id: Role | uuid.UUID | str):
-        self._delete_resource("roles", role_id)
+    def delete_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("roles", role_id, **params)
 
     def update_role(
         self,
@@ -345,12 +366,14 @@ class AuthClient(BaseClient):
         name: str | UNSET_T = UNSET,
         display_name: str | None | UNSET_T = UNSET,
         description: str | None | UNSET_T = UNSET,
+        **params: te.Unpack[BaseKwargs],
     ) -> Role:
         return self._update_resource(
             Role,
             UpdateRole(name=name, display_name=display_name, description=description),
             "roles",
             role_id,
+            **params,
         )
 
     def get_roles(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Role]:
@@ -360,12 +383,16 @@ class AuthClient(BaseClient):
         return self._find_all_resources(Role, "roles", include=get_includable_names(Role), **params)
 
     def create_role_permission(
-        self, role_id: Role | uuid.UUID | str, permission_id: Permission | uuid.UUID | str
+        self,
+        role_id: Role | uuid.UUID | str,
+        permission_id: Permission | uuid.UUID | str,
+        **params: te.Unpack[BaseKwargs],
     ) -> RolePermission:
         return self._create_resource(
             RolePermission,
             CreateRolePermission(role_id=role_id, permission_id=permission_id),
             "role-permissions",
+            **params,
         )
 
     def get_role_permission(
@@ -379,8 +406,12 @@ class AuthClient(BaseClient):
             **params,
         )
 
-    def delete_role_permission(self, role_permission_id: RolePermission | uuid.UUID | str):
-        self._delete_resource("role-permissions", role_permission_id)
+    def delete_role_permission(
+        self,
+        role_permission_id: RolePermission | uuid.UUID | str,
+        **params: te.Unpack[BaseKwargs],
+    ):
+        self._delete_resource("role-permissions", role_permission_id, **params)
 
     def get_role_permissions(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[RolePermission]:
         return self._get_all_resources(
@@ -407,6 +438,7 @@ class AuthClient(BaseClient):
         name_locked: bool = False,
         first_name: str | None = None,
         last_name: str | None = None,
+        **params: te.Unpack[BaseKwargs],
     ) -> User:
         return self._create_resource(
             User,
@@ -420,13 +452,14 @@ class AuthClient(BaseClient):
                 last_name=last_name,
             ),
             "users",
+            **params,
         )
 
     def get_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> User | None:
         return self._get_single_resource(User, "users", user_id, include=get_includable_names(User), **params)
 
-    def delete_user(self, user_id: User | uuid.UUID | str):
-        self._delete_resource("users", user_id)
+    def delete_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("users", user_id, **params)
 
     def update_user(
         self,
@@ -438,6 +471,7 @@ class AuthClient(BaseClient):
         name_locked: bool | UNSET_T = UNSET,
         first_name: str | None | UNSET_T = UNSET,
         last_name: str | None | UNSET_T = UNSET,
+        **params: te.Unpack[BaseKwargs],
     ) -> User:
         return self._update_resource(
             User,
@@ -452,6 +486,7 @@ class AuthClient(BaseClient):
             ),
             "users",
             user_id,
+            **params,
         )
 
     def get_users(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[User]:
@@ -464,11 +499,13 @@ class AuthClient(BaseClient):
         self,
         user_id: User | uuid.UUID | str,
         permission_id: Permission | uuid.UUID | str,
+        **params: te.Unpack[BaseKwargs],
     ) -> UserPermission:
         return self._create_resource(
             UserPermission,
             CreateUserPermission(user_id=user_id, permission_id=permission_id),
             "user-permissions",
+            **params,
         )
 
     def get_user_permission(
@@ -482,8 +519,12 @@ class AuthClient(BaseClient):
             **params,
         )
 
-    def delete_user_permission(self, user_permission_id: UserPermission | uuid.UUID | str):
-        self._delete_resource("user-permissions", user_permission_id)
+    def delete_user_permission(
+        self,
+        user_permission_id: UserPermission | uuid.UUID | str,
+        **params: te.Unpack[BaseKwargs],
+    ):
+        self._delete_resource("user-permissions", user_permission_id, **params)
 
     def get_user_permissions(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[UserPermission]:
         return self._get_all_resources(
@@ -501,11 +542,17 @@ class AuthClient(BaseClient):
             **params,
         )
 
-    def create_user_role(self, user_id: User | uuid.UUID | str, role_id: Role | uuid.UUID | str) -> UserRole:
+    def create_user_role(
+        self,
+        user_id: User | uuid.UUID | str,
+        role_id: Role | uuid.UUID | str,
+        **params: te.Unpack[BaseKwargs],
+    ) -> UserRole:
         return self._create_resource(
             UserRole,
             CreateUserRole(user_id=user_id, role_id=role_id),
             "user-roles",
+            **params,
         )
 
     def get_user_role(
@@ -515,8 +562,8 @@ class AuthClient(BaseClient):
             UserRole, "user-roles", user_role_id, include=get_includable_names(UserRole), **params
         )
 
-    def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str):
-        self._delete_resource("user-roles", user_role_id)
+    def delete_user_role(self, user_role_id: UserRole | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("user-roles", user_role_id, **params)
 
     def get_user_roles(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[UserRole]:
         return self._get_all_resources(UserRole, "user-roles", include=get_includable_names(UserRole), **params)
@@ -536,6 +583,7 @@ class AuthClient(BaseClient):
         is_confidential: bool = True,
         secret_hashed: bool = False,
         grant_types: str | None = None,
+        **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._create_resource(
             Client,
@@ -552,10 +600,11 @@ class AuthClient(BaseClient):
                 grant_types=grant_types,
             ),
             "clients",
+            **params,
         )
 
-    def delete_client(self, client_id: Client | uuid.UUID | str):
-        self._delete_resource("clients", client_id)
+    def delete_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
+        self._delete_resource("clients", client_id, **params)
 
     def get_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Client | None:
         return self._get_single_resource(Client, "clients", client_id, include=get_includable_names(Client), **params)
@@ -578,6 +627,7 @@ class AuthClient(BaseClient):
         is_confidential: bool | UNSET_T = UNSET,
         secret_hashed: bool | UNSET_T = UNSET,
         grant_types: str | None | UNSET_T = UNSET,
+        **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._update_resource(
             Client,
@@ -594,4 +644,5 @@ class AuthClient(BaseClient):
             ),
             "clients",
             client_id,
+            **params,
         )

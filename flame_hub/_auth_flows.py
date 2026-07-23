@@ -206,3 +206,26 @@ class PasswordAuth(httpx.Auth):
 
         request.headers["Authorization"] = f"Bearer {self._current_token.access_token}"
         yield request
+
+
+class StaticAuth(httpx.Auth):
+    """Static authentication flow for the FLAME Hub.
+
+    Parameters
+    ----------
+    access_token : :py:class:`str`
+        The token which is set as the auth header.
+    """
+
+    def __init__(self, access_token: str):
+        self._access_token = access_token
+
+    def auth_flow(self, request) -> t.Iterator[httpx.Request]:
+        """Executes the static authentication flow.
+
+        This method just sets the given access token as the auth header. The token is not automatically refreshed by
+        this auth flow.
+        """
+
+        request.headers["Authorization"] = f"Bearer {self._access_token}"
+        yield request

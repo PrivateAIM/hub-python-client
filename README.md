@@ -1,4 +1,4 @@
-![Code Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen.svg)
+![Code Coverage](https://img.shields.io/badge/Coverage-97%25-brightgreen.svg)
 
 # FLAME Hub Python Client
 

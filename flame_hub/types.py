@@ -24,6 +24,8 @@ __all__ = [
     "LogChannel",
     "ReadableBinary",
     "ResourceListResult",
+    "AuthParam",
+    "BaseKwargs",
 ]
 
 from ._base_client import (
@@ -39,6 +41,8 @@ from ._base_client import (
     ResourceT,
     UNSET_T,
     ResourceListResult,
+    AuthParam,
+    BaseKwargs,
 )
 from ._core_client import (
     NodeType,

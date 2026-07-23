@@ -1,9 +1,10 @@
 import tarfile
 from io import BytesIO
 
+import httpx2 as httpx
 import pytest
 
-from flame_hub import get_includable_names
+from flame_hub import get_includable_names, HubAPIError
 from flame_hub.models import BucketFile
 from tests.helpers import next_random_string, next_uuid
 
@@ -65,6 +66,14 @@ def test_stream_bucket_tarball(storage_client, bucket_file, rng_bytes):
             assert rng_bytes == f.read()
 
 
+def test_stream_non_existing_bucket_tarball(storage_client):
+    with pytest.raises(HubAPIError) as e:
+        next(storage_client.stream_bucket_tarball(next_uuid()))
+
+    assert e.value.error_response.status_code == httpx.codes.NOT_FOUND.value
+    assert "The bucket was not found" in str(e.value)
+
+
 def test_get_bucket_not_found(storage_client):
     assert storage_client.get_bucket(next_uuid()) is None
 
@@ -96,3 +105,11 @@ def test_find_bucket_files(storage_client, bucket_file, bucket_file_includables)
 
 def test_stream_bucket_file(storage_client, bucket_file, rng_bytes):
     assert rng_bytes == next(storage_client.stream_bucket_file(bucket_file.id))
+
+
+def test_stream_non_existing_bucket_file(storage_client):
+    with pytest.raises(HubAPIError) as e:
+        next(storage_client.stream_bucket_file(next_uuid()))
+
+    assert e.value.error_response.status_code == httpx.codes.NOT_FOUND.value
+    assert "The bucket-file was not found" in str(e.value)
