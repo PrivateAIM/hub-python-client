@@ -337,6 +337,8 @@ token as a string.
 
 .. code-block:: python
 
+    import flame_hub
+
     # Use a raw header value for this request only.
     core_client.get_nodes(auth="<token>")
 
@@ -344,7 +346,7 @@ token as a string.
     core_client.create_node(
         name="my-node",
         realm_id=master_realm,
-        auth=PasswordAuth(
+        auth=flame_hub.auth.PasswordAuth(
             username="admin",
             password="start123",
             base_url="http://localhost:3000/auth/",
