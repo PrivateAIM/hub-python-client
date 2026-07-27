@@ -184,7 +184,6 @@ def test_get_role_not_found(auth_client):
     assert auth_client.get_role(next_uuid()) is None
 
 
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2661")
 def test_get_roles(auth_client, role, role_includables):
     roles_get = auth_client.get_roles()
 
@@ -192,7 +191,6 @@ def test_get_roles(auth_client, role, role_includables):
     assert all(includable in r.model_fields_set for r in roles_get for includable in role_includables)
 
 
-@pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2661")
 def test_find_roles(auth_client, role, role_includables):
     roles_find = auth_client.find_roles(filter={"id": role.id})
 
