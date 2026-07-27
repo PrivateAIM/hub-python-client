@@ -15,7 +15,7 @@ respectively. The signature of the clients is always the same since they inherit
 When initializing a client, there are some things to keep in mind.
 
 * You *should* provide an instance of either :py:class:`.PasswordAuth`, :py:class:`.ClientAuth` or
-  :py:class:`.StaticAuth` to the ``auth`` argument as these are the two main authentication schemes supported by the
+  :py:class:`.StaticAuth` to the ``auth`` argument as these are the three main authentication schemes supported by the
   FLAME Hub.
 * You *can* provide a custom ``base_url`` if you're hosting your own instance of the FLAME Hub, otherwise the client
   will use the default publicly available Hub instance https://privateaim.dev to connect to.
@@ -98,14 +98,11 @@ Overview of implemented resources
 * :py:class:`.AuthClient`
     * realms
     * users
-    * robots
     * permissions
     * roles
     * role permissions
     * user permissions
     * user roles
-    * robot permissions
-    * robot roles
 * :py:class:`.CoreClient`
     * registries
     * registry projects
@@ -204,7 +201,7 @@ See :py:class:`.FindAllKwargs` for the API documentation of all possible paramet
 Optional fields
 ===============
 
-Some fields are not provided by default, such as the secret tied to a robot. You can explicitly request these fields
+Some fields are not provided by default, such as the email tied to a user. You can explicitly request these fields
 with the `fields` keyword argument.
 
 .. code-block:: python
@@ -223,7 +220,7 @@ You have to request ``email`` explicitly in order to get it.
 
 .. code-block:: python
 
-    admin = auth_client.find_robots(filter={"name": "admin"}, fields="email").pop()
+    admin = auth_client.find_users(filter={"name": "admin"}, fields="email").pop()
     print(admin.email)
 
 .. code-block::
@@ -236,9 +233,9 @@ function.
 .. code-block:: python
 
     from flame_hub import get_field_names
-    from flame_hub.models import Robot
+    from flame_hub.models import User
 
-    assert get_field_names(Robot) == ("secret",)
+    assert get_field_names(User) == ("email",)
 
 
 Meta information
