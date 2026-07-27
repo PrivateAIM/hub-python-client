@@ -14,8 +14,9 @@ respectively. The signature of the clients is always the same since they inherit
 
 When initializing a client, there are some things to keep in mind.
 
-* You *should* provide an instance of either :py:class:`.PasswordAuth` or :py:class:`.ClientAuth` to the ``auth``
-  argument as these are the two main authentication schemes supported by the FLAME Hub.
+* You *should* provide an instance of either :py:class:`.PasswordAuth`, :py:class:`.ClientAuth` or
+  :py:class:`.StaticAuth` to the ``auth`` argument as these are the three main authentication schemes supported by the
+  FLAME Hub.
 * You *can* provide a custom ``base_url`` if you're hosting your own instance of the FLAME Hub, otherwise the client
   will use the default publicly available Hub instance https://privateaim.dev to connect to.
 * You *should'nt* set ``client`` explicitly unless you know what you're doing. When providing any of the previous two
@@ -97,14 +98,11 @@ Overview of implemented resources
 * :py:class:`.AuthClient`
     * realms
     * users
-    * robots
     * permissions
     * roles
     * role permissions
     * user permissions
     * user roles
-    * robot permissions
-    * robot roles
 * :py:class:`.CoreClient`
     * registries
     * registry projects
@@ -203,7 +201,7 @@ See :py:class:`.FindAllKwargs` for the API documentation of all possible paramet
 Optional fields
 ===============
 
-Some fields are not provided by default, such as the secret tied to a robot. You can explicitly request these fields
+Some fields are not provided by default, such as the email tied to a user. You can explicitly request these fields
 with the `fields` keyword argument.
 
 .. code-block:: python
@@ -215,19 +213,19 @@ with the `fields` keyword argument.
     )
     auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
 
-    system_robot = auth_client.find_robots(filter={"name": "system"}).pop()
-    assert system_robot.secret is None
+    admin = auth_client.find_users(filter={"name": "admin"}).pop()
+    assert admin.email is None
 
-You have to request ``secret`` explicitly in order to get it.
+You have to request ``email`` explicitly in order to get it.
 
 .. code-block:: python
 
-    system_robot = auth_client.find_robots(filter={"name": "system"}, fields="secret").pop()
-    print(system_robot.secret)
+    admin = auth_client.find_users(filter={"name": "admin"}, fields="email").pop()
+    print(admin.email)
 
 .. code-block::
 
-    $2y$10$KUOKEwbbnaUDo41e7XBKGek4hggD6z6R95I69Cv3mTeBcx0hifBAC
+    admin@example.com
 
 If you are ever unsure which fields can be requested this way on a specific resource, use :py:func:`.get_field_names`
 function.
@@ -235,9 +233,9 @@ function.
 .. code-block:: python
 
     from flame_hub import get_field_names
-    from flame_hub.models import Robot
+    from flame_hub.models import User
 
-    assert get_field_names(Robot) == ("secret",)
+    assert get_field_names(User) == ("email",)
 
 
 Meta information
@@ -296,12 +294,12 @@ the resource you are requesting.
     794f2375-f043-4789-bd0c-e5534e8deeaa
     {
       "name": "master",
-      "display_name": null,
+      "displayName": null,
       "description": null,
       "id": "794f2375-f043-4789-bd0c-e5534e8deeaa",
-      "built_in": true,
-      "created_at": "2025-05-12T09:44:08.284000Z",
-      "updated_at": "2025-05-12T09:44:08.284000Z"
+      "builtIn": true,
+      "createdAt": "2025-05-12T09:44:08.284000Z",
+      "updatedAt": "2025-05-12T09:44:08.284000Z"
     }
 
 Since the realm ID is present, we can use the ``realm`` property too. And just to be extremely sure, we verify that the

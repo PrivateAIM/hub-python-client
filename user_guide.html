@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e259d695"></script>
+      <script src="_static/documentation_options.js?v=6c02275b"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -61,6 +61,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 
         </div>
@@ -99,8 +100,9 @@
 respectively. The signature of the clients is always the same since they inherit from the <a class="reference internal" href="clients_api.html#flame_hub._base_client.BaseClient" title="flame_hub._base_client.BaseClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseClient</span></code></a> class.</p>
 <p>When initializing a client, there are some things to keep in mind.</p>
 <ul class="simple">
-<li><p>You <em>should</em> provide an instance of either <a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth" title="flame_hub.auth.PasswordAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordAuth</span></code></a> or <a class="reference internal" href="authentication_api.html#flame_hub.auth.ClientAuth" title="flame_hub.auth.ClientAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClientAuth</span></code></a> to the <code class="docutils literal notranslate"><span class="pre">auth</span></code>
-argument as these are the two main authentication schemes supported by the FLAME Hub.</p></li>
+<li><p>You <em>should</em> provide an instance of either <a class="reference internal" href="authentication_api.html#flame_hub.auth.PasswordAuth" title="flame_hub.auth.PasswordAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">PasswordAuth</span></code></a>, <a class="reference internal" href="authentication_api.html#flame_hub.auth.ClientAuth" title="flame_hub.auth.ClientAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClientAuth</span></code></a> or
+<a class="reference internal" href="authentication_api.html#flame_hub.auth.StaticAuth" title="flame_hub.auth.StaticAuth"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticAuth</span></code></a> to the <code class="docutils literal notranslate"><span class="pre">auth</span></code> argument as these are the three main authentication schemes supported by the
+FLAME Hub.</p></li>
 <li><p>You <em>can</em> provide a custom <code class="docutils literal notranslate"><span class="pre">base_url</span></code> if you’re hosting your own instance of the FLAME Hub, otherwise the client
 will use the default publicly available Hub instance <a class="reference external" href="https://privateaim.dev">https://privateaim.dev</a> to connect to.</p></li>
 <li><p>You <em>should’nt</em> set <code class="docutils literal notranslate"><span class="pre">client</span></code> explicitly unless you know what you’re doing. When providing any of the previous two
@@ -185,14 +187,11 @@ the <a class="reference internal" href="clients_api.html"><span class="doc">API 
 <dt><a class="reference internal" href="clients_api.html#flame_hub.AuthClient" title="flame_hub.AuthClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthClient</span></code></a></dt><dd><ul>
 <li><p>realms</p></li>
 <li><p>users</p></li>
-<li><p>robots</p></li>
 <li><p>permissions</p></li>
 <li><p>roles</p></li>
 <li><p>role permissions</p></li>
 <li><p>user permissions</p></li>
 <li><p>user roles</p></li>
-<li><p>robot permissions</p></li>
-<li><p>robot roles</p></li>
 </ul>
 </dd>
 </dl>
@@ -289,7 +288,7 @@ left unset, the client will sort in ascending order by default.</p>
 </section>
 <section id="optional-fields">
 <h2>Optional fields<a class="headerlink" href="#optional-fields" title="Link to this heading"></a></h2>
-<p>Some fields are not provided by default, such as the secret tied to a robot. You can explicitly request these fields
+<p>Some fields are not provided by default, such as the email tied to a user. You can explicitly request these fields
 with the <cite>fields</cite> keyword argument.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
@@ -298,24 +297,24 @@ with the <cite>fields</cite> keyword argument.</p>
 <span class="p">)</span>
 <span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
-<span class="n">system_robot</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_robots</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-<span class="k">assert</span> <span class="n">system_robot</span><span class="o">.</span><span class="n">secret</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">admin</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<p>You have to request <code class="docutils literal notranslate"><span class="pre">secret</span></code> explicitly in order to get it.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system_robot</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_robots</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;secret&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">system_robot</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span>
+<p>You have to request <code class="docutils literal notranslate"><span class="pre">email</span></code> explicitly in order to get it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;email&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$2y$10$KUOKEwbbnaUDo41e7XBKGek4hggD6z6R95I69Cv3mTeBcx0hifBAC
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">admin</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span>
 </pre></div>
 </div>
 <p>If you are ever unsure which fields can be requested this way on a specific resource, use <a class="reference internal" href="utility_functions_api.html#flame_hub.get_field_names" title="flame_hub.get_field_names"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_field_names()</span></code></a>
 function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_field_names</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Robot</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 
-<span class="k">assert</span> <span class="n">get_field_names</span><span class="p">(</span><span class="n">Robot</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;secret&quot;</span><span class="p">,)</span>
+<span class="k">assert</span> <span class="n">get_field_names</span><span class="p">(</span><span class="n">User</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,)</span>
 </pre></div>
 </div>
 </section>
@@ -365,12 +364,12 @@ the resource you are requesting.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">794f2375-f043-4789-bd0c-e5534e8deeaa</span>
 <span class="go">{</span>
 <span class="go">  &quot;name&quot;: &quot;master&quot;,</span>
-<span class="go">  &quot;display_name&quot;: null,</span>
+<span class="go">  &quot;displayName&quot;: null,</span>
 <span class="go">  &quot;description&quot;: null,</span>
 <span class="go">  &quot;id&quot;: &quot;794f2375-f043-4789-bd0c-e5534e8deeaa&quot;,</span>
-<span class="go">  &quot;built_in&quot;: true,</span>
-<span class="go">  &quot;created_at&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;,</span>
-<span class="go">  &quot;updated_at&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;</span>
+<span class="go">  &quot;builtIn&quot;: true,</span>
+<span class="go">  &quot;createdAt&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;,</span>
+<span class="go">  &quot;updatedAt&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;</span>
 <span class="go">}</span>
 </pre></div>
 </div>
