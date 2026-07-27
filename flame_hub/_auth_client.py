@@ -3,7 +3,8 @@ from datetime import datetime
 import typing as t
 
 import typing_extensions as te
-from pydantic import BaseModel, Field, WrapValidator, EmailStr
+from pydantic import BaseModel, Field, WrapValidator, EmailStr, ConfigDict
+from pydantic.alias_generators import to_camel
 
 from flame_hub._base_client import (
     BaseClient,
@@ -23,13 +24,22 @@ from flame_hub._base_client import (
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 
 
-class CreateRealm(BaseModel):
+class AuthBaseModel(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        validate_by_alias=True,
+        validate_by_name=True,
+        serialize_by_alias=True,
+    )
+
+
+class CreateRealm(AuthBaseModel):
     name: str
     display_name: str | None
     description: str | None
 
 
-class UpdateRealm(BaseModel):
+class UpdateRealm(AuthBaseModel):
     name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
@@ -42,7 +52,7 @@ class Realm(CreateRealm):
     updated_at: datetime
 
 
-class CreateUser(BaseModel):
+class CreateUser(AuthBaseModel):
     name: str
     display_name: str | None
     email: t.Annotated[EmailStr, IsOptionalField] = None
@@ -62,7 +72,7 @@ class User(CreateUser):
     updated_at: datetime
 
 
-class UpdateUser(BaseModel):
+class UpdateUser(AuthBaseModel):
     name: str | UNSET_T = UNSET
     display_name: str | UNSET_T = UNSET
     email: str | None | UNSET_T = UNSET
@@ -73,7 +83,7 @@ class UpdateUser(BaseModel):
     password: str | None | UNSET_T = UNSET
 
 
-class CreatePermission(BaseModel):
+class CreatePermission(AuthBaseModel):
     name: str
     display_name: str | None
     description: str | None
@@ -90,7 +100,7 @@ class Permission(CreatePermission):
     realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class UpdatePermission(BaseModel):
+class UpdatePermission(AuthBaseModel):
     name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
@@ -98,7 +108,7 @@ class UpdatePermission(BaseModel):
     policy_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
 
 
-class CreateRole(BaseModel):
+class CreateRole(AuthBaseModel):
     name: str
     display_name: str | None
     description: str | None
@@ -113,13 +123,13 @@ class Role(CreateRole):
     realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class UpdateRole(BaseModel):
+class UpdateRole(AuthBaseModel):
     name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
     description: str | None | UNSET_T = UNSET
 
 
-class CreateRolePermission(BaseModel):
+class CreateRolePermission(AuthBaseModel):
     role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
@@ -137,7 +147,7 @@ class RolePermission(CreateRolePermission):
     permission_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class CreateUserPermission(BaseModel):
+class CreateUserPermission(AuthBaseModel):
     user_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     permission_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
@@ -155,7 +165,7 @@ class UserPermission(CreateUserPermission):
     user_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class CreateUserRole(BaseModel):
+class CreateUserRole(AuthBaseModel):
     user_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     role_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
@@ -172,7 +182,7 @@ class UserRole(CreateUserRole):
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
-class CreateClient(BaseModel):
+class CreateClient(AuthBaseModel):
     name: str
     secret: str | None
     display_name: str | None
@@ -185,7 +195,7 @@ class CreateClient(BaseModel):
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
-class Client(BaseModel):
+class Client(AuthBaseModel):
     id: uuid.UUID
     name: str
     built_in: bool
@@ -205,7 +215,7 @@ class Client(BaseModel):
     realm: t.Annotated[Realm, IsIncludable] = None
 
 
-class UpdateClient(BaseModel):
+class UpdateClient(AuthBaseModel):
     name: str | UNSET_T = UNSET
     secret: str | None | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
