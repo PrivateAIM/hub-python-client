@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.3.0...v0.4.0) (2026-07-27)
+
+
+### Features
+
+* update to hub v0.12.5 ([#124](https://github.com/PrivateAIM/hub-python-client/issues/124)) ([22f93a6](https://github.com/PrivateAIM/hub-python-client/commit/22f93a60a078da1fbc8da356f6270991af3b5c33))
+
 ## [0.3.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.2.16...v0.3.0) (2026-07-23)
 
 
