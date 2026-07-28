@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/PrivateAIM/hub-python-client/compare/v0.4.0...v0.4.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* client authentication ([#127](https://github.com/PrivateAIM/hub-python-client/issues/127)) ([425c032](https://github.com/PrivateAIM/hub-python-client/commit/425c032d38bc7ff7c5c1db69ec4f315e7718f742))
+* make analysis models backwards compatible for older analysis resources ([a2e3fd2](https://github.com/PrivateAIM/hub-python-client/commit/a2e3fd28d7d128d1c6e1d2eea2974992bc24faac))
+
 ## [0.4.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.3.0...v0.4.0) (2026-07-27)
 
 
