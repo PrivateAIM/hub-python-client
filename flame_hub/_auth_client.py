@@ -182,6 +182,10 @@ class UserRole(CreateUserRole):
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
+ClientAuthMethod = t.Literal["none", "secret", "tls"]
+ClientTokenBindingMethod = t.Literal["none", "tls"]
+
+
 class CreateClient(AuthBaseModel):
     name: str
     secret: str | None
@@ -192,6 +196,8 @@ class CreateClient(AuthBaseModel):
     is_confidential: bool
     secret_hashed: bool
     grant_types: str | None
+    auth_method: ClientAuthMethod
+    token_binding_method: ClientTokenBindingMethod
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
@@ -209,6 +215,8 @@ class Client(AuthBaseModel):
     scope: str | None
     base_url: str | None
     root_url: str | None
+    auth_method: ClientAuthMethod
+    token_binding_method: ClientTokenBindingMethod
     created_at: datetime
     updated_at: datetime
     realm_id: uuid.UUID
@@ -225,6 +233,8 @@ class UpdateClient(AuthBaseModel):
     is_confidential: bool | UNSET_T = UNSET
     secret_hashed: bool | UNSET_T = UNSET
     grant_types: str | None | UNSET_T = UNSET
+    auth_method: ClientAuthMethod | UNSET_T = UNSET
+    token_binding_method: ClientTokenBindingMethod | UNSET_T = UNSET
 
 
 class AuthClient(BaseClient):
@@ -593,6 +603,8 @@ class AuthClient(BaseClient):
         is_confidential: bool = True,
         secret_hashed: bool = False,
         grant_types: str | None = None,
+        auth_method: ClientAuthMethod = "secret",
+        token_binding_method: ClientTokenBindingMethod = "none",
         **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._create_resource(
@@ -608,6 +620,8 @@ class AuthClient(BaseClient):
                 is_confidential=is_confidential,
                 secret_hashed=secret_hashed,
                 grant_types=grant_types,
+                auth_method=auth_method,
+                token_binding_method=token_binding_method,
             ),
             "clients",
             **params,
@@ -637,6 +651,8 @@ class AuthClient(BaseClient):
         is_confidential: bool | UNSET_T = UNSET,
         secret_hashed: bool | UNSET_T = UNSET,
         grant_types: str | None | UNSET_T = UNSET,
+        auth_method: ClientAuthMethod | UNSET_T = UNSET,
+        token_binding_method: ClientTokenBindingMethod | UNSET_T = UNSET,
         **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._update_resource(
@@ -651,6 +667,8 @@ class AuthClient(BaseClient):
                 is_confidential=is_confidential,
                 secret_hashed=secret_hashed,
                 grant_types=grant_types,
+                auth_method=auth_method,
+                token_binding_method=token_binding_method,
             ),
             "clients",
             client_id,
