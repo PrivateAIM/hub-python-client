@@ -286,7 +286,7 @@ class Analysis(CreateAnalysis):
     registry: t.Annotated[Registry | None, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID
-    client_id: uuid.UUID
+    client_id: uuid.UUID | None
     project_id: uuid.UUID
     project: t.Annotated[Project, IsIncludable] = None
     master_image: t.Annotated[MasterImage | None, IsIncludable] = None
