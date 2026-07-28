@@ -1,5 +1,5 @@
 [![PyPI](https://img.shields.io/pypi/v/flame-hub-client?label=PyPI&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
-![Code Coverage](https://img.shields.io/badge/Coverage-97%25-brightgreen.svg)
+![Code Coverage](https://img.shields.io/badge/Coverage-98%25-brightgreen.svg)
 ![Python versions](https://img.shields.io/badge/Python->=3.10-blue)
 [![License](https://img.shields.io/pypi/l/flame-hub-client?label=License&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
