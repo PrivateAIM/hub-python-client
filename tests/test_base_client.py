@@ -25,7 +25,7 @@ from flame_hub._base_client import (
 )
 from flame_hub.auth import ClientAuth, PasswordAuth, StaticAuth
 from flame_hub.types import FilterOperator
-from flame_hub.models import Node, User, Bucket, RefreshToken
+from flame_hub.models import Node, Realm, User, Bucket, RefreshToken
 from tests.helpers import next_random_string
 
 
@@ -205,6 +205,77 @@ class ExtendedIncludeModel(IncludeModel):
 )
 def test_get_includable_names(model, includable_properties):
     assert get_includable_names(model) == includable_properties
+
+
+def new_mock_client(body: t.Any, status_code: int = httpx.codes.OK.value) -> httpx.Client:
+    """Create an HTTP client which answers every request with the same status code and body."""
+    return httpx.Client(
+        base_url="http://localhost",
+        transport=httpx.MockTransport(lambda _: httpx.Response(status_code, json=body)),
+    )
+
+
+REALM_JSON = {
+    "id": "36b6a1a4-2fdb-4ec3-a1a9-4b1f0aa0f9de",
+    "name": "master",
+    "displayName": "Master Realm",
+    "description": None,
+    "builtIn": True,
+    "createdAt": "2026-07-20T09:25:01.000Z",
+    "updatedAt": "2026-07-20T09:25:01.000Z",
+}
+
+NODE_JSON = {
+    "id": "5a0a3b0e-e4a0-4a41-9d7f-e2b9dcdcf9c1",
+    "name": "my-node",
+    "external_name": None,
+    "hidden": False,
+    "realm_id": "9d6b7a44-3f66-4f8b-9d2e-9dd0d2d7b2c1",
+    "registry_id": None,
+    "type": "default",
+    "public_key": None,
+    "online": False,
+    "registry_project_id": None,
+    "robot_id": None,
+    "client_id": None,
+    "created_at": "2026-07-20T09:25:01.000Z",
+    "updated_at": "2026-07-20T09:25:01.000Z",
+}
+
+
+@pytest.mark.parametrize(
+    "status_code,call_client",
+    [
+        (httpx.codes.OK.value, lambda c: c.get_realm(REALM_JSON["id"])),
+        (httpx.codes.CREATED.value, lambda c: c.create_realm(REALM_JSON["name"])),
+        (httpx.codes.ACCEPTED.value, lambda c: c.update_realm(REALM_JSON["id"], name=REALM_JSON["name"])),
+    ],
+)
+def test_auth_client_unwraps_single_resource(status_code, call_client):
+    # authup wraps single resources as {"data": ..., "meta": ...} since 1.0.0-beta.57
+    auth_client = flame_hub.AuthClient(client=new_mock_client({"data": REALM_JSON, "meta": {}}, status_code))
+
+    assert call_client(auth_client) == Realm(**REALM_JSON)
+
+
+def test_auth_client_rejects_unwrapped_single_resource():
+    auth_client = flame_hub.AuthClient(client=new_mock_client(REALM_JSON))
+
+    with pytest.raises(ValueError, match="data property"):
+        auth_client.get_realm(REALM_JSON["id"])
+
+
+def test_auth_client_keeps_list_response_untouched():
+    auth_client = flame_hub.AuthClient(client=new_mock_client({"data": [REALM_JSON], "meta": {"total": 1}}))
+
+    assert auth_client.get_realms() == [Realm(**REALM_JSON)]
+
+
+def test_base_client_keeps_single_resource_untouched():
+    # the FLAME Hub core and storage services respond with the resource itself
+    client = BaseClient(base_url="http://localhost", client=new_mock_client(NODE_JSON))
+
+    assert client._get_single_resource(Node, "nodes", NODE_JSON["id"]) == Node(**NODE_JSON)
 
 
 @pytest.mark.integration
