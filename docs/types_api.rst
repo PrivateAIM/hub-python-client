@@ -5,6 +5,10 @@ Types
 .. autodata:: flame_hub._base_client.ResourceT
     :annotation: = typing.TypeVar
 
+.. autoclass:: flame_hub._base_client.ResourceListResult
+    :members:
+    :undoc-members:
+
 .. autoclass:: flame_hub.types.FieldParams
 
 .. autoclass:: flame_hub.types.IncludeParams

@@ -39,9 +39,6 @@ __all__ = [
     "CreateRealm",
     "UpdateRealm",
     "Realm",
-    "CreateRobot",
-    "Robot",
-    "UpdateRobot",
     "CreatePermission",
     "Permission",
     "UpdatePermission",
@@ -57,10 +54,6 @@ __all__ = [
     "UserPermission",
     "CreateUserRole",
     "UserRole",
-    "CreateRobotPermission",
-    "RobotPermission",
-    "CreateRobotRole",
-    "RobotRole",
     "IsOptionalField",
     "IsIncludable",
     "ResourceListMeta",
@@ -70,6 +63,9 @@ __all__ = [
     "CreateClient",
     "UpdateClient",
     "Client",
+    "NodeRegistryCredentials",
+    "ClientCredentials",
+    "UpdateClientCredentials",
 ]
 
 from ._core_client import (
@@ -106,6 +102,9 @@ from ._core_client import (
     CreateRegistryProject,
     RegistryProject,
     UpdateRegistryProject,
+    NodeRegistryCredentials,
+    ClientCredentials,
+    UpdateClientCredentials,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile
 from ._base_client import UNSET, IsOptionalField, IsIncludable, ResourceListMeta, ResourceList
@@ -113,9 +112,6 @@ from ._auth_client import (
     CreateRealm,
     UpdateRealm,
     Realm,
-    CreateRobot,
-    Robot,
-    UpdateRobot,
     CreatePermission,
     Permission,
     UpdatePermission,
@@ -131,10 +127,6 @@ from ._auth_client import (
     UserPermission,
     CreateUserRole,
     UserRole,
-    CreateRobotPermission,
-    RobotPermission,
-    CreateRobotRole,
-    RobotRole,
     CreateClient,
     Client,
     UpdateClient,

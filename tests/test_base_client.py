@@ -1,11 +1,11 @@
 import typing as t
 import uuid
 
-import httpx
+import httpx2 as httpx
 from pydantic import BaseModel, WrapValidator, Field, ValidationError
 import pytest
 
-from flame_hub import AuthClient
+import flame_hub
 from flame_hub._base_client import (
     build_page_params,
     build_filter_params,
@@ -21,9 +21,12 @@ from flame_hub._base_client import (
     BaseClient,
     UNSET,
     UNSET_T,
+    resolve_auth,
 )
+from flame_hub.auth import ClientAuth, PasswordAuth, StaticAuth
 from flame_hub.types import FilterOperator
-from flame_hub.models import Node, Realm, User, Bucket
+from flame_hub.models import Node, Realm, User, Bucket, RefreshToken
+from tests.helpers import next_random_string
 
 
 @pytest.mark.parametrize(
@@ -250,20 +253,20 @@ NODE_JSON = {
 )
 def test_auth_client_unwraps_single_resource(status_code, call_client):
     # authup wraps single resources as {"data": ..., "meta": ...} since 1.0.0-beta.57
-    auth_client = AuthClient(client=new_mock_client({"data": REALM_JSON, "meta": {}}, status_code))
+    auth_client = flame_hub.AuthClient(client=new_mock_client({"data": REALM_JSON, "meta": {}}, status_code))
 
     assert call_client(auth_client) == Realm(**REALM_JSON)
 
 
 def test_auth_client_rejects_unwrapped_single_resource():
-    auth_client = AuthClient(client=new_mock_client(REALM_JSON))
+    auth_client = flame_hub.AuthClient(client=new_mock_client(REALM_JSON))
 
     with pytest.raises(ValueError, match="data property"):
         auth_client.get_realm(REALM_JSON["id"])
 
 
 def test_auth_client_keeps_list_response_untouched():
-    auth_client = AuthClient(client=new_mock_client({"data": [REALM_JSON], "meta": {"total": 1}}))
+    auth_client = flame_hub.AuthClient(client=new_mock_client({"data": [REALM_JSON], "meta": {"total": 1}}))
 
     assert auth_client.get_realms() == [Realm(**REALM_JSON)]
 
@@ -291,3 +294,61 @@ def test_resource_list_meta_data(request, password_auth, resource_type, base_url
     assert meta.total >= 0
     assert meta.limit == DEFAULT_PAGE_PARAMS["limit"]
     assert meta.offset == DEFAULT_PAGE_PARAMS["offset"]
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        ClientAuth(client_id=next_random_string(), client_secret=next_random_string()),
+        PasswordAuth(username=next_random_string(), password=next_random_string()),
+        StaticAuth(access_token=next_random_string()),
+        None,
+        httpx.USE_CLIENT_DEFAULT,
+    ],
+)
+def test_resolve_auth_other_than_string(value):
+    assert value is resolve_auth(value)
+
+
+def test_resolve_auth_for_string():
+    token = next_random_string()
+    auth = resolve_auth(token)
+
+    assert isinstance(auth, StaticAuth)
+    assert token == auth._access_token
+
+
+@pytest.mark.integration
+def test_override_auth(core_base_url, auth_base_url, auth_admin_username, auth_admin_password):
+    auth_client = httpx.Client(base_url=auth_base_url)
+    r = auth_client.post(
+        "token",
+        json={
+            "grant_type": "password",
+            "username": auth_admin_username,
+            "password": auth_admin_password,
+        },
+    )
+
+    assert r.status_code == httpx.codes.OK.value
+
+    token = RefreshToken(**r.json()).access_token
+
+    recorder = {}
+
+    def handler(request):
+        recorder["auth_header"] = request.headers.get("Authorization")
+        return request
+
+    test_client = httpx.Client(
+        base_url=core_base_url,
+        auth=StaticAuth(access_token=next_random_string()),
+        event_hooks={"request": [handler]},
+    )
+    core_client = flame_hub.CoreClient(client=test_client)
+
+    node = core_client.create_node(name=next_random_string(), auth=token)
+
+    assert recorder["auth_header"] == f"Bearer {token}"
+
+    core_client.delete_node(node, auth=token)
