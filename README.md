@@ -1,4 +1,8 @@
-![Code Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen.svg)
+[![PyPI](https://img.shields.io/pypi/v/flame-hub-client?label=PyPI&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
+![Code Coverage](https://img.shields.io/badge/Coverage-98%25-brightgreen.svg)
+![Python versions](https://img.shields.io/badge/Python->=3.10-blue)
+[![License](https://img.shields.io/pypi/l/flame-hub-client?label=License&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 # FLAME Hub Python Client
 
@@ -16,7 +20,7 @@ python -m pip install flame-hub-client
 ## Quickstart
 
 The FLAME Hub Python Client offers *get*, *find*, *update*, *create* and *delete* methods for the core, storage and auth
-endpoints. It is capable of authenticating against the API using either password or robot authentication. Pick one,
+endpoints. It is capable of authenticating against the API using either password or client authentication. Pick one,
 provide your credentials and plug them into the class for the service you want to use. Note that the client will
 automatically reauthenticate if necessary.
 

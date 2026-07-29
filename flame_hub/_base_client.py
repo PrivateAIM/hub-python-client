@@ -4,12 +4,12 @@ import uuid
 from collections.abc import Iterable
 from enum import Enum
 
-import httpx
+import httpx2 as httpx
 import typing_extensions as te
 from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
 
-from flame_hub._exceptions import new_hub_api_error_from_response
-from flame_hub._auth_flows import PasswordAuth, ClientAuth
+from flame_hub._exceptions import new_hub_api_error_from_response, HubAPIError
+from flame_hub._auth_flows import PasswordAuth, ClientAuth, StaticAuth
 
 
 class UNSET(BaseModel):
@@ -28,9 +28,12 @@ class UuidModel(t.Protocol[ResourceT]):
 
     id: uuid.UUID
 
+    def __str__(self) -> str:
+        return str(self.id)
+
 
 # union which encompasses all types where a UUID can be extracted from
-UuidIdentifiable = UuidModel | uuid.UUID | str
+UuidIdentifiable: t.TypeAlias = UuidModel | uuid.UUID | str
 
 
 def obtain_uuid_from(uuid_identifiable: UuidIdentifiable) -> uuid.UUID:
@@ -113,6 +116,10 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
     """Attribute which holds all retrieved resources as a list."""
     meta: ResourceListMeta
     """Attribute which holds meta information about the result and the requested resource type."""
+
+
+# Generic type alias for all get and find methods.
+ResourceListResult: t.TypeAlias = list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]
 
 
 class SortParams(te.TypedDict, total=False):
@@ -236,20 +243,7 @@ def get_includable_names(model: type[ResourceT]) -> tuple[str, ...]:
     return _get_annotated_property_names(model, IsIncludable)
 
 
-class FindAllKwargs(te.TypedDict, total=False):
-    """Keyword arguments that can be used for finding resources.
-
-    See Also
-    --------
-    :py:class:`.FilterOperator`, :py:type:`~flame_hub.types.FilterParams`, :py:type:`~flame_hub.types.PageParams`,\
-    :py:type:`~flame_hub.types.SortParams`, :py:type:`flame_hub.types.FieldParams`, :py:meth:`._find_all_resources`
-    """
-
-    filter: FilterParams | None
-    page: PageParams | None
-    sort: SortParams | None
-    fields: FieldParams | None
-    meta: bool
+AuthParam: t.TypeAlias = ClientAuth | PasswordAuth | StaticAuth | str | None
 
 
 class ClientKwargs(te.TypedDict, total=False):
@@ -263,7 +257,19 @@ class ClientKwargs(te.TypedDict, total=False):
     client: httpx.Client | None
 
 
-class GetKwargs(te.TypedDict, total=False):
+class BaseKwargs(te.TypedDict, total=False):
+    """Base keyword arguments that apply to all high-level methods of the :py:class:`.BaseClient` and should be
+    configurable by the user.
+
+    See Also
+    --------
+    :py:type:`~flame_hub.types.AuthParam`, :py:class:`.BaseClient`
+    """
+
+    auth: AuthParam
+
+
+class GetKwargs(BaseKwargs, total=False):
     """Keyword arguments that can be used for getting resources.
 
     See Also
@@ -273,6 +279,20 @@ class GetKwargs(te.TypedDict, total=False):
 
     fields: FieldParams | None
     meta: bool
+
+
+class FindAllKwargs(GetKwargs, total=False):
+    """Keyword arguments that can be used for finding resources.
+
+    See Also
+    --------
+    :py:class:`.FilterOperator`, :py:type:`~flame_hub.types.FilterParams`, :py:type:`~flame_hub.types.PageParams`,\
+    :py:type:`~flame_hub.types.SortParams`, :py:meth:`._find_all_resources`
+    """
+
+    filter: FilterParams | None
+    page: PageParams | None
+    sort: SortParams | None
 
 
 def build_page_params(page_params: PageParams | None = None, default_page_params: PageParams | None = None) -> dict:
@@ -285,7 +305,7 @@ def build_page_params(page_params: PageParams | None = None, default_page_params
         page_params: PageParams = {}
 
     # overwrite default values with user-defined ones
-    page_params = default_page_params | page_params
+    page_params = {**default_page_params, **page_params}
 
     return {f"page[{k}]": v for k, v in page_params.items()}
 
@@ -332,7 +352,7 @@ def build_sort_params(sort_params: SortParams | None = None) -> dict:
         # property gets a "-" prepended if sorting in descending order
         param_sort_prefix = "-" if param_sort_order == "descending" else ""
         # construct the actual query params
-        query_params["sort"] = param_sort_prefix + param_sort_by
+        query_params["sort"] = f"{param_sort_prefix}{param_sort_by}"
 
     return query_params
 
@@ -384,6 +404,15 @@ def convert_path(path: Iterable[str | UuidIdentifiable]) -> tuple[str, ...]:
     return tuple(path_parts)
 
 
+def resolve_auth(auth: AuthParam) -> ClientAuth | PasswordAuth | StaticAuth | None:
+    """Translates strings into :py:class:`.StaticAuth` instances."""
+
+    if isinstance(auth, str):
+        auth = StaticAuth(access_token=auth)
+
+    return auth
+
+
 class BaseClient(object):
     """The base class for other client classes.
 
@@ -395,7 +424,7 @@ class BaseClient(object):
     ----------
     base_url : :py:class:`str`
         Base URL of the Hub service.
-    auth : :py:class:`.PasswordAuth` | :py:class:`.ClientAuth`, optional
+    auth : :py:class:`.PasswordAuth` | :py:class:`.ClientAuth` | :py:class:`.StaticAuth` | :any:`None`, optional
         Authenticator which is used to authenticate the client at the FLAME Hub instance. Defaults to :any:`None`.
     **kwargs : :py:class:`Unpack`\\[:py:class:`~flame_hub._base_client.ClientKwargs`]
         Currently used to pass an already instantiated HTTP client via the ``client`` keyword argument to bypass the
@@ -406,9 +435,63 @@ class BaseClient(object):
     :py:class:`.AuthClient`, :py:class:`.CoreClient`, :py:class:`.StorageClient`
     """
 
-    def __init__(self, base_url: str, auth: PasswordAuth | ClientAuth | None = None, **kwargs: te.Unpack[ClientKwargs]):
+    def __init__(
+        self,
+        base_url: str,
+        auth: AuthParam = None,
+        **kwargs: te.Unpack[ClientKwargs],
+    ):
         client = kwargs.get("client", None)
-        self._client = client or httpx.Client(auth=auth, base_url=base_url)
+        self._client = client or httpx.Client(auth=resolve_auth(auth), base_url=base_url)
+
+    def _request(
+        self,
+        method: t.Literal["GET", "POST", "PUT", "DELETE"],
+        *path: str | UuidIdentifiable,
+        expected_code: int,
+        stream: bool = False,
+        **params,
+    ) -> httpx.Response:
+        """Base method which is used by all other low-level methods that request the Hub.
+
+        This method takes care of all :py:class:`.BaseKwargs`. It overrides the authentication flow for only one
+        request and checks if the response's status code matches the expected code.
+
+        Parameters
+        ----------
+        method : Literal["GET", "POST", "PUT", "DELETE"]
+            Specifies the method that should be performed with the request.
+        *path : :py:class:`str`
+            A string or multiple strings that define the endpoint.
+        expected_code : :py:class:`int`
+            The expected status code of the response from the ``GET`` request. This defaults to ``200``.
+        stream : :py:class:`bool`
+            Whether the response should be streamed or not.
+        **params
+            Further keyword arguments from which all :py:class:`.BaseKwargs` are popped and all remaining arguments are
+            then passed into :py:meth:`httpx2.Client.build_request`.
+
+        Returns
+        -------
+        :py:class:`httpx2.Response`
+            The response for the specified request.
+
+        Raises
+        ------
+        :py:exc:`.HubAPIError`
+            If the status code of the response does not match `expected_code`.
+        """
+
+        auth = params.pop("auth", httpx.USE_CLIENT_DEFAULT)
+        request = self._client.build_request(method, "/".join(convert_path(path)), **params)
+        r = self._client.send(request, stream=stream, auth=resolve_auth(auth))
+
+        if r.status_code != expected_code:
+            if stream:
+                r.read()
+            raise new_hub_api_error_from_response(r)
+
+        return r
 
     def _get_all_resources(
         self,
@@ -417,7 +500,7 @@ class BaseClient(object):
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
-    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
+    ) -> ResourceListResult[ResourceT]:
         """Retrieve all resources of a certain type at the specified path from the FLAME Hub.
 
         This method passes its arguments through to :py:meth:`_find_all_resources`. Check the documentation of that
@@ -441,7 +524,7 @@ class BaseClient(object):
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[FindAllKwargs],
-    ) -> list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]:
+    ) -> ResourceListResult[ResourceT]:
         """Find all resources at the specified path on the FLAME Hub that match certain criteria.
 
         This method accesses the endpoint ``*path`` and returns all resources of type ``resource_type`` that match
@@ -461,7 +544,7 @@ class BaseClient(object):
         include : :py:type:`~flame_hub.types.IncludeParams`, optional
             Extend the default resource fields by explicitly list resource names to nest in the response. See the
             :doc:`model specifications <models_api>` which resources can be included in other resources.
-        expected_code : :py:class:`int`, optional
+        expected_code : :py:class:`int`
             The expected status code of the response from the ``GET`` request. This defaults to ``200``.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.FindAllKwargs`]
             Further keyword arguments to define filtering, sorting and pagination conditions, adding optional fields
@@ -488,11 +571,11 @@ class BaseClient(object):
         """
 
         # merge processed filter and page params
-        page_params = params.get("page", None)
-        filter_params = params.get("filter", None)
-        sort_params = params.get("sort", None)
-        field_params = params.get("fields", None)
-        meta = params.get("meta", False)
+        page_params = params.pop("page", None)
+        filter_params = params.pop("filter", None)
+        sort_params = params.pop("sort", None)
+        field_params = params.pop("fields", None)
+        meta_flag = params.pop("meta", False)
 
         request_params = (
             build_page_params(page_params)
@@ -502,14 +585,11 @@ class BaseClient(object):
             | build_field_params(field_params)
         )
 
-        r = self._client.get("/".join(path), params=request_params)
-
-        if r.status_code != expected_code:
-            raise new_hub_api_error_from_response(r)
+        r = self._request("GET", *path, expected_code=expected_code, params=request_params, **params)
 
         resource_list = ResourceList[resource_type](**r.json())
 
-        if meta:
+        if meta_flag:
             return resource_list.data, resource_list.meta
         else:
             return resource_list.data
@@ -520,6 +600,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str,
         expected_code: int = httpx.codes.CREATED.value,
+        **params: te.Unpack[BaseKwargs],
     ) -> ResourceT:
         """Create a resource of a certain type at the specified path.
 
@@ -538,7 +619,7 @@ class BaseClient(object):
             available models.
         *path : :py:class:`str`
             Path to the endpoint where the resource should be created.
-        expected_code : :py:class:`int`, optional
+        expected_code : :py:class:`int`
             The expected status code of the response from the ``POST`` request. This defaults to ``201``.
 
         Returns
@@ -553,13 +634,8 @@ class BaseClient(object):
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
         """
-        r = self._client.post(
-            "/".join(path),
-            json=resource.model_dump(mode="json"),
-        )
 
-        if r.status_code != expected_code:
-            raise new_hub_api_error_from_response(r)
+        r = self._request("POST", *path, expected_code=expected_code, json=resource.model_dump(mode="json"), **params)
 
         return resource_type(**r.json())
 
@@ -591,7 +667,7 @@ class BaseClient(object):
         include : :py:type:`~flame_hub.types.IncludeParams`, optional
             Extend the default resource fields by explicitly list resource names to nest in the response. See the
             :doc:`model specifications <models_api>` which resources can be included in other resources.
-        expected_code : :py:class:`int`, optional
+        expected_code : :py:class:`int`
             The expected status code of the response from the ``GET`` request. This defaults to ``200``.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.GetKwargs`]
             Further keyword arguments for adding optional fields to a response and returning meta information.
@@ -617,17 +693,18 @@ class BaseClient(object):
         -----
         ``meta`` has no relevance for this method.
         """
-        field_params = params.get("fields", None)
+
+        field_params = params.pop("fields", None)
 
         request_params = build_field_params(field_params) | build_include_params(include)
 
-        r = self._client.get("/".join(convert_path(path)), params=request_params)
-
-        if r.status_code == httpx.codes.NOT_FOUND.value:
-            return None
-
-        if r.status_code != expected_code:
-            raise new_hub_api_error_from_response(r)
+        try:
+            r = self._request("GET", *path, expected_code=expected_code, params=request_params, **params)
+        except HubAPIError as e:
+            if e.error_response is not None and e.error_response.status_code == httpx.codes.NOT_FOUND.value:
+                return None
+            else:
+                raise
 
         return resource_type(**r.json())
 
@@ -637,6 +714,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str | UuidIdentifiable,
         expected_code: int = httpx.codes.ACCEPTED.value,
+        **params: te.Unpack[BaseKwargs],
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path.
 
@@ -657,7 +735,7 @@ class BaseClient(object):
             A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
             a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
             ``id`` attribute.
-        expected_code : :py:class:`int`, optional
+        expected_code : :py:class:`int`
             The expected status code of the response from the ``POST`` request. This defaults to ``202``.
 
         Returns
@@ -672,18 +750,24 @@ class BaseClient(object):
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
         """
-        r = self._client.post(
-            "/".join(convert_path(path)),
+
+        r = self._request(
+            "POST",
+            *path,
+            expected_code=expected_code,
             # Exclude defaults so that properties that are set to UNSET are excluded from update models.
             json=resource.model_dump(mode="json", exclude_defaults=True),
+            **params,
         )
-
-        if r.status_code != expected_code:
-            raise new_hub_api_error_from_response(r)
 
         return resource_type(**r.json())
 
-    def _delete_resource(self, *path: str | UuidIdentifiable, expected_code: int = httpx.codes.ACCEPTED.value) -> None:
+    def _delete_resource(
+        self,
+        *path: str | UuidIdentifiable,
+        expected_code: int = httpx.codes.ACCEPTED.value,
+        **params: te.Unpack[BaseKwargs],
+    ) -> None:
         """Delete a resource of a certain type at the specified path.
 
         Parameters
@@ -692,7 +776,7 @@ class BaseClient(object):
             A string or multiple strings that define the endpoint. Since the last component of the path is a UUID of
             a specific resource, it is also possible to pass in an :py:class:`~uuid.UUID` object or a model with an
             ``id`` attribute.
-        expected_code : :py:class:`int`, optional
+        expected_code : :py:class:`int`
             The expected status code of the response from the ``DELETE`` request. This defaults to ``202``.
 
         Raises
@@ -700,7 +784,5 @@ class BaseClient(object):
         :py:exc:`.HubAPIError`
             If the status code of the response does not match ``expected_code``.
         """
-        r = self._client.delete("/".join(convert_path(path)))
 
-        if r.status_code != expected_code:
-            raise new_hub_api_error_from_response(r)
+        self._request("DELETE", *path, expected_code=expected_code, **params)

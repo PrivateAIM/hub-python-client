@@ -9,3 +9,4 @@
     user_guide
     testing
     api
+    changelog
