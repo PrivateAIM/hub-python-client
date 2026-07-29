@@ -493,6 +493,30 @@ class BaseClient(object):
 
         return r
 
+    def _unwrap_single_resource(self, body: t.Any) -> t.Any:
+        """Extract the resource object from the body of a single-resource response.
+
+        The FLAME Hub core and storage services respond to single-resource requests with the resource object itself,
+        which is why this implementation returns ``body`` unchanged. Clients whose service wraps the resource in an
+        envelope override this method.
+
+        Parameters
+        ----------
+        body : :py:obj:`~typing.Any`
+            Deserialized response body of a request which targets a single resource.
+
+        Returns
+        -------
+        :py:obj:`~typing.Any`
+            The object which is validated with the resource model.
+
+        See Also
+        --------
+        :py:meth:`._get_single_resource`, :py:meth:`._create_resource`, :py:meth:`._update_resource`,\
+        :py:meth:`.AuthClient._unwrap_single_resource`
+        """
+        return body
+
     def _get_all_resources(
         self,
         resource_type: type[ResourceT],
@@ -637,7 +661,7 @@ class BaseClient(object):
 
         r = self._request("POST", *path, expected_code=expected_code, json=resource.model_dump(mode="json"), **params)
 
-        return resource_type(**r.json())
+        return resource_type(**self._unwrap_single_resource(r.json()))
 
     def _get_single_resource(
         self,
@@ -706,7 +730,7 @@ class BaseClient(object):
             else:
                 raise
 
-        return resource_type(**r.json())
+        return resource_type(**self._unwrap_single_resource(r.json()))
 
     def _update_resource(
         self,
@@ -760,7 +784,7 @@ class BaseClient(object):
             **params,
         )
 
-        return resource_type(**r.json())
+        return resource_type(**self._unwrap_single_resource(r.json()))
 
     def _delete_resource(
         self,

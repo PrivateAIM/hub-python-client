@@ -256,6 +256,28 @@ class AuthClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
+    def _unwrap_single_resource(self, body: t.Any) -> t.Any:
+        """Extract the resource object from authup's single-resource envelope.
+
+        Since ``1.0.0-beta.57`` authup responds to single-resource requests with :python:`{"data": ..., "meta": ...}`
+        instead of the resource object itself, mirroring the envelope that list responses have always used. ``meta``
+        holds response-scoped extras such as the queryable schema of the endpoint and is discarded.
+
+        Raises
+        ------
+        :py:exc:`ValueError`
+            If ``body`` does not carry a ``data`` property, which is the case for authup versions before
+            ``1.0.0-beta.57``.
+
+        See Also
+        --------
+        :py:meth:`.BaseClient._unwrap_single_resource`
+        """
+        if not isinstance(body, dict) or "data" not in body:
+            raise ValueError("response body is not wrapped in a data property, authup 1.0.0-beta.57 or newer required")
+
+        return body["data"]
+
     def get_realms(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Realm]:
         return self._get_all_resources(Realm, "realms", **params)
 
