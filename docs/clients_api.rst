@@ -14,7 +14,9 @@ Clients
 .. autoclass:: flame_hub.CoreClient
     :members:
     :undoc-members:
+    :private-members: _unwrap_single_resource
 
 .. autoclass:: flame_hub.StorageClient
     :members:
     :undoc-members:
+    :private-members: _unwrap_single_resource

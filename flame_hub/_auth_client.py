@@ -19,6 +19,7 @@ from flame_hub._base_client import (
     ResourceListResult,
     AuthParam,
     BaseKwargs,
+    unwrap_enveloped_resource,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 
@@ -261,12 +262,9 @@ class AuthClient(BaseClient):
 
         See Also
         --------
-        :py:meth:`.BaseClient._unwrap_single_resource`
+        :py:meth:`.BaseClient._unwrap_single_resource`, :py:func:`.unwrap_enveloped_resource`
         """
-        if not isinstance(body, dict) or "data" not in body:
-            raise ValueError("response body is not wrapped in a data property, authup 1.0.0-beta.57 or newer required")
-
-        return body["data"]
+        return unwrap_enveloped_resource(body, "authup 1.0.0-beta.57")
 
     def get_realms(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Realm]:
         return self._get_all_resources(Realm, "realms", **params)
