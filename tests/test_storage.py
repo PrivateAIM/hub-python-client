@@ -55,7 +55,7 @@ def test_get_bucket(storage_client, bucket):
 
 
 def test_stream_bucket_tarball(storage_client, bucket_file, rng_bytes):
-    tarball_bytes = next(storage_client.stream_bucket_tarball(bucket_file.bucket_id))
+    tarball_bytes = next(storage_client.stream_bucket_tarball(bucket_file.bucketId))
 
     with tarfile.open(fileobj=BytesIO(tarball_bytes), mode="r") as tar:
         members = tar.getmembers()

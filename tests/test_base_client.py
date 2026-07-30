@@ -25,7 +25,7 @@ from flame_hub._base_client import (
 )
 from flame_hub.auth import ClientAuth, PasswordAuth, StaticAuth
 from flame_hub.types import FilterOperator
-from flame_hub.models import Node, Realm, User, Bucket, RefreshToken
+from flame_hub.models import Node, Realm, User, Bucket, RefreshToken, ClientCredentials
 from tests.helpers import next_random_string
 
 
@@ -228,18 +228,17 @@ REALM_JSON = {
 NODE_JSON = {
     "id": "5a0a3b0e-e4a0-4a41-9d7f-e2b9dcdcf9c1",
     "name": "my-node",
-    "external_name": None,
+    "externalName": None,
     "hidden": False,
-    "realm_id": "9d6b7a44-3f66-4f8b-9d2e-9dd0d2d7b2c1",
-    "registry_id": None,
+    "realmId": "9d6b7a44-3f66-4f8b-9d2e-9dd0d2d7b2c1",
+    "registryId": None,
     "type": "default",
-    "public_key": None,
+    "publicKey": None,
     "online": False,
-    "registry_project_id": None,
-    "robot_id": None,
-    "client_id": None,
-    "created_at": "2026-07-20T09:25:01.000Z",
-    "updated_at": "2026-07-20T09:25:01.000Z",
+    "registryProjectId": None,
+    "clientId": None,
+    "createdAt": "2026-07-20T09:25:01.000Z",
+    "updatedAt": "2026-07-20T09:25:01.000Z",
 }
 
 
@@ -272,10 +271,92 @@ def test_auth_client_keeps_list_response_untouched():
 
 
 def test_base_client_keeps_single_resource_untouched():
-    # the FLAME Hub core and storage services respond with the resource itself
+    # the base client makes no assumption about the envelope, so it passes the body through unchanged
     client = BaseClient(base_url="http://localhost", client=new_mock_client(NODE_JSON))
 
     assert client._get_single_resource(Node, "nodes", NODE_JSON["id"]) == Node(**NODE_JSON)
+
+
+BUCKET_JSON = {
+    "id": "0a6ff30e-2f6f-4a09-9d67-33f5b5a4bb3e",
+    "name": "my-bucket",
+    "region": None,
+    "createdAt": "2026-07-20T09:25:01.000Z",
+    "updatedAt": "2026-07-20T09:25:01.000Z",
+    "actorId": None,
+    "actorType": None,
+    "realmId": None,
+}
+
+CLIENT_CREDENTIALS_JSON = {
+    "id": "9b5d0b2c-19d7-4b7f-9a9a-4b1f0aa0f9de",
+    "secret": "s3cr3t",
+    "name": "my-node",
+    "displayName": "My Node",
+}
+
+
+@pytest.mark.parametrize(
+    "status_code,call_client",
+    [
+        (httpx.codes.OK.value, lambda c: c.get_node(NODE_JSON["id"])),
+        (httpx.codes.CREATED.value, lambda c: c.create_node(NODE_JSON["name"], NODE_JSON["realmId"])),
+        (httpx.codes.ACCEPTED.value, lambda c: c.update_node(NODE_JSON["id"], hidden=False)),
+    ],
+)
+def test_core_client_unwraps_single_resource(status_code, call_client):
+    # the FLAME Hub wraps records as {"data": ..., "meta": ...} since 0.13.0
+    core_client = flame_hub.CoreClient(client=new_mock_client({"data": NODE_JSON, "meta": {}}, status_code))
+
+    assert call_client(core_client) == Node(**NODE_JSON)
+
+
+def test_core_client_rejects_unwrapped_single_resource():
+    core_client = flame_hub.CoreClient(client=new_mock_client(NODE_JSON))
+
+    with pytest.raises(ValueError, match="data property"):
+        core_client.get_node(NODE_JSON["id"])
+
+
+def test_core_client_unwraps_analysis_command_response():
+    # POST /analyses/:id/command reads the body itself rather than going through _get_single_resource
+    core_client = flame_hub.CoreClient(client=new_mock_client(NODE_JSON, httpx.codes.ACCEPTED.value))
+
+    with pytest.raises(ValueError, match="data property"):
+        core_client.send_analysis_command(uuid.uuid4(), "configurationLock")
+
+
+@pytest.mark.parametrize(
+    "call_client",
+    [
+        lambda c: c.get_node_client_credentials(NODE_JSON["id"]),
+        lambda c: c.get_analysis_client_credentials(uuid.uuid4()),
+    ],
+)
+def test_core_client_keeps_credentials_flat(call_client):
+    # the credential routes are among the endpoints which deliberately respond without an envelope
+    core_client = flame_hub.CoreClient(client=new_mock_client(CLIENT_CREDENTIALS_JSON))
+
+    assert call_client(core_client) == ClientCredentials(**CLIENT_CREDENTIALS_JSON)
+
+
+def test_core_client_keeps_list_response_untouched():
+    core_client = flame_hub.CoreClient(client=new_mock_client({"data": [NODE_JSON], "meta": {"total": 1}}))
+
+    assert core_client.get_nodes() == [Node(**NODE_JSON)]
+
+
+def test_storage_client_unwraps_single_resource():
+    storage_client = flame_hub.StorageClient(client=new_mock_client({"data": BUCKET_JSON, "meta": {}}))
+
+    assert storage_client.get_bucket(BUCKET_JSON["id"]) == Bucket(**BUCKET_JSON)
+
+
+def test_storage_client_rejects_unwrapped_single_resource():
+    storage_client = flame_hub.StorageClient(client=new_mock_client(BUCKET_JSON))
+
+    with pytest.raises(ValueError, match="data property"):
+        storage_client.get_bucket(BUCKET_JSON["id"])
 
 
 @pytest.mark.integration

@@ -190,8 +190,8 @@ left unset, the client will sort in ascending order by default.
 
 .. code-block:: python
 
-    nodes = core_client.find_nodes(sort={"by": "created_at"})
-    sedon = core_client.find_nodes(sort={"by": "created_at", "order": "descending"})
+    nodes = core_client.find_nodes(sort={"by": "createdAt"})
+    sedon = core_client.find_nodes(sort={"by": "createdAt", "order": "descending"})
 
     assert nodes == sedon[::-1]
 
@@ -322,7 +322,7 @@ It is also possible to retrieve all names of includable properties for a specifi
 
 .. code-block::
 
-    ('registry', 'registry_project')
+    ('registry', 'registryProject')
 
 
 Overriding authentication per request
@@ -343,7 +343,7 @@ token as a string.
     # Or use a dedicated authenticator for this request only.
     core_client.create_node(
         name="my-node",
-        realm_id=master_realm,
+        realmId=master_realm,
         auth=flame_hub.auth.PasswordAuth(
             username="admin",
             password="start123",
@@ -372,18 +372,18 @@ possible, including status code and additional information in the response body.
     core_client = flame_hub.CoreClient(base_url="http://localhost:3000/core/", auth=auth)
 
     try:
-        core_client.create_node(name="my-new-node", realm_id=str(uuid4()))
+        core_client.create_node(name="my-new-node", realmId=str(uuid4()))
     except flame_hub.HubAPIError as e:
         print(e)
         print(e.error_response.model_dump_json(indent=2))
 
 .. code-block:: console
 
-    received status code 400 (undefined): Can't find realm entity by realm_id
+    received status code 400 (undefined): Can't find realm entity by realmId
     {
       "status_code": 400,
       "code": "undefined",
-      "message": "Can't find realm entity by realm_id"
+      "message": "Can't find realm entity by realmId"
     }
 
 In this example a :py:exc:`.HubAPIError` is raised because there is no realm with an ID that matches the dynamically
@@ -406,14 +406,14 @@ Hub instance.
 
     from flame_hub.models import UpdateNode, UNSET
 
-    update_node = UpdateNode(hidden=False, external_name=None, type=UNSET)
+    update_node = UpdateNode(hidden=False, externalName=None, type=UNSET)
     print(update_node.model_dump_json(indent=2, exclude_defaults=True))
 
 .. code-block:: console
 
     {
       "hidden": false,
-      "external_name": null
+      "externalName": null
     }
 
 Check out all implemented models :doc:`here <models_api>`.

@@ -413,6 +413,39 @@ def resolve_auth(auth: AuthParam) -> ClientAuth | PasswordAuth | StaticAuth | No
     return auth
 
 
+def unwrap_enveloped_resource(body: t.Any, requirement: str) -> t.Any:
+    """Extract the resource object from a :python:`{"data": ..., "meta": ...}` record envelope.
+
+    ``meta`` holds response-scoped extras such as the queryable schema of the endpoint and is discarded.
+
+    Parameters
+    ----------
+    body : :py:obj:`~typing.Any`
+        Deserialized response body of a request which targets a single resource.
+    requirement : :py:class:`str`
+        Name and version of the service which introduced the envelope. Named in the error message so that an
+        outdated deployment is recognizable from the exception alone.
+
+    Returns
+    -------
+    :py:obj:`~typing.Any`
+        The object which is validated with the resource model.
+
+    Raises
+    ------
+    :py:exc:`ValueError`
+        If ``body`` does not carry a ``data`` property, which is the case for services older than ``requirement``.
+
+    See Also
+    --------
+    :py:meth:`.BaseClient._unwrap_single_resource`
+    """
+    if not isinstance(body, dict) or "data" not in body:
+        raise ValueError(f"response body is not wrapped in a data property, {requirement} or newer required")
+
+    return body["data"]
+
+
 class BaseClient(object):
     """The base class for other client classes.
 
@@ -447,9 +480,8 @@ class BaseClient(object):
     def _unwrap_single_resource(self, body: t.Any) -> t.Any:
         """Extract the resource object from the body of a single-resource response.
 
-        The FLAME Hub core and storage services respond to single-resource requests with the resource object itself,
-        which is why this implementation returns ``body`` unchanged. Clients whose service wraps the resource in an
-        envelope override this method.
+        This implementation returns ``body`` unchanged. Clients whose service wraps the resource in an envelope
+        override this method, usually by delegating to :py:func:`.unwrap_enveloped_resource`.
 
         Parameters
         ----------
@@ -464,7 +496,7 @@ class BaseClient(object):
         See Also
         --------
         :py:meth:`._get_single_resource`, :py:meth:`._create_resource`, :py:meth:`._update_resource`,\
-        :py:meth:`.AuthClient._unwrap_single_resource`
+        :py:func:`.unwrap_enveloped_resource`, :py:meth:`.AuthClient._unwrap_single_resource`
         """
         return body
 
@@ -624,6 +656,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str,
         expected_code: int = httpx.codes.CREATED.value,
+        envelope: bool = True,
         **params: te.Unpack[BaseKwargs],
     ) -> ResourceT:
         """Create a resource of a certain type at the specified path.
@@ -645,6 +678,10 @@ class BaseClient(object):
             Path to the endpoint where the resource should be created.
         expected_code : :py:class:`int`
             The expected status code of the response from the ``POST`` request. This defaults to ``201``.
+        envelope : :py:class:`bool`
+            Whether the endpoint wraps its response in a record envelope. This defaults to :any:`True`. Pass
+            :any:`False` for the endpoints which deliberately respond with a bare object, such as the client and
+            registry credential routes.
 
         Returns
         -------
@@ -661,7 +698,7 @@ class BaseClient(object):
 
         r = self._request("POST", *path, expected_code=expected_code, json=resource.model_dump(mode="json"), **params)
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        return resource_type(**(self._unwrap_single_resource(r.json()) if envelope else r.json()))
 
     def _get_single_resource(
         self,
@@ -669,6 +706,7 @@ class BaseClient(object):
         *path: str | UuidIdentifiable,
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
+        envelope: bool = True,
         **params: te.Unpack[GetKwargs],
     ) -> ResourceT | None:
         """Get a single resource of a certain type at the specified path.
@@ -693,6 +731,10 @@ class BaseClient(object):
             :doc:`model specifications <models_api>` which resources can be included in other resources.
         expected_code : :py:class:`int`
             The expected status code of the response from the ``GET`` request. This defaults to ``200``.
+        envelope : :py:class:`bool`
+            Whether the endpoint wraps its response in a record envelope. This defaults to :any:`True`. Pass
+            :any:`False` for the endpoints which deliberately respond with a bare object, such as the client and
+            registry credential routes.
         **params : :py:obj:`~typing.Unpack` [:py:class:`.GetKwargs`]
             Further keyword arguments for adding optional fields to a response and returning meta information.
 
@@ -730,7 +772,7 @@ class BaseClient(object):
             else:
                 raise
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        return resource_type(**(self._unwrap_single_resource(r.json()) if envelope else r.json()))
 
     def _update_resource(
         self,
@@ -738,6 +780,7 @@ class BaseClient(object):
         resource: BaseModel,
         *path: str | UuidIdentifiable,
         expected_code: int = httpx.codes.ACCEPTED.value,
+        envelope: bool = True,
         **params: te.Unpack[BaseKwargs],
     ) -> ResourceT:
         """Update a resource of a certain type at the specified path.
@@ -761,6 +804,10 @@ class BaseClient(object):
             ``id`` attribute.
         expected_code : :py:class:`int`
             The expected status code of the response from the ``POST`` request. This defaults to ``202``.
+        envelope : :py:class:`bool`
+            Whether the endpoint wraps its response in a record envelope. This defaults to :any:`True`. Pass
+            :any:`False` for the endpoints which deliberately respond with a bare object, such as the client and
+            registry credential routes.
 
         Returns
         -------
@@ -784,7 +831,7 @@ class BaseClient(object):
             **params,
         )
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        return resource_type(**(self._unwrap_single_resource(r.json()) if envelope else r.json()))
 
     def _delete_resource(
         self,

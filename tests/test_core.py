@@ -37,30 +37,28 @@ def sync_master_images(core_client):
 def master_image(core_client):
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
 
-    if len(core_client.find_master_images(filter={"virtual_path": default_master_image})) != 1:
+    if len(core_client.find_master_images(filter={"virtualPath": default_master_image})) != 1:
         sync_master_images(core_client)
 
         def _check_default_master_image_available():
-            assert len(core_client.find_master_images(filter={"virtual_path": default_master_image})) == 1
+            assert len(core_client.find_master_images(filter={"virtualPath": default_master_image})) == 1
 
         assert_eventually(_check_default_master_image_available, max_retries=10, delay_millis=1000)
 
-    return core_client.find_master_images(filter={"virtual_path": default_master_image})[0]
+    return core_client.find_master_images(filter={"virtualPath": default_master_image})[0]
 
 
 @pytest.fixture(scope="module")
 def master_image_group(core_client, master_image):
-    if len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) != 1:
+    if len(core_client.find_master_image_groups(filter={"virtualPath": master_image.groupVirtualPath})) != 1:
         sync_master_images(core_client)
 
         def _check_default_master_image_group_available():
-            assert (
-                len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) == 1
-            )
+            assert len(core_client.find_master_image_groups(filter={"virtualPath": master_image.groupVirtualPath})) == 1
 
         assert_eventually(_check_default_master_image_group_available, max_retries=10, delay_millis=1000)
 
-    return core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})[0]
+    return core_client.find_master_image_groups(filter={"virtualPath": master_image.groupVirtualPath})[0]
 
 
 @pytest.fixture()
@@ -103,7 +101,7 @@ def project_node_includables():
 def analysis(core_client, project, master_image):
     new_analysis = core_client.create_analysis(
         project,
-        master_image_id=master_image.id,
+        masterImageId=master_image.id,
     )
     yield new_analysis
     core_client.delete_analysis(new_analysis)
@@ -116,7 +114,7 @@ def analysis_includables():
 
 @pytest.fixture()
 def analysis_node(core_client, analysis, project_node):
-    new_analysis_node = core_client.create_analysis_node(analysis.id, project_node.node_id)
+    new_analysis_node = core_client.create_analysis_node(analysis.id, project_node.nodeId)
     yield new_analysis_node
     core_client.delete_analysis_node(new_analysis_node)
 
@@ -129,11 +127,11 @@ def analysis_node_includables():
 @pytest.fixture()
 def analysis_code_bucket(core_client, analysis):
     def _wait_for_buckets():
-        assert len(core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})) != 0
+        assert len(core_client.find_analysis_buckets(filter={"analysisId": analysis.id})) != 0
 
     assert_eventually(_wait_for_buckets)
 
-    analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
+    analysis_buckets = core_client.find_analysis_buckets(filter={"analysisId": analysis.id})
     code_buckets = [bucket for bucket in analysis_buckets if bucket.type == AnalysisBucketType.CODE]
 
     assert len(code_buckets) == 1
@@ -154,7 +152,7 @@ def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_
     # Upload example file to referenced bucket.
     file_name = next_random_string()
     bucket_files = storage_client.upload_to_bucket(
-        analysis_code_bucket.bucket_id, {"file_name": file_name, "content": rng_bytes}
+        analysis_code_bucket.bucketId, {"file_name": file_name, "content": rng_bytes}
     )
     assert len(bucket_files) == 1
 
@@ -163,14 +161,14 @@ def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_
 
     def _wait_for_analysis_bucket_file():
         analysis_bucket_files = core_client.find_analysis_bucket_files(
-            filter={"analysis_id": analysis_code_bucket.analysis_id}
+            filter={"analysisId": analysis_code_bucket.analysisId}
         )
         assert len(analysis_bucket_files) == 1
 
     assert_eventually(_wait_for_analysis_bucket_file)
 
     analysis_bucket_file = core_client.find_analysis_bucket_files(
-        filter={"analysis_id": analysis_code_bucket.analysis_id}
+        filter={"analysisId": analysis_code_bucket.analysisId}
     ).pop()
 
     yield analysis_bucket_file
@@ -191,12 +189,12 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
     for node_type in t.get_args(NodeType):
         new_node = core_client.create_node(
             name=next_random_string(),
-            realm_id=master_realm,
+            realmId=master_realm,
             node_type=node_type,
-            registry_id=registry.id,
+            registryId=registry.id,
         )
         nodes.append(new_node)
-        core_client.create_project_node(analysis.project_id, new_node)
+        core_client.create_project_node(analysis.projectId, new_node)
         core_client.create_analysis_node(analysis, new_node)
 
     # Mark analysis bucket file as the entrypoint.
@@ -224,11 +222,11 @@ def analysis_log(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis, "buildStart")
 
     def _check_analysis_logs_present():
-        assert len(core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})) > 0
+        assert len(core_client.find_analysis_logs(filter={"analysisId": configured_analysis.id})) > 0
 
     assert_eventually(_check_analysis_logs_present)
 
-    return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
+    return core_client.find_analysis_logs(filter={"analysisId": configured_analysis.id})[0]
 
 
 @pytest.fixture()
@@ -236,8 +234,8 @@ def registry(core_client):
     new_registry = core_client.create_registry(
         name=next_random_string(),
         host=next_random_string(),
-        # account_name=next_random_string(),
-        account_secret=next_random_string(),
+        # accountName=next_random_string(),
+        accountSecret=next_random_string(),
     )
     yield new_registry
     core_client.delete_registry(new_registry)
@@ -253,8 +251,8 @@ def registry_project(core_client, registry):
     new_registry_project = core_client.create_registry_project(
         name=next_random_string(),
         registry_project_type="default",
-        registry_id=registry,
-        external_name=next_random_string(charset=string.ascii_lowercase + string.digits),
+        registryId=registry,
+        externalName=next_random_string(charset=string.ascii_lowercase + string.digits),
     )
     yield new_registry_project
     core_client.delete_registry_project(new_registry_project)
@@ -298,39 +296,39 @@ def test_get_node_not_found(core_client):
 def test_update_node(core_client, node):
     # only accepts lowercase letters and numbers
     new_name = next_random_string(charset=string.ascii_lowercase + string.digits)
-    new_node = core_client.update_node(node.id, external_name=new_name)
+    new_node = core_client.update_node(node.id, externalName=new_name)
 
     assert node != new_node
-    assert new_node.external_name == new_name
+    assert new_node.externalName == new_name
 
 
 @pytest.mark.xfail(reason="Hub returns properties of another registry")
 def test_get_node_registry_credentials(core_client, node, registry):
-    core_client.update_node(node.id, registry_id=registry.id)
+    core_client.update_node(node.id, registryId=registry.id)
     credentials = core_client.get_node_registry_credentials(node.id)
 
     assert credentials.host == registry.host
-    assert credentials.account_name == registry.account_name
-    assert credentials.account_secret == registry.account_secret
+    assert credentials.accountName == registry.accountName
+    assert credentials.accountSecret == registry.accountSecret
 
 
 def test_get_node_client_credentials(core_client, auth_client, node):
-    client = auth_client.get_client(client_id=node.client_id)
-    credentials = core_client.get_node_client_credentials(node_id=node.id)
+    client = auth_client.get_client(clientId=node.clientId)
+    credentials = core_client.get_node_client_credentials(nodeId=node.id)
 
     assert credentials.id == client.id
     assert credentials.name == client.name
-    assert credentials.display_name == client.display_name
+    assert credentials.displayName == client.displayName
 
 
 def test_update_node_client_credentials(core_client, node):
     new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
     new_credentials = core_client.update_node_client_credentials(
-        node_id=node.id, name=new_name, display_name=new_display_name, secret=new_secret
+        nodeId=node.id, name=new_name, displayName=new_display_name, secret=new_secret
     )
 
     assert new_credentials.name == new_name
-    assert new_credentials.display_name == new_display_name
+    assert new_credentials.displayName == new_display_name
     assert new_credentials.secret == new_secret
 
 
@@ -378,11 +376,11 @@ def test_get_project_not_found(core_client):
 def test_update_project(core_client, project):
     new_name = next_random_string()
     new_display_name = next_random_string()
-    new_node = core_client.update_project(project.id, name=new_name, display_name=new_display_name)
+    new_node = core_client.update_project(project.id, name=new_name, displayName=new_display_name)
 
     assert project != new_node
     assert new_node.name.lower() == new_name.lower()
-    assert new_node.display_name.lower() == new_display_name.lower()
+    assert new_node.displayName.lower() == new_display_name.lower()
 
 
 def test_get_project_nodes(core_client, project_node, project_node_includables):
@@ -393,8 +391,8 @@ def test_get_project_nodes(core_client, project_node, project_node_includables):
 
 
 def test_find_project_nodes(core_client, project_node, project_node_includables):
-    # Use "project_id" instead of "id" because filtering for ids does not work.
-    project_nodes_find = core_client.find_project_nodes(filter={"project_id": project_node.project_id})
+    # Use "projectId" instead of "id" because filtering for ids does not work.
+    project_nodes_find = core_client.find_project_nodes(filter={"projectId": project_node.projectId})
 
     assert [project_node.id] == [pn.id for pn in project_nodes_find]
     assert all(
@@ -412,9 +410,9 @@ def test_get_project_node(core_client, project_node, project_node_includables):
 
 def test_update_project_node(core_client, project_node):
     new_comment = next_random_string()
-    new_project_node = core_client.update_project_node(project_node.id, approval_status="rejected", comment=new_comment)
+    new_project_node = core_client.update_project_node(project_node.id, approvalStatus="rejected", comment=new_comment)
 
-    assert new_project_node.approval_status == "rejected"
+    assert new_project_node.approvalStatus == "rejected"
     assert new_project_node != project_node
 
 
@@ -460,14 +458,14 @@ def test_update_analysis(core_client, analysis):
     new_analysis = core_client.update_analysis(
         analysis.id,
         name=new_name,
-        display_name=new_display_name,
-        image_command_arguments=args,
+        displayName=new_display_name,
+        imageCommandArguments=args,
     )
 
     assert analysis != new_analysis
     assert new_analysis.name.lower() == new_name.lower()
-    assert new_analysis.display_name.lower() == new_display_name.lower()
-    assert new_analysis.image_command_arguments == args  # Note that args is modified during updating the analysis.
+    assert new_analysis.displayName.lower() == new_display_name.lower()
+    assert new_analysis.imageCommandArguments == args  # Note that args is modified during updating the analysis.
 
 
 def test_create_analysis_with_arguments(core_client, project, master_image):
@@ -477,19 +475,19 @@ def test_create_analysis_with_arguments(core_client, project, master_image):
     ]
     analysis = core_client.create_analysis(
         project,
-        master_image_id=master_image.id,
-        image_command_arguments=args,
+        masterImageId=master_image.id,
+        imageCommandArguments=args,
     )
     core_client.delete_analysis(analysis)
 
 
 def test_unlock_analysis(core_client, configured_analysis):
     assert (
-        core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock").configuration_locked
+        core_client.send_analysis_command(configured_analysis.id, command="configurationUnlock").configurationLocked
         is False
     )
     assert (
-        core_client.send_analysis_command(configured_analysis.id, command="configurationLock").configuration_locked
+        core_client.send_analysis_command(configured_analysis.id, command="configurationLock").configurationLocked
         is True
     )
 
@@ -497,32 +495,32 @@ def test_unlock_analysis(core_client, configured_analysis):
 def test_build_analysis(core_client, configured_analysis):
     assert (
         core_client.send_analysis_command(
-            analysis_id=configured_analysis.id,
+            analysisId=configured_analysis.id,
             command="buildStart",
-        ).build_status
+        ).buildStatus
         == "starting"
     )
 
     def _wait_for_successful_build():
-        analysis = core_client.get_analysis(analysis_id=configured_analysis.id)
-        assert analysis.build_status == "executed"
+        analysis = core_client.get_analysis(analysisId=configured_analysis.id)
+        assert analysis.buildStatus == "executed"
 
     assert_eventually(_wait_for_successful_build)
 
 
 def test_get_analysis_client_credentials(core_client, auth_client, analysis):
-    client = auth_client.get_client(client_id=analysis.client_id)
-    credentials = core_client.get_analysis_client_credentials(analysis_id=analysis.id)
+    client = auth_client.get_client(clientId=analysis.clientId)
+    credentials = core_client.get_analysis_client_credentials(analysisId=analysis.id)
 
     assert credentials.id == client.id
     assert credentials.name == client.name
-    assert credentials.display_name == client.display_name
+    assert credentials.displayName == client.displayName
 
 
 def test_update_analysis_client_credentials(core_client, analysis):
     new_name, new_display_name, new_secret = next_random_string().lower(), next_random_string(), next_random_string()
     new_credentials = core_client.update_analysis_client_credentials(
-        analysis_id=analysis.id, name=new_name, display_name=new_display_name, secret=new_secret
+        analysisId=analysis.id, name=new_name, displayName=new_display_name, secret=new_secret
     )
 
     assert new_credentials.secret == new_secret
@@ -533,13 +531,13 @@ def test_update_analysis_node(core_client, analysis_node):
     status = random.choice(t.get_args(ProcessStatus))
     new_analysis_node = core_client.update_analysis_node(
         analysis_node.id,
-        execution_status=status,
-        execution_progress=progress,
+        executionStatus=status,
+        executionProgress=progress,
     )
 
     assert analysis_node != new_analysis_node
-    assert new_analysis_node.execution_status == status
-    assert new_analysis_node.execution_progress == progress
+    assert new_analysis_node.executionStatus == status
+    assert new_analysis_node.executionProgress == progress
 
 
 def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includables):
@@ -552,8 +550,8 @@ def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includable
 
 
 def test_find_analysis_nodes(core_client, analysis_node, analysis_node_includables):
-    # Use "analysis_id" instead of "id" because filtering for ids does not work.
-    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysis_id": analysis_node.analysis_id})
+    # Use "analysisId" instead of "id" because filtering for ids does not work.
+    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysisId": analysis_node.analysisId})
 
     assert [analysis_node.id] == [an.id for an in analysis_nodes_find]
     assert all(
@@ -576,32 +574,32 @@ def test_get_analysis_node_not_found(core_client):
 @pytest.mark.xfail(reason="Deletion of analysis node logs does not work")
 def test_analysis_node_logs(core_client, analysis_node):
     log = core_client.create_analysis_node_log(
-        analysis_id=analysis_node.analysis_id,
-        node_id=analysis_node.node_id,
+        analysisId=analysis_node.analysisId,
+        nodeId=analysis_node.nodeId,
         level=random.choice(t.get_args(LogLevel)),
         message=next_random_string(),
     )
 
     def _check_analysis_node_logs_present():
         found_logs = core_client.find_analysis_node_logs(
-            filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+            filter={"analysisId": analysis_node.analysisId, "nodeId": analysis_node.nodeId}
         )
         assert len(found_logs) == 1
 
     assert_eventually(_check_analysis_node_logs_present)
 
     new_log = core_client.find_analysis_node_logs(
-        filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+        filter={"analysisId": analysis_node.analysisId, "nodeId": analysis_node.nodeId}
     )[0]
 
     assert log == new_log
 
-    core_client.delete_analysis_node_logs(analysis_id=analysis_node.analysis_id, node_id=analysis_node.node_id)
+    core_client.delete_analysis_node_logs(analysisId=analysis_node.analysisId, nodeId=analysis_node.nodeId)
 
     assert (
         len(
             core_client.find_analysis_node_logs(
-                filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+                filter={"analysisId": analysis_node.analysisId, "nodeId": analysis_node.nodeId}
             )
         )
         == 0
@@ -630,8 +628,8 @@ def test_get_analysis_buckets(core_client, analysis_code_bucket, analysis_bucket
 
 
 def test_find_analysis_buckets(core_client, analysis_code_bucket, analysis_bucket_includables):
-    # Use "analysis_id" instead of "id" because filtering for ids does not work.
-    analysis_buckets_find = core_client.find_analysis_buckets(filter={"analysis_id": analysis_code_bucket.analysis_id})
+    # Use "analysisId" instead of "id" because filtering for ids does not work.
+    analysis_buckets_find = core_client.find_analysis_buckets(filter={"analysisId": analysis_code_bucket.analysisId})
 
     assert analysis_code_bucket.id in [bucket.id for bucket in analysis_buckets_find]
     assert all(
@@ -667,9 +665,9 @@ def test_get_analysis_bucket_files(core_client, analysis_bucket_file, analysis_b
 
 
 def test_find_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
-    # Use "analysis_id" instead of "id" because filtering for ids does not work.
+    # Use "analysisId" instead of "id" because filtering for ids does not work.
     analysis_bucket_files_find = core_client.find_analysis_bucket_files(
-        filter={"analysis_id": analysis_bucket_file.analysis_id}
+        filter={"analysisId": analysis_bucket_file.analysisId}
     )
 
     assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
@@ -726,7 +724,7 @@ def test_registry_setup(core_client, registry):
     core_client.send_registry_command(registry.id, command="setup")
 
     def _check_setup():
-        registry_projects = core_client.find_registry_projects(filter={"registry_id": registry.id})
+        registry_projects = core_client.find_registry_projects(filter={"registryId": registry.id})
         assert len(registry_projects) == 3
         assert {"incoming", "outgoing", "masterImages"} == set(rp.type for rp in registry_projects)
 
@@ -780,6 +778,6 @@ def test_update_registry_project(core_client, registry_project):
 
 @pytest.mark.xfail(reason="Bug in Hub, see https://github.com/PrivateAIM/hub/issues/1181.")
 def test_delete_analysis_logs(core_client, analysis_log):
-    core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysis_id"])
+    core_client.delete_analysis_logs(analysisId=analysis_log.labels["analysisId"])
 
-    assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis_log.labels["analysis_id"]})) == 0
+    assert len(core_client.find_analysis_logs(filter={"analysisId": analysis_log.labels["analysisId"]})) == 0
