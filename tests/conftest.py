@@ -46,6 +46,11 @@ def use_testcontainers() -> bool:
 
 
 @pytest.fixture(scope="session")
+def response_timeout() -> int:
+    return int(os.getenv("PYTEST_RESPONSE_TIMEOUT", "5"))
+
+
+@pytest.fixture(scope="session")
 def hub_version() -> str:
     return os.getenv("PYTEST_HUB_VERSION", "0.8.13")
 
@@ -339,18 +344,18 @@ def password_auth(nginx, auth_base_url, auth_admin_username, auth_admin_password
 
 
 @pytest.fixture(scope="session")
-def auth_client(password_auth, auth_base_url):
-    yield AuthClient(base_url=auth_base_url, auth=password_auth)
+def auth_client(password_auth, auth_base_url, response_timeout):
+    yield AuthClient(client=httpx.Client(base_url=auth_base_url, auth=password_auth, timeout=response_timeout))
 
 
 @pytest.fixture(scope="session")
-def core_client(password_auth, core_base_url):
-    yield CoreClient(base_url=core_base_url, auth=password_auth)
+def core_client(password_auth, core_base_url, response_timeout):
+    yield CoreClient(client=httpx.Client(base_url=core_base_url, auth=password_auth, timeout=response_timeout))
 
 
 @pytest.fixture(scope="session")
-def storage_client(password_auth, storage_base_url):
-    yield StorageClient(base_url=storage_base_url, auth=password_auth)
+def storage_client(password_auth, storage_base_url, response_timeout):
+    yield StorageClient(client=httpx.Client(base_url=storage_base_url, auth=password_auth, timeout=response_timeout))
 
 
 @pytest.fixture(scope="session")

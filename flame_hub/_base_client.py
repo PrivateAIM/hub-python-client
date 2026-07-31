@@ -6,7 +6,8 @@ from enum import Enum
 
 import httpx2 as httpx
 import typing_extensions as te
-from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict
+from pydantic import BaseModel, ValidatorFunctionWrapHandler, ValidationError, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 
 from flame_hub._exceptions import new_hub_api_error_from_response, HubAPIError
 from flame_hub._auth_flows import PasswordAuth, ClientAuth, StaticAuth
@@ -17,6 +18,17 @@ class UNSET(BaseModel):
 
 
 UNSET_T = type[UNSET]
+
+
+class ConfigBaseModel(BaseModel):
+    """Base model that defines all configurations that are inherited to all model classes."""
+
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        validate_by_alias=True,
+        validate_by_name=True,
+        serialize_by_alias=True,
+    )
 
 
 ResourceT = t.TypeVar("ResourceT", bound=BaseModel)
@@ -90,26 +102,45 @@ def uuid_validator(value: t.Any, handler: ValidatorFunctionWrapHandler) -> uuid.
             raise e
 
 
-class ResourceListMeta(BaseModel):
+class SingleResourceMeta(BaseModel):
+    """Available meta info for single resource responses.
+
+    See Also
+    --------
+    :py:meth:`._get_single_resource`
+    """
+
+    model_config = ConfigDict(
+        validate_by_alias=True,
+        validate_by_name=True,
+    )
+
+    # Otherwise the "schema" attribute from BaseModel will be overshadowed.
+    response_schema: dict = Field(alias="schema")
+
+
+class ResourceListMeta(SingleResourceMeta):
     """Resource for meta information on list responses.
 
     See Also
     --------
-    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
+    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`, :py:class:`.SingleResourceMeta`
     """
 
-    model_config = ConfigDict(extra="allow")
-    """Based on the type of the request, additional attributes like ``limit`` or ``offset`` may be available."""
     total: int
     """The total amount of records of a specific resource type."""
+    limit: int
+    """Amount of returned resources."""
+    offset: int
+    """Amount of resources to skip before resources are added to the returned list."""
 
 
 class ResourceList(BaseModel, t.Generic[ResourceT]):
-    """Resource for list responses.
+    """Model for list responses.
 
     See Also
     --------
-    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
+    :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`, :py:class:`ResourceListMeta`
     """
 
     data: list[ResourceT]
@@ -118,8 +149,24 @@ class ResourceList(BaseModel, t.Generic[ResourceT]):
     """Attribute which holds meta information about the result and the requested resource type."""
 
 
-# Generic type alias for all get and find methods.
+class WrappedResource(BaseModel, t.Generic[ResourceT]):
+    """Model for wrapped singular resources.
+
+    See Also
+    --------
+    :py:meth:`._get_singular_resource`, :py:class:`.SingleResourceMeta`
+    """
+
+    data: ResourceT
+    """Attribute which holds the retrieved resource."""
+    meta: SingleResourceMeta
+    """Attribute which holds meta information about the requested resource."""
+
+
+# Generic type alias for all list get and find methods.
 ResourceListResult: t.TypeAlias = list[ResourceT] | tuple[list[ResourceT], ResourceListMeta]
+# Generic type alias for all get methods.
+SingleResourceResult: t.TypeAlias = ResourceT | tuple[ResourceT, SingleResourceMeta] | None
 
 
 class SortParams(te.TypedDict, total=False):
@@ -365,7 +412,7 @@ def build_include_params(include_params: IncludeParams | None = None) -> dict:
         include_params = (include_params,)  # coalesce into tuple
 
     # unravel iterable and merge into tuple
-    include_params = tuple(p for p in include_params)
+    include_params = tuple(to_camel(p) for p in include_params)
 
     if len(include_params) == 0:
         return {}
@@ -381,7 +428,7 @@ def build_field_params(field_params: FieldParams | None = None) -> dict:
         field_params = (field_params,)  # coalesce into tuple
 
     # unravel iterable and merge into tuple
-    field_params = tuple(p for p in field_params)
+    field_params = tuple(to_camel(p) for p in field_params)
 
     # only allow the addition of fields
     field_params = tuple(f"+{p}" for p in field_params)
@@ -411,6 +458,14 @@ def resolve_auth(auth: AuthParam) -> ClientAuth | PasswordAuth | StaticAuth | No
         auth = StaticAuth(access_token=auth)
 
     return auth
+
+
+def _is_enveloped(response_body: dict) -> bool:
+    """Checks if a response body is enveloped. In that case resources are available via the 'data' key and further meta
+    information via the 'meta' key."""
+    if "data" in response_body and "meta" in response_body:
+        return True
+    return False
 
 
 class BaseClient(object):
@@ -492,30 +547,6 @@ class BaseClient(object):
             raise new_hub_api_error_from_response(r)
 
         return r
-
-    def _unwrap_single_resource(self, body: t.Any) -> t.Any:
-        """Extract the resource object from the body of a single-resource response.
-
-        The FLAME Hub core and storage services respond to single-resource requests with the resource object itself,
-        which is why this implementation returns ``body`` unchanged. Clients whose service wraps the resource in an
-        envelope override this method.
-
-        Parameters
-        ----------
-        body : :py:obj:`~typing.Any`
-            Deserialized response body of a request which targets a single resource.
-
-        Returns
-        -------
-        :py:obj:`~typing.Any`
-            The object which is validated with the resource model.
-
-        See Also
-        --------
-        :py:meth:`._get_single_resource`, :py:meth:`._create_resource`, :py:meth:`._update_resource`,\
-        :py:meth:`.AuthClient._unwrap_single_resource`
-        """
-        return body
 
     def _get_all_resources(
         self,
@@ -661,7 +692,10 @@ class BaseClient(object):
 
         r = self._request("POST", *path, expected_code=expected_code, json=resource.model_dump(mode="json"), **params)
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        if _is_enveloped(r.json()):
+            # The meta field is empty for create responses so it gets thrown away here.
+            return resource_type(**r.json()["data"])
+        return resource_type(**r.json())
 
     def _get_single_resource(
         self,
@@ -670,7 +704,7 @@ class BaseClient(object):
         include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
-    ) -> ResourceT | None:
+    ) -> SingleResourceResult:
         """Get a single resource of a certain type at the specified path.
 
         This method accesses the endpoint ``*path`` and returns the resource of type ``resource_type``. In contrast to
@@ -708,17 +742,17 @@ class BaseClient(object):
             If the status code of the response does not match ``expected_code`` or 404.
         :py:exc:`~pydantic_core._pydantic_core.ValidationError`
             If the resource returned by the Hub instance does not validate with the given ``resource_type``.
+        :py:exc:`ValueError`
+            If ``meta=True``, but the endpoint does not send meta information in the response body for that specific
+            resource.
 
         See Also
         --------
         :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
-
-        Notes
-        -----
-        ``meta`` has no relevance for this method.
         """
 
         field_params = params.pop("fields", None)
+        meta_flag = params.pop("meta", False)
 
         request_params = build_field_params(field_params) | build_include_params(include)
 
@@ -730,7 +764,15 @@ class BaseClient(object):
             else:
                 raise
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        if _is_enveloped(r.json()):
+            wrapped_resource = WrappedResource[resource_type](**r.json())
+            if meta_flag:
+                return wrapped_resource.data, wrapped_resource.meta
+            return wrapped_resource.data
+        else:
+            if meta_flag:
+                raise ValueError(f"Single resources of type {resource_type} do not have meta data.")
+            return resource_type(**r.json())
 
     def _update_resource(
         self,
@@ -784,7 +826,10 @@ class BaseClient(object):
             **params,
         )
 
-        return resource_type(**self._unwrap_single_resource(r.json()))
+        if _is_enveloped(r.json()):
+            # The meta field is empty for update responses so it gets thrown away here.
+            return resource_type(**r.json()["data"])
+        return resource_type(**r.json())
 
     def _delete_resource(
         self,

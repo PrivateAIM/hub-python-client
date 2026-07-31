@@ -37,30 +37,30 @@ def sync_master_images(core_client):
 def master_image(core_client):
     default_master_image = os.getenv("PYTEST_DEFAULT_MASTER_IMAGE", "python/base")
 
-    if len(core_client.find_master_images(filter={"virtual_path": default_master_image})) != 1:
+    if len(core_client.find_master_images(filter={"virtualPath": default_master_image})) != 1:
         sync_master_images(core_client)
 
         def _check_default_master_image_available():
-            assert len(core_client.find_master_images(filter={"virtual_path": default_master_image})) == 1
+            assert len(core_client.find_master_images(filter={"virtualPath": default_master_image})) == 1
 
         assert_eventually(_check_default_master_image_available, max_retries=10, delay_millis=1000)
 
-    return core_client.find_master_images(filter={"virtual_path": default_master_image})[0]
+    return core_client.find_master_images(filter={"virtualPath": default_master_image})[0]
 
 
 @pytest.fixture(scope="module")
 def master_image_group(core_client, master_image):
-    if len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) != 1:
+    if len(core_client.find_master_image_groups(filter={"virtualPath": master_image.group_virtual_path})) != 1:
         sync_master_images(core_client)
 
         def _check_default_master_image_group_available():
             assert (
-                len(core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})) == 1
+                len(core_client.find_master_image_groups(filter={"virtualPath": master_image.group_virtual_path})) == 1
             )
 
         assert_eventually(_check_default_master_image_group_available, max_retries=10, delay_millis=1000)
 
-    return core_client.find_master_image_groups(filter={"virtual_path": master_image.group_virtual_path})[0]
+    return core_client.find_master_image_groups(filter={"virtualPath": master_image.group_virtual_path})[0]
 
 
 @pytest.fixture()
@@ -129,11 +129,11 @@ def analysis_node_includables():
 @pytest.fixture()
 def analysis_code_bucket(core_client, analysis):
     def _wait_for_buckets():
-        assert len(core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})) != 0
+        assert len(core_client.find_analysis_buckets(filter={"analysisId": analysis.id})) != 0
 
     assert_eventually(_wait_for_buckets)
 
-    analysis_buckets = core_client.find_analysis_buckets(filter={"analysis_id": analysis.id})
+    analysis_buckets = core_client.find_analysis_buckets(filter={"analysisId": analysis.id})
     code_buckets = [bucket for bucket in analysis_buckets if bucket.type == AnalysisBucketType.CODE]
 
     assert len(code_buckets) == 1
@@ -163,14 +163,14 @@ def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_
 
     def _wait_for_analysis_bucket_file():
         analysis_bucket_files = core_client.find_analysis_bucket_files(
-            filter={"analysis_id": analysis_code_bucket.analysis_id}
+            filter={"analysisId": analysis_code_bucket.analysis_id}
         )
         assert len(analysis_bucket_files) == 1
 
     assert_eventually(_wait_for_analysis_bucket_file)
 
     analysis_bucket_file = core_client.find_analysis_bucket_files(
-        filter={"analysis_id": analysis_code_bucket.analysis_id}
+        filter={"analysisId": analysis_code_bucket.analysis_id}
     ).pop()
 
     yield analysis_bucket_file
@@ -224,11 +224,11 @@ def analysis_log(core_client, configured_analysis):
     core_client.send_analysis_command(configured_analysis, "buildStart")
 
     def _check_analysis_logs_present():
-        assert len(core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})) > 0
+        assert len(core_client.find_analysis_logs(filter={"analysisId": configured_analysis.id})) > 0
 
     assert_eventually(_check_analysis_logs_present)
 
-    return core_client.find_analysis_logs(filter={"analysis_id": configured_analysis.id})[0]
+    return core_client.find_analysis_logs(filter={"analysisId": configured_analysis.id})[0]
 
 
 @pytest.fixture()
@@ -394,7 +394,7 @@ def test_get_project_nodes(core_client, project_node, project_node_includables):
 
 def test_find_project_nodes(core_client, project_node, project_node_includables):
     # Use "project_id" instead of "id" because filtering for ids does not work.
-    project_nodes_find = core_client.find_project_nodes(filter={"project_id": project_node.project_id})
+    project_nodes_find = core_client.find_project_nodes(filter={"projectId": project_node.project_id})
 
     assert [project_node.id] == [pn.id for pn in project_nodes_find]
     assert all(
@@ -553,7 +553,7 @@ def test_get_analysis_nodes(core_client, analysis_node, analysis_node_includable
 
 def test_find_analysis_nodes(core_client, analysis_node, analysis_node_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
-    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysis_id": analysis_node.analysis_id})
+    analysis_nodes_find = core_client.find_analysis_nodes(filter={"analysisId": analysis_node.analysis_id})
 
     assert [analysis_node.id] == [an.id for an in analysis_nodes_find]
     assert all(
@@ -584,14 +584,14 @@ def test_analysis_node_logs(core_client, analysis_node):
 
     def _check_analysis_node_logs_present():
         found_logs = core_client.find_analysis_node_logs(
-            filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+            filter={"analysisId": analysis_node.analysis_id, "nodeId": analysis_node.node_id}
         )
         assert len(found_logs) == 1
 
     assert_eventually(_check_analysis_node_logs_present)
 
     new_log = core_client.find_analysis_node_logs(
-        filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+        filter={"analysisId": analysis_node.analysis_id, "nodeId": analysis_node.node_id}
     )[0]
 
     assert log == new_log
@@ -601,7 +601,7 @@ def test_analysis_node_logs(core_client, analysis_node):
     assert (
         len(
             core_client.find_analysis_node_logs(
-                filter={"analysis_id": analysis_node.analysis_id, "node_id": analysis_node.node_id}
+                filter={"analysisId": analysis_node.analysis_id, "nodeId": analysis_node.node_id}
             )
         )
         == 0
@@ -631,7 +631,7 @@ def test_get_analysis_buckets(core_client, analysis_code_bucket, analysis_bucket
 
 def test_find_analysis_buckets(core_client, analysis_code_bucket, analysis_bucket_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
-    analysis_buckets_find = core_client.find_analysis_buckets(filter={"analysis_id": analysis_code_bucket.analysis_id})
+    analysis_buckets_find = core_client.find_analysis_buckets(filter={"analysisId": analysis_code_bucket.analysis_id})
 
     assert analysis_code_bucket.id in [bucket.id for bucket in analysis_buckets_find]
     assert all(
@@ -669,7 +669,7 @@ def test_get_analysis_bucket_files(core_client, analysis_bucket_file, analysis_b
 def test_find_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
     analysis_bucket_files_find = core_client.find_analysis_bucket_files(
-        filter={"analysis_id": analysis_bucket_file.analysis_id}
+        filter={"analysisId": analysis_bucket_file.analysis_id}
     )
 
     assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
@@ -726,7 +726,7 @@ def test_registry_setup(core_client, registry):
     core_client.send_registry_command(registry.id, command="setup")
 
     def _check_setup():
-        registry_projects = core_client.find_registry_projects(filter={"registry_id": registry.id})
+        registry_projects = core_client.find_registry_projects(filter={"registryId": registry.id})
         assert len(registry_projects) == 3
         assert {"incoming", "outgoing", "masterImages"} == set(rp.type for rp in registry_projects)
 
@@ -780,6 +780,6 @@ def test_update_registry_project(core_client, registry_project):
 
 @pytest.mark.xfail(reason="Bug in Hub, see https://github.com/PrivateAIM/hub/issues/1181.")
 def test_delete_analysis_logs(core_client, analysis_log):
-    core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysis_id"])
+    core_client.delete_analysis_logs(analysis_id=analysis_log.labels["analysisId"])
 
-    assert len(core_client.find_analysis_logs(filter={"analysis_id": analysis_log.labels["analysis_id"]})) == 0
+    assert len(core_client.find_analysis_logs(filter={"analysisId": analysis_log.labels["analysisId"]})) == 0

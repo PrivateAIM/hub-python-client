@@ -4,11 +4,9 @@ from datetime import datetime
 
 import httpx2 as httpx
 import typing_extensions as te
-from pydantic import BaseModel
 
 from flame_hub._base_client import (
     BaseClient,
-    ResourceList,
     obtain_uuid_from,
     FindAllKwargs,
     GetKwargs,
@@ -18,11 +16,17 @@ from flame_hub._base_client import (
     ResourceListResult,
     AuthParam,
     BaseKwargs,
+    ConfigBaseModel,
+    SingleResourceResult,
 )
 from flame_hub._defaults import DEFAULT_STORAGE_BASE_URL
 
 
-class CreateBucket(BaseModel):
+class StorageBaseModel(ConfigBaseModel):
+    pass
+
+
+class CreateBucket(StorageBaseModel):
     name: str
     region: str | None
 
@@ -36,7 +40,7 @@ class Bucket(CreateBucket):
     realm_id: uuid.UUID | None
 
 
-class BucketFile(BaseModel):
+class BucketFile(StorageBaseModel):
     id: uuid.UUID
     name: str
     path: str
@@ -100,7 +104,11 @@ class StorageClient(BaseClient):
     def find_buckets(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Bucket]:
         return self._find_all_resources(Bucket, "buckets", **params)
 
-    def get_bucket(self, bucket_id: Bucket | str | uuid.UUID, **params: te.Unpack[GetKwargs]) -> Bucket | None:
+    def get_bucket(
+        self,
+        bucket_id: Bucket | str | uuid.UUID,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Bucket]:
         return self._get_single_resource(Bucket, "buckets", bucket_id, **params)
 
     def stream_bucket_tarball(
@@ -146,14 +154,14 @@ class StorageClient(BaseClient):
             **params,
         )
 
-        return ResourceList[BucketFile](**r.json()).data
+        return [BucketFile(**d) for d in r.json()["data"]]
 
     def delete_bucket_file(self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[BaseKwargs]):
         self._delete_resource("bucket-files", bucket_file_id, **params)
 
     def get_bucket_file(
         self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
-    ) -> BucketFile | None:
+    ) -> SingleResourceResult[BucketFile]:
         return self._get_single_resource(
             BucketFile, "bucket-files", bucket_file_id, include=get_includable_names(BucketFile), **params
         )

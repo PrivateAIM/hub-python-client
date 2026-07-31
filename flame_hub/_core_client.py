@@ -5,7 +5,7 @@ from datetime import datetime
 
 import httpx2 as httpx
 import typing_extensions as te
-from pydantic import BaseModel, WrapValidator, Field, BeforeValidator
+from pydantic import WrapValidator, Field, BeforeValidator
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -24,14 +24,21 @@ from flame_hub._base_client import (
     ResourceListResult,
     AuthParam,
     BaseKwargs,
+    ConfigBaseModel,
+    SingleResourceResult,
 )
 from flame_hub._defaults import DEFAULT_CORE_BASE_URL
 from flame_hub._storage_client import Bucket, BucketFile
 
+
+class CoreBaseModel(ConfigBaseModel):
+    pass
+
+
 RegistryCommand = t.Literal["setup", "cleanup"]
 
 
-class CreateRegistry(BaseModel):
+class CreateRegistry(CoreBaseModel):
     name: str
     host: str
     account_name: str | None
@@ -44,7 +51,7 @@ class Registry(CreateRegistry):
     updated_at: datetime
 
 
-class UpdateRegistry(BaseModel):
+class UpdateRegistry(CoreBaseModel):
     name: str | UNSET_T = UNSET
     host: str | UNSET_T = UNSET
     account_name: str | None | UNSET_T = UNSET
@@ -54,7 +61,7 @@ class UpdateRegistry(BaseModel):
 RegistryProjectType = t.Literal["default", "aggregator", "incoming", "outgoing", "masterImages", "node"]
 
 
-class CreateRegistryProject(BaseModel):
+class CreateRegistryProject(CoreBaseModel):
     name: str
     type: RegistryProjectType
     registry_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
@@ -76,7 +83,7 @@ class RegistryProject(CreateRegistryProject):
     updated_at: datetime
 
 
-class UpdateRegistryProject(BaseModel):
+class UpdateRegistryProject(CoreBaseModel):
     name: str | UNSET_T = UNSET
     type: RegistryProjectType | UNSET_T = UNSET
     registry_id: t.Annotated[uuid.UUID | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
@@ -88,7 +95,7 @@ class UpdateRegistryProject(BaseModel):
 NodeType = t.Literal["aggregator", "default"]
 
 
-class CreateNode(BaseModel):
+class CreateNode(CoreBaseModel):
     external_name: str | None
     hidden: bool | None
     name: str
@@ -109,7 +116,7 @@ class Node(CreateNode):
     updated_at: datetime
 
 
-class UpdateNode(BaseModel):
+class UpdateNode(CoreBaseModel):
     hidden: bool | UNSET_T = UNSET
     external_name: str | None | UNSET_T = UNSET
     type: NodeType | UNSET_T = UNSET
@@ -118,27 +125,27 @@ class UpdateNode(BaseModel):
     registry_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
 
 
-class NodeRegistryCredentials(BaseModel):
+class NodeRegistryCredentials(CoreBaseModel):
     host: str
     external_name: str
     account_name: str | None
     account_secret: str | None
 
 
-class ClientCredentials(BaseModel):
+class ClientCredentials(CoreBaseModel):
     id: uuid.UUID
     secret: str | None
     name: str
     display_name: str
 
 
-class UpdateClientCredentials(BaseModel):
+class UpdateClientCredentials(CoreBaseModel):
     secret: str | None | UNSET_T = UNSET
     name: str | UNSET_T = UNSET
     display_name: str | UNSET_T = UNSET
 
 
-class MasterImageGroup(BaseModel):
+class MasterImageGroup(CoreBaseModel):
     id: uuid.UUID
     name: str
     path: str
@@ -170,7 +177,7 @@ def ensure_position_none(value: t.Any) -> t.Any:
 ProcessStatus = t.Literal["starting", "started", "stopping", "stopped", "executing", "executed", "failed"]
 
 
-class MasterImage(BaseModel):
+class MasterImage(CoreBaseModel):
     id: uuid.UUID
     path: str | None
     virtual_path: str
@@ -184,7 +191,7 @@ class MasterImage(BaseModel):
     updated_at: datetime
 
 
-class CreateProject(BaseModel):
+class CreateProject(CoreBaseModel):
     description: str | None
     master_image_id: t.Annotated[uuid.UUID | None, Field(), WrapValidator(uuid_validator)]
     name: str
@@ -202,7 +209,7 @@ class Project(CreateProject):
     user_id: uuid.UUID | None
 
 
-class UpdateProject(BaseModel):
+class UpdateProject(CoreBaseModel):
     description: str | None | UNSET_T = UNSET
     master_image_id: t.Annotated[uuid.UUID | None | UNSET_T, Field(), WrapValidator(uuid_validator)] = UNSET
     name: str | UNSET_T = UNSET
@@ -212,7 +219,7 @@ class UpdateProject(BaseModel):
 ProjectNodeApprovalStatus = t.Literal["rejected", "approved"]
 
 
-class CreateProjectNode(BaseModel):
+class CreateProjectNode(CoreBaseModel):
     node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     project_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
@@ -229,7 +236,7 @@ class ProjectNode(CreateProjectNode):
     node_realm_id: uuid.UUID
 
 
-class UpdateProjectNode(BaseModel):
+class UpdateProjectNode(CoreBaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: ProjectNodeApprovalStatus | None | UNSET_T = UNSET
 
@@ -238,7 +245,7 @@ LogLevel = t.Literal["emerg", "alert", "crit", "error", "warn", "notice", "info"
 LogChannel = t.Literal["http", "websocket", "background", "system"]
 
 
-class Log(BaseModel):
+class Log(CoreBaseModel):
     time: str
     message: str
     service: str
@@ -247,7 +254,7 @@ class Log(BaseModel):
     labels: dict[str, str | None]
 
 
-class CreateAnalysis(BaseModel):
+class CreateAnalysis(CoreBaseModel):
     description: str | None
     name: str | None
     display_name: str | None
@@ -292,7 +299,7 @@ class Analysis(CreateAnalysis):
     master_image: t.Annotated[MasterImage | None, IsIncludable] = None
 
 
-class UpdateAnalysis(BaseModel):
+class UpdateAnalysis(CoreBaseModel):
     description: str | None | UNSET_T = UNSET
     name: str | UNSET_T = UNSET
     display_name: str | None | UNSET_T = UNSET
@@ -317,7 +324,7 @@ AnalysisCommand = t.Literal[
 ]
 
 
-class CreateAnalysisNode(BaseModel):
+class CreateAnalysisNode(CoreBaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
@@ -341,14 +348,14 @@ class AnalysisNode(CreateAnalysisNode):
     node_realm_id: uuid.UUID
 
 
-class UpdateAnalysisNode(BaseModel):
+class UpdateAnalysisNode(CoreBaseModel):
     comment: str | None | UNSET_T = UNSET
     approval_status: AnalysisNodeApprovalStatus | None | UNSET_T = UNSET
     execution_status: ProcessStatus | None | UNSET_T = UNSET
     execution_progress: int | None | UNSET_T = UNSET
 
 
-class CreateAnalysisNodeLog(BaseModel):
+class CreateAnalysisNodeLog(CoreBaseModel):
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     node_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     code: str | None
@@ -363,7 +370,7 @@ class AnalysisBucketType(str, Enum):
     TEMP = "TEMP"
 
 
-class CreateAnalysisBucket(BaseModel):
+class CreateAnalysisBucket(CoreBaseModel):
     type: AnalysisBucketType
     bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     analysis_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
@@ -377,7 +384,7 @@ class AnalysisBucket(CreateAnalysisBucket):
     realm_id: uuid.UUID
 
 
-class CreateAnalysisBucketFile(BaseModel):
+class CreateAnalysisBucketFile(CoreBaseModel):
     path: str
     bucket_file_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
     bucket_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
@@ -397,7 +404,7 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     analysis: t.Annotated[Analysis, IsIncludable] = None
 
 
-class UpdateAnalysisBucketFile(BaseModel):
+class UpdateAnalysisBucketFile(CoreBaseModel):
     root: bool | UNSET_T = UNSET
 
 
@@ -450,7 +457,7 @@ class CoreClient(BaseClient):
             **params,
         )
 
-    def get_node(self, node_id: Node | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Node | None:
+    def get_node(self, node_id: Node | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> SingleResourceResult[Node]:
         return self._get_single_resource(Node, "nodes", node_id, include=get_includable_names(Node), **params)
 
     def delete_node(
@@ -490,7 +497,7 @@ class CoreClient(BaseClient):
         self,
         node_id: Node | uuid.UUID | str,
         **params: te.Unpack[GetKwargs],
-    ) -> NodeRegistryCredentials | None:
+    ) -> SingleResourceResult[NodeRegistryCredentials]:
         """Returns the node's registry project credentials."""
 
         return self._get_single_resource(
@@ -506,7 +513,7 @@ class CoreClient(BaseClient):
         self,
         node_id: Node | uuid.UUID | str,
         **params: te.Unpack[GetKwargs],
-    ) -> ClientCredentials | None:
+    ) -> SingleResourceResult[ClientCredentials]:
         """Returns the node's client credentials."""
 
         return self._get_single_resource(
@@ -549,7 +556,7 @@ class CoreClient(BaseClient):
 
     def get_master_image_group(
         self, master_image_group_id: MasterImageGroup | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> MasterImageGroup | None:
+    ) -> SingleResourceResult[MasterImageGroup]:
         return self._get_single_resource(MasterImageGroup, "master-image-groups", master_image_group_id, **params)
 
     def find_master_image_groups(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[MasterImageGroup]:
@@ -560,7 +567,7 @@ class CoreClient(BaseClient):
 
     def get_master_image(
         self, master_image_id: MasterImage | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> MasterImage | None:
+    ) -> SingleResourceResult[MasterImage]:
         return self._get_single_resource(MasterImage, "master-images", master_image_id, **params)
 
     def find_master_images(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[MasterImage]:
@@ -623,7 +630,11 @@ class CoreClient(BaseClient):
     def delete_project(self, project_id: Project | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
         self._delete_resource("projects", project_id, **params)
 
-    def get_project(self, project_id: Project | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Project | None:
+    def get_project(
+        self,
+        project_id: Project | uuid.UUID | str,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Project]:
         return self._get_single_resource(
             Project, "projects", project_id, include=get_includable_names(Project), **params
         )
@@ -672,7 +683,7 @@ class CoreClient(BaseClient):
 
     def get_project_node(
         self, project_node_id: ProjectNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> ProjectNode | None:
+    ) -> SingleResourceResult[ProjectNode]:
         return self._get_single_resource(
             ProjectNode, "project-nodes", project_node_id, include=get_includable_names(ProjectNode), **params
         )
@@ -727,7 +738,11 @@ class CoreClient(BaseClient):
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Analysis]:
         return self._find_all_resources(Analysis, "analyses", include=get_includable_names(Analysis), **params)
 
-    def get_analysis(self, analysis_id: Analysis | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Analysis | None:
+    def get_analysis(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Analysis]:
         return self._get_single_resource(
             Analysis, "analyses", analysis_id, include=get_includable_names(Analysis), **params
         )
@@ -772,13 +787,13 @@ class CoreClient(BaseClient):
             **params,
         )
 
-        return Analysis(**r.json())
+        return Analysis(**r.json()["data"])
 
     def get_analysis_client_credentials(
         self,
         analysis_id: Analysis | uuid.UUID | str,
         **params: te.Unpack[GetKwargs],
-    ) -> ClientCredentials | None:
+    ) -> SingleResourceResult[ClientCredentials]:
         """Returns the client credentials of the analysis."""
 
         return self._get_single_resource(
@@ -853,7 +868,7 @@ class CoreClient(BaseClient):
 
     def get_analysis_node(
         self, analysis_node_id: AnalysisNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> AnalysisNode | None:
+    ) -> SingleResourceResult[AnalysisNode]:
         return self._get_single_resource(
             AnalysisNode, "analysis-nodes", analysis_node_id, include=get_includable_names(AnalysisNode), **params
         )
@@ -952,7 +967,7 @@ class CoreClient(BaseClient):
 
     def get_analysis_bucket(
         self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> AnalysisBucket | None:
+    ) -> SingleResourceResult[AnalysisBucket]:
         return self._get_single_resource(
             AnalysisBucket,
             "analysis-buckets",
@@ -973,7 +988,7 @@ class CoreClient(BaseClient):
 
     def get_analysis_bucket_file(
         self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> AnalysisBucketFile | None:
+    ) -> SingleResourceResult[AnalysisBucketFile]:
         return self._get_single_resource(
             AnalysisBucketFile,
             "analysis-bucket-files",
@@ -1040,7 +1055,11 @@ class CoreClient(BaseClient):
             **params,
         )
 
-    def get_registry(self, registry_id: Registry | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Registry | None:
+    def get_registry(
+        self,
+        registry_id: Registry | uuid.UUID | str,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Registry]:
         return self._get_single_resource(Registry, "registries", registry_id, **params)
 
     def delete_registry(
@@ -1115,7 +1134,7 @@ class CoreClient(BaseClient):
 
     def get_registry_project(
         self, registry_project_id: RegistryProject | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> RegistryProject | None:
+    ) -> SingleResourceResult[RegistryProject]:
         return self._get_single_resource(
             RegistryProject,
             "registry-projects",

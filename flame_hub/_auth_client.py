@@ -3,8 +3,7 @@ from datetime import datetime
 import typing as t
 
 import typing_extensions as te
-from pydantic import BaseModel, Field, WrapValidator, EmailStr, ConfigDict
-from pydantic.alias_generators import to_camel
+from pydantic import Field, WrapValidator, EmailStr
 
 from flame_hub._base_client import (
     BaseClient,
@@ -20,17 +19,14 @@ from flame_hub._base_client import (
     ResourceListResult,
     AuthParam,
     BaseKwargs,
+    ConfigBaseModel,
+    SingleResourceResult,
 )
 from flame_hub._defaults import DEFAULT_AUTH_BASE_URL
 
 
-class AuthBaseModel(BaseModel):
-    model_config = ConfigDict(
-        alias_generator=to_camel,
-        validate_by_alias=True,
-        validate_by_name=True,
-        serialize_by_alias=True,
-    )
+class AuthBaseModel(ConfigBaseModel):
+    pass
 
 
 class CreateRealm(AuthBaseModel):
@@ -256,28 +252,6 @@ class AuthClient(BaseClient):
     ):
         super().__init__(base_url, auth, **kwargs)
 
-    def _unwrap_single_resource(self, body: t.Any) -> t.Any:
-        """Extract the resource object from authup's single-resource envelope.
-
-        Since ``1.0.0-beta.57`` authup responds to single-resource requests with :python:`{"data": ..., "meta": ...}`
-        instead of the resource object itself, mirroring the envelope that list responses have always used. ``meta``
-        holds response-scoped extras such as the queryable schema of the endpoint and is discarded.
-
-        Raises
-        ------
-        :py:exc:`ValueError`
-            If ``body`` does not carry a ``data`` property, which is the case for authup versions before
-            ``1.0.0-beta.57``.
-
-        See Also
-        --------
-        :py:meth:`.BaseClient._unwrap_single_resource`
-        """
-        if not isinstance(body, dict) or "data" not in body:
-            raise ValueError("response body is not wrapped in a data property, authup 1.0.0-beta.57 or newer required")
-
-        return body["data"]
-
     def get_realms(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Realm]:
         return self._get_all_resources(Realm, "realms", **params)
 
@@ -305,7 +279,11 @@ class AuthClient(BaseClient):
     def delete_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
         self._delete_resource("realms", realm_id, **params)
 
-    def get_realm(self, realm_id: Realm | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Realm | None:
+    def get_realm(
+        self,
+        realm_id: Realm | uuid.UUID | str,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Realm]:
         return self._get_single_resource(Realm, "realms", realm_id, **params)
 
     def update_realm(
@@ -351,7 +329,7 @@ class AuthClient(BaseClient):
 
     def get_permission(
         self, permission_id: Permission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> Permission | None:
+    ) -> SingleResourceResult[Permission]:
         return self._get_single_resource(
             Permission, "permissions", permission_id, include=get_includable_names(Permission), **params
         )
@@ -396,7 +374,7 @@ class AuthClient(BaseClient):
             **params,
         )
 
-    def get_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Role | None:
+    def get_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> SingleResourceResult[Role]:
         return self._get_single_resource(Role, "roles", role_id, include=get_includable_names(Role), **params)
 
     def delete_role(self, role_id: Role | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
@@ -439,7 +417,7 @@ class AuthClient(BaseClient):
 
     def get_role_permission(
         self, role_permission_id: RolePermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> RolePermission | None:
+    ) -> SingleResourceResult[RolePermission]:
         return self._get_single_resource(
             RolePermission,
             "role-permissions",
@@ -497,7 +475,7 @@ class AuthClient(BaseClient):
             **params,
         )
 
-    def get_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> User | None:
+    def get_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> SingleResourceResult[User]:
         return self._get_single_resource(User, "users", user_id, include=get_includable_names(User), **params)
 
     def delete_user(self, user_id: User | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
@@ -552,7 +530,7 @@ class AuthClient(BaseClient):
 
     def get_user_permission(
         self, user_permission_id: UserPermission | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> UserPermission | None:
+    ) -> SingleResourceResult[UserPermission]:
         return self._get_single_resource(
             UserPermission,
             "user-permissions",
@@ -599,7 +577,7 @@ class AuthClient(BaseClient):
 
     def get_user_role(
         self, user_role_id: UserRole | uuid.UUID | str, **params: te.Unpack[GetKwargs]
-    ) -> UserRole | None:
+    ) -> SingleResourceResult[UserRole]:
         return self._get_single_resource(
             UserRole, "user-roles", user_role_id, include=get_includable_names(UserRole), **params
         )
@@ -652,7 +630,11 @@ class AuthClient(BaseClient):
     def delete_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[BaseKwargs]):
         self._delete_resource("clients", client_id, **params)
 
-    def get_client(self, client_id: Client | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> Client | None:
+    def get_client(
+        self,
+        client_id: Client | uuid.UUID | str,
+        **params: te.Unpack[GetKwargs],
+    ) -> SingleResourceResult[Client]:
         return self._get_single_resource(Client, "clients", client_id, include=get_includable_names(Client), **params)
 
     def get_clients(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Client]:

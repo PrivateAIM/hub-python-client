@@ -190,8 +190,8 @@ left unset, the client will sort in ascending order by default.
 
 .. code-block:: python
 
-    nodes = core_client.find_nodes(sort={"by": "created_at"})
-    sedon = core_client.find_nodes(sort={"by": "created_at", "order": "descending"})
+    nodes = core_client.find_nodes(sort={"by": "createdAt"})
+    sedon = core_client.find_nodes(sort={"by": "createdAt", "order": "descending"})
 
     assert nodes == sedon[::-1]
 
@@ -322,7 +322,7 @@ It is also possible to retrieve all names of includable properties for a specifi
 
 .. code-block::
 
-    ('registry', 'registry_project')
+    ('registry', 'registryProject')
 
 
 Overriding authentication per request
@@ -379,11 +379,11 @@ possible, including status code and additional information in the response body.
 
 .. code-block:: console
 
-    received status code 400 (undefined): Can't find realm entity by realm_id
+    received status code 400 (undefined): Can't find realm entity by realmId
     {
       "status_code": 400,
       "code": "undefined",
-      "message": "Can't find realm entity by realm_id"
+      "message": "Can't find realm entity by realmId"
     }
 
 In this example a :py:exc:`.HubAPIError` is raised because there is no realm with an ID that matches the dynamically
@@ -413,7 +413,7 @@ Hub instance.
 
     {
       "hidden": false,
-      "external_name": null
+      "externalName": null
     }
 
 Check out all implemented models :doc:`here <models_api>`.
