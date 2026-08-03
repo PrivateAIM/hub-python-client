@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c87aa342"></script>
+      <script src="_static/documentation_options.js?v=1dd76d02"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -278,8 +278,8 @@ comparisons.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">sort</span></code> parameter allows you to define a field to sort by in either ascending or descending order. If <code class="docutils literal notranslate"><span class="pre">order</span></code> is
 left unset, the client will sort in ascending order by default.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;created_at&quot;</span><span class="p">})</span>
-<span class="n">sedon</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;descending&quot;</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">})</span>
+<span class="n">sedon</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;descending&quot;</span><span class="p">})</span>
 
 <span class="k">assert</span> <span class="n">nodes</span> <span class="o">==</span> <span class="n">sedon</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
@@ -387,7 +387,7 @@ admin’s realm is the master realm.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">get_includable_names</span><span class="p">(</span><span class="n">Node</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;registry&#39;</span><span class="p">,</span> <span class="s1">&#39;registry_project&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;registry&#39;</span><span class="p">,</span> <span class="s1">&#39;registryProject&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -436,11 +436,11 @@ possible, including status code and additional information in the response body.
     <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">error_response</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">received status code 400 (undefined): Can&#39;t find realm entity by realm_id</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">received status code 400 (undefined): Can&#39;t find realm entity by realmId</span>
 <span class="go">{</span>
 <span class="go">  &quot;status_code&quot;: 400,</span>
 <span class="go">  &quot;code&quot;: &quot;undefined&quot;,</span>
-<span class="go">  &quot;message&quot;: &quot;Can&#39;t find realm entity by realm_id&quot;</span>
+<span class="go">  &quot;message&quot;: &quot;Can&#39;t find realm entity by realmId&quot;</span>
 <span class="go">}</span>
 </pre></div>
 </div>
@@ -464,7 +464,7 @@ Hub instance.</p>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
 <span class="go">  &quot;hidden&quot;: false,</span>
-<span class="go">  &quot;external_name&quot;: null</span>
+<span class="go">  &quot;externalName&quot;: null</span>
 <span class="go">}</span>
 </pre></div>
 </div>

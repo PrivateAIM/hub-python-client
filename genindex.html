@@ -13,7 +13,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c87aa342"></script>
+      <script src="_static/documentation_options.js?v=1dd76d02"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -194,10 +194,10 @@
       </ul></li>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.analysis_bucket">analysis_bucket (flame_hub.models.AnalysisBucketFile attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisBucketFile.analysis_bucket_id">analysis_bucket_id (flame_hub.models.CreateAnalysisBucketFile attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucketFile.analysis_id">analysis_id (flame_hub.models.AnalysisBucketFile attribute)</a>
 
       <ul>
@@ -262,6 +262,8 @@
         <li><a href="models_api.html#flame_hub.models.UpdateClient.auth_method">(flame_hub.models.UpdateClient attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.AuthBaseModel">AuthBaseModel (class in flame_hub.models)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.AuthClient">AuthClient (class in flame_hub)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.User.avatar">avatar (flame_hub.models.User attribute)</a>
@@ -376,6 +378,8 @@
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysisNode.comment">(flame_hub.models.UpdateAnalysisNode attribute)</a>
 </li>
       </ul></li>
+      <li><a href="models_api.html#flame_hub.models.ConfigBaseModel">ConfigBaseModel (class in flame_hub.models)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.Analysis.configuration_entrypoint_valid">configuration_entrypoint_valid (flame_hub.models.Analysis attribute)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.Analysis.configuration_image_valid">configuration_image_valid (flame_hub.models.Analysis attribute)</a>
@@ -391,6 +395,8 @@
       <li><a href="types_api.html#flame_hub.types.UploadFile.content">content (flame_hub.types.UploadFile attribute)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.UploadFile.content_type">content_type (flame_hub.types.UploadFile attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.CoreBaseModel">CoreBaseModel (class in flame_hub.models)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient">CoreClient (class in flame_hub)</a>
 </li>
@@ -424,10 +430,10 @@
 </li>
       <li><a href="clients_api.html#flame_hub.CoreClient.create_registry_project">create_registry_project() (flame_hub.CoreClient method)</a>
 </li>
-      <li><a href="clients_api.html#flame_hub.AuthClient.create_role">create_role() (flame_hub.AuthClient method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="clients_api.html#flame_hub.AuthClient.create_role">create_role() (flame_hub.AuthClient method)</a>
+</li>
       <li><a href="clients_api.html#flame_hub.AuthClient.create_role_permission">create_role_permission() (flame_hub.AuthClient method)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.AuthClient.create_user">create_user() (flame_hub.AuthClient method)</a>
@@ -525,7 +531,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.ResourceList.data">data (flame_hub.models.ResourceList attribute)</a>
+
+      <ul>
+        <li><a href="models_api.html#flame_hub.models.WrappedResource.data">(flame_hub.models.WrappedResource attribute)</a>
 </li>
+      </ul></li>
       <li><a href="defaults_api.html#flame_hub._defaults.DEFAULT_AUTH_BASE_URL">DEFAULT_AUTH_BASE_URL (in module flame_hub._defaults)</a>
 </li>
       <li><a href="defaults_api.html#flame_hub._defaults.DEFAULT_CORE_BASE_URL">DEFAULT_CORE_BASE_URL (in module flame_hub._defaults)</a>
@@ -1041,8 +1051,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="types_api.html#flame_hub.types.FilterOperator.like">like (flame_hub.types.FilterOperator attribute)</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.PageParams.limit">limit (flame_hub.types.PageParams attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.ResourceListMeta.limit">limit (flame_hub.models.ResourceListMeta attribute)</a>
+
+      <ul>
+        <li><a href="types_api.html#flame_hub.types.PageParams.limit">(flame_hub.types.PageParams attribute)</a>
 </li>
+      </ul></li>
       <li><a href="models_api.html#flame_hub.models.Log">Log (class in flame_hub.models)</a>
 </li>
       <li><a href="types_api.html#flame_hub.types.LogChannel">LogChannel (in module flame_hub.types)</a>
@@ -1090,6 +1104,8 @@
       <li><a href="models_api.html#flame_hub.models.ResourceList.meta">meta (flame_hub.models.ResourceList attribute)</a>
 
       <ul>
+        <li><a href="models_api.html#flame_hub.models.WrappedResource.meta">(flame_hub.models.WrappedResource attribute)</a>
+</li>
         <li><a href="types_api.html#flame_hub.types.FindAllKwargs.meta">(flame_hub.types.FindAllKwargs attribute)</a>
 </li>
         <li><a href="types_api.html#flame_hub.types.GetKwargs.meta">(flame_hub.types.GetKwargs attribute)</a>
@@ -1108,6 +1124,8 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.AnalysisNode.model_config">(flame_hub.models.AnalysisNode attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.AuthBaseModel.model_config">(flame_hub.models.AuthBaseModel attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.Bucket.model_config">(flame_hub.models.Bucket attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.BucketFile.model_config">(flame_hub.models.BucketFile attribute)</a>
@@ -1115,6 +1133,10 @@
         <li><a href="models_api.html#flame_hub.models.Client.model_config">(flame_hub.models.Client attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.ClientCredentials.model_config">(flame_hub.models.ClientCredentials attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.ConfigBaseModel.model_config">(flame_hub.models.ConfigBaseModel attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.CoreBaseModel.model_config">(flame_hub.models.CoreBaseModel attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.CreateAnalysis.model_config">(flame_hub.models.CreateAnalysis attribute)</a>
 </li>
@@ -1186,6 +1208,10 @@
 </li>
         <li><a href="models_api.html#flame_hub.models.RolePermission.model_config">(flame_hub.models.RolePermission attribute)</a>
 </li>
+        <li><a href="models_api.html#flame_hub.models.SingleResourceMeta.model_config">(flame_hub.models.SingleResourceMeta attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.StorageBaseModel.model_config">(flame_hub.models.StorageBaseModel attribute)</a>
+</li>
         <li><a href="models_api.html#flame_hub.models.UNSET.model_config">(flame_hub.models.UNSET attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UpdateAnalysis.model_config">(flame_hub.models.UpdateAnalysis attribute)</a>
@@ -1219,6 +1245,8 @@
         <li><a href="models_api.html#flame_hub.models.UserPermission.model_config">(flame_hub.models.UserPermission attribute)</a>
 </li>
         <li><a href="models_api.html#flame_hub.models.UserRole.model_config">(flame_hub.models.UserRole attribute)</a>
+</li>
+        <li><a href="models_api.html#flame_hub.models.WrappedResource.model_config">(flame_hub.models.WrappedResource attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1348,8 +1376,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="utility_functions_api.html#flame_hub._base_client.obtain_uuid_from">obtain_uuid_from() (in module flame_hub._base_client)</a>
 </li>
-      <li><a href="types_api.html#flame_hub.types.PageParams.offset">offset (flame_hub.types.PageParams attribute)</a>
+      <li><a href="models_api.html#flame_hub.models.ResourceListMeta.offset">offset (flame_hub.models.ResourceListMeta attribute)</a>
+
+      <ul>
+        <li><a href="types_api.html#flame_hub.types.PageParams.offset">(flame_hub.types.PageParams attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.Node.online">online (flame_hub.models.Node attribute)</a>
@@ -1562,6 +1594,8 @@
 </li>
       <li><a href="types_api.html#flame_hub._base_client.ResourceT">ResourceT (in module flame_hub._base_client)</a>
 </li>
+      <li><a href="models_api.html#flame_hub.models.SingleResourceMeta.response_schema">response_schema (flame_hub.models.SingleResourceMeta attribute)</a>
+</li>
       <li><a href="models_api.html#flame_hub.models.AnalysisBucketType.RESULT">RESULT (flame_hub.models.AnalysisBucketType attribute)</a>
 
       <ul>
@@ -1638,11 +1672,13 @@
       </ul></li>
       <li><a href="clients_api.html#flame_hub.CoreClient.send_analysis_command">send_analysis_command() (flame_hub.CoreClient method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="clients_api.html#flame_hub.CoreClient.send_registry_command">send_registry_command() (flame_hub.CoreClient method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.Log.service">service (flame_hub.models.Log attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.SingleResourceMeta">SingleResourceMeta (class in flame_hub.models)</a>
 </li>
       <li><a href="models_api.html#flame_hub.models.BucketFile.size">size (flame_hub.models.BucketFile attribute)</a>
 </li>
@@ -1655,6 +1691,8 @@
       <li><a href="models_api.html#flame_hub.models.CreateAnalysisNodeLog.status">status (flame_hub.models.CreateAnalysisNodeLog attribute)</a>
 </li>
       <li><a href="exceptions_api.html#flame_hub._exceptions.ErrorResponse.status_code">status_code (flame_hub._exceptions.ErrorResponse attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.StorageBaseModel">StorageBaseModel (class in flame_hub.models)</a>
 </li>
       <li><a href="clients_api.html#flame_hub.StorageClient">StorageClient (class in flame_hub)</a>
 </li>
@@ -1889,6 +1927,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models_api.html#flame_hub.models.RegistryProject.webhook_name">webhook_name (flame_hub.models.RegistryProject attribute)</a>
+</li>
+      <li><a href="models_api.html#flame_hub.models.WrappedResource">WrappedResource (class in flame_hub.models)</a>
 </li>
   </ul></td>
 </tr></table>
