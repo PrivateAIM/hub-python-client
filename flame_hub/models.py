@@ -57,7 +57,6 @@ __all__ = [
     "IsOptionalField",
     "IsIncludable",
     "ResourceListMeta",
-    "ResourceList",
     "AccessToken",
     "RefreshToken",
     "CreateClient",
@@ -66,9 +65,17 @@ __all__ = [
     "NodeRegistryCredentials",
     "ClientCredentials",
     "UpdateClientCredentials",
+    "ConfigBaseModel",
+    "AuthBaseModel",
+    "CoreBaseModel",
+    "StorageBaseModel",
+    "SingleResourceMeta",
+    "ResourceList",
+    "WrappedResource",
 ]
 
 from ._core_client import (
+    CoreBaseModel,
     CreateNode,
     Node,
     NodeType,
@@ -106,9 +113,19 @@ from ._core_client import (
     ClientCredentials,
     UpdateClientCredentials,
 )
-from ._storage_client import CreateBucket, Bucket, BucketFile
-from ._base_client import UNSET, IsOptionalField, IsIncludable, ResourceListMeta, ResourceList
+from ._storage_client import CreateBucket, Bucket, BucketFile, StorageBaseModel
+from ._base_client import (
+    UNSET,
+    IsOptionalField,
+    IsIncludable,
+    SingleResourceMeta,
+    ResourceListMeta,
+    ConfigBaseModel,
+    ResourceList,
+    WrappedResource,
+)
 from ._auth_client import (
+    AuthBaseModel,
     CreateRealm,
     UpdateRealm,
     Realm,

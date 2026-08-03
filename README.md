@@ -1,5 +1,5 @@
 [![PyPI](https://img.shields.io/pypi/v/flame-hub-client?label=PyPI&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
-![Code Coverage](https://img.shields.io/badge/Coverage-98%25-brightgreen.svg)
+![Code Coverage](https://img.shields.io/badge/Coverage-97%25-brightgreen.svg)
 ![Python versions](https://img.shields.io/badge/Python->=3.10-blue)
 [![License](https://img.shields.io/pypi/l/flame-hub-client?label=License&cacheSeconds=0)](https://pypi.org/project/flame-hub-client/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
@@ -74,22 +74,22 @@ print(my_node.model_dump_json(indent=2))
 
 ```console
 {
-  "external_name": null,
+  "externalName": null,
   "hidden": false,
   "name": "my-node",
-  "realm_id": "794f2375-f043-4789-bd0c-e5534e8deeaa",
-  "registry_id": null,
+  "realmId": "794f2375-f043-4789-bd0c-e5534e8deeaa",
+  "registryId": null,
   "type": "default",
   "id": "03636152-e6a8-4e01-994e-18b2b0c3a935",
-  "public_key": null,
+  "publicKey": null,
   "online": false,
   "registry": null,
-  "registry_project_id": null,
-  "registry_project": null,
-  "robot_id": null,
-  "client_id": "2d3e19b4-6708-4279-b2a7-34ad42638e4b",
-  "created_at": "2025-05-19T15:43:57.859000Z",
-  "updated_at": "2025-05-19T15:43:57.859000Z"
+  "registryProjectId": null,
+  "registryProject": null,
+  "robotId": null,
+  "clientId": "2d3e19b4-6708-4279-b2a7-34ad42638e4b",
+  "createdAt": "2025-05-19T15:43:57.859000Z",
+  "updatedAt": "2025-05-19T15:43:57.859000Z"
 }
 ```
 
