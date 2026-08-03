@@ -51,7 +51,7 @@ class Realm(CreateRealm):
 class CreateUser(AuthBaseModel):
     name: str
     display_name: str | None
-    email: t.Annotated[EmailStr, IsOptionalField] = None
+    email: t.Annotated[EmailStr, IsOptionalField] | None = None
     active: bool
     name_locked: bool
     first_name: str | None
@@ -63,7 +63,7 @@ class User(CreateUser):
     avatar: str | None
     cover: str | None
     realm_id: uuid.UUID
-    realm: t.Annotated[Realm, IsIncludable] = None
+    realm: t.Annotated[Realm, IsIncludable] | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -137,9 +137,9 @@ class RolePermission(CreateRolePermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    role: t.Annotated[Role, IsIncludable] = None
+    role: t.Annotated[Role, IsIncludable] | None = None
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
-    permission: t.Annotated[Permission, IsIncludable] = None
+    permission: t.Annotated[Permission, IsIncludable] | None = None
     permission_realm: t.Annotated[Realm | None, IsIncludable] = None
 
 
@@ -155,8 +155,8 @@ class UserPermission(CreateUserPermission):
     policy_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    permission: t.Annotated[Permission, IsIncludable] = None
-    user: t.Annotated[User, IsIncludable] = None
+    permission: t.Annotated[Permission, IsIncludable] | None = None
+    user: t.Annotated[User, IsIncludable] | None = None
     permission_realm: t.Annotated[Realm | None, IsIncludable] = None
     user_realm: t.Annotated[Realm | None, IsIncludable] = None
 
@@ -172,8 +172,8 @@ class UserRole(CreateUserRole):
     role_realm_id: uuid.UUID | None
     created_at: datetime
     updated_at: datetime
-    user: t.Annotated[User, IsIncludable] = None
-    role: t.Annotated[Role, IsIncludable] = None
+    user: t.Annotated[User, IsIncludable] | None = None
+    role: t.Annotated[Role, IsIncludable] | None = None
     user_realm: t.Annotated[Realm | None, IsIncludable] = None
     role_realm: t.Annotated[Realm | None, IsIncludable] = None
 
@@ -216,7 +216,7 @@ class Client(AuthBaseModel):
     created_at: datetime
     updated_at: datetime
     realm_id: uuid.UUID
-    realm: t.Annotated[Realm, IsIncludable] = None
+    realm: t.Annotated[Realm, IsIncludable] | None = None
 
 
 class UpdateClient(AuthBaseModel):

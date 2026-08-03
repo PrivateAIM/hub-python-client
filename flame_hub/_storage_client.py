@@ -53,7 +53,7 @@ class BucketFile(StorageBaseModel):
     actor_id: uuid.UUID
     realm_id: uuid.UUID
     bucket_id: uuid.UUID
-    bucket: t.Annotated[Bucket, IsIncludable] = None
+    bucket: t.Annotated[Bucket, IsIncludable] | None = None
 
 
 class ReadableBinary(t.Protocol):
