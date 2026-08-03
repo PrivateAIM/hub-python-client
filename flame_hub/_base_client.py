@@ -499,6 +499,10 @@ class BaseClient(object):
         client = kwargs.get("client", None)
         self._client = client or httpx.Client(auth=resolve_auth(auth), base_url=base_url)
 
+    def close(self):
+        """Closes the internally used :py:class:`httpx2.Client` instance."""
+        self._client.close()
+
     def _request(
         self,
         method: t.Literal["GET", "POST", "PUT", "DELETE"],
