@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.4.1...v0.5.0) (2026-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* AuthClient requires authup 1.0.0-beta.57 or newer.
+
+### Features
+
+* hub v0.13.0 ([#130](https://github.com/PrivateAIM/hub-python-client/issues/130)) ([b419de8](https://github.com/PrivateAIM/hub-python-client/commit/b419de8ecebf5956e040371572686d4351aaca3b))
+
 ## [0.4.1](https://github.com/PrivateAIM/hub-python-client/compare/v0.4.0...v0.4.1) (2026-07-28)
 
 
