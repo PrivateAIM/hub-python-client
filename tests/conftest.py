@@ -345,17 +345,29 @@ def password_auth(nginx, auth_base_url, auth_admin_username, auth_admin_password
 
 @pytest.fixture(scope="session")
 def auth_client(password_auth, auth_base_url, response_timeout):
-    yield AuthClient(client=httpx.Client(base_url=auth_base_url, auth=password_auth, timeout=response_timeout))
+    client = httpx.Client(base_url=auth_base_url, auth=password_auth, timeout=response_timeout)
+    try:
+        yield AuthClient(client=client)
+    finally:
+        client.close()
 
 
 @pytest.fixture(scope="session")
 def core_client(password_auth, core_base_url, response_timeout):
-    yield CoreClient(client=httpx.Client(base_url=core_base_url, auth=password_auth, timeout=response_timeout))
+    client = httpx.Client(base_url=core_base_url, auth=password_auth, timeout=response_timeout)
+    try:
+        yield CoreClient(client=client)
+    finally:
+        client.close()
 
 
 @pytest.fixture(scope="session")
 def storage_client(password_auth, storage_base_url, response_timeout):
-    yield StorageClient(client=httpx.Client(base_url=storage_base_url, auth=password_auth, timeout=response_timeout))
+    client = httpx.Client(base_url=storage_base_url, auth=password_auth, timeout=response_timeout)
+    try:
+        yield StorageClient(client=client)
+    finally:
+        client.close()
 
 
 @pytest.fixture(scope="session")
