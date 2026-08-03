@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.0...v0.5.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* correct type annotations for includable attributes ([859163a](https://github.com/PrivateAIM/hub-python-client/commit/859163ac906db225e56a00ea9ed5c46a74c71bc8))
+
 ## [0.5.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.4.1...v0.5.0) (2026-08-03)
 
 
