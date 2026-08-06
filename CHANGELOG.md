@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.2](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.1...v0.5.2) (2026-08-06)
+
+
+### Bug Fixes
+
+* convert snake case filters to camel case for backwards compatibility ([03ac2dd](https://github.com/PrivateAIM/hub-python-client/commit/03ac2ddc5ed7da39d2c3a4b6b03f4eddf460b9e3))
+* **test:** remove xfail from working tests ([ab40a96](https://github.com/PrivateAIM/hub-python-client/commit/ab40a9645a328ee5ac8e1f9950d72da7b4ccb631))
+
 ## [0.5.1](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.0...v0.5.1) (2026-08-03)
 
 
