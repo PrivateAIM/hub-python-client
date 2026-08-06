@@ -62,6 +62,8 @@ def test_build_page_params(page_params, expected):
         ({"id": (">", "20")}, {"filter[id]": ">20"}),
         ({"id": (FilterOperator.ge, "20")}, {"filter[id]": ">=20"}),
         ({"id": (">=", "20")}, {"filter[id]": ">=20"}),
+        ({"display_name": ("=", "foo")}, {"filter[displayName]": "foo"}),
+        ({"displayName": ("=", "bar")}, {"filter[displayName]": "bar"}),
     ],
 )
 def test_build_filter_params(filter_params, expected):
