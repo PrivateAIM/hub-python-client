@@ -6,11 +6,11 @@ import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.network import Network
 from testcontainers.core.waiting_utils import wait_for_logs
-from testcontainers.minio import MinioContainer
-from testcontainers.mysql import MySqlContainer
-from testcontainers.rabbitmq import RabbitMqContainer
-from testcontainers.redis import RedisContainer
-from testcontainers.vault import VaultContainer
+from testcontainers.community.minio import MinioContainer
+from testcontainers.community.mysql import MySqlContainer
+from testcontainers.community.rabbitmq import RabbitMqContainer
+from testcontainers.community.redis import RedisContainer
+from testcontainers.community.vault import VaultContainer
 
 from flame_hub.auth import PasswordAuth
 from flame_hub import AuthClient, CoreClient, StorageClient

@@ -23,25 +23,27 @@ homepage = "https://privateaim.de/"
 documentation = "https://privateaim.github.io/hub-python-client/"
 repository = "https://github.com/PrivateAIM/hub-python-client/"
 
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "pytest-dotenv (>=0.5.2,<0.6.0)",
+    "ruff (>=0.15.0,<0.16.0)",
+    "pre-commit (>=4.6.1,<5.0.0)",
+    "testcontainers[minio,mysql,rabbitmq,redis,vault] (>=4.15.0,<5.0.0)",
+    "readme-coverage-badger (>=1.1.0,<2.0.0)"
+]
+docs = [
+    "sphinx (==8.1.3)",
+    "sphinx-rtd-theme (>=3.1.0,<4.0.0)",
+    "sphinx-autobuild (==2024.10.3)",
+    "numpydoc (>=1.10.0,<2.0.0)",
+    "myst-parser (>=4,<5)"
+]
+
+
 [tool.poetry]
 packages = [{ include = "flame_hub" }]
-
-[tool.poetry.group.dev.dependencies]
-pytest = ">=8.3.0"
-ruff = ">=0.9.0"
-pre-commit = ">=4.0.0"
-testcontainers = { extras = ["minio", "mysql", "rabbitmq", "redis", "vault"], version = ">=4.9.0" }
-pytest-dotenv = ">=0.5.0"
-pytest-cov = "^7.1.0"
-readme-coverage-badger = "^1.0.1"
-
-
-[tool.poetry.group.docs.dependencies]
-sphinx = "8.1.3"
-sphinx-rtd-theme = "^3.0.2"
-sphinx-autobuild = "^2024.10.3"
-numpydoc = "^1.8.0"
-myst-parser = "^4.0.1"
 
 [tool.ruff]
 line-length = 120
