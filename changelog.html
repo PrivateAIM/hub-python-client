@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b9afe91b"></script>
+      <script src="_static/documentation_options.js?v=8e576371"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -49,27 +49,31 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">0.5.1 (2026-08-03)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">0.5.2 (2026-08-06)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">0.5.0 (2026-08-03)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">0.5.1 (2026-08-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">0.5.0 (2026-08-03)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#breaking-changes">⚠ BREAKING CHANGES</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#features">Features</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id3">0.4.1 (2026-07-28)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id4">Bug Fixes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">0.4.1 (2026-07-28)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id5">0.4.0 (2026-07-27)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id6">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">0.4.0 (2026-07-27)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Features</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">0.3.0 (2026-07-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id8">⚠ BREAKING CHANGES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Bug Fixes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">0.3.0 (2026-07-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id10">⚠ BREAKING CHANGES</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Bug Fixes</a></li>
 </ul>
 </li>
 </ul>
@@ -103,16 +107,26 @@
   <section id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Link to this heading"></a></h1>
 <section id="id1">
-<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.5.0...v0.5.1">0.5.1</a> (2026-08-03)<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.5.1...v0.5.2">0.5.2</a> (2026-08-06)<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
 <section id="bug-fixes">
 <h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>convert snake case filters to camel case for backwards compatibility (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/03ac2ddc5ed7da39d2c3a4b6b03f4eddf460b9e3">03ac2dd</a>)</p></li>
+<li><p><strong>test:</strong> remove xfail from working tests (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/ab40a9645a328ee5ac8e1f9950d72da7b4ccb631">ab40a96</a>)</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.5.0...v0.5.1">0.5.1</a> (2026-08-03)<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>Bug Fixes<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>correct type annotations for includable attributes (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/859163ac906db225e56a00ea9ed5c46a74c71bc8">859163a</a>)</p></li>
 </ul>
 </section>
 </section>
-<section id="id2">
-<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.4.1...v0.5.0">0.5.0</a> (2026-08-03)<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<section id="id4">
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.4.1...v0.5.0">0.5.0</a> (2026-08-03)<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <section id="breaking-changes">
 <h3>⚠ BREAKING CHANGES<a class="headerlink" href="#breaking-changes" title="Link to this heading"></a></h3>
 <ul class="simple">
@@ -126,42 +140,42 @@
 </ul>
 </section>
 </section>
-<section id="id3">
-<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.4.0...v0.4.1">0.4.1</a> (2026-07-28)<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
-<section id="id4">
-<h3>Bug Fixes<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id5">
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.4.0...v0.4.1">0.4.1</a> (2026-07-28)<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<section id="id6">
+<h3>Bug Fixes<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>client authentication (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/issues/127">#127</a>) (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/425c032d38bc7ff7c5c1db69ec4f315e7718f742">425c032</a>)</p></li>
 <li><p>make analysis models backwards compatible for older analysis resources (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/a2e3fd28d7d128d1c6e1d2eea2974992bc24faac">a2e3fd2</a>)</p></li>
 </ul>
 </section>
 </section>
-<section id="id5">
-<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.3.0...v0.4.0">0.4.0</a> (2026-07-27)<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
-<section id="id6">
-<h3>Features<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="id7">
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.3.0...v0.4.0">0.4.0</a> (2026-07-27)<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<section id="id8">
+<h3>Features<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>update to hub v0.12.5 (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/issues/124">#124</a>) (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/22f93a60a078da1fbc8da356f6270991af3b5c33">22f93a6</a>)</p></li>
 </ul>
 </section>
 </section>
-<section id="id7">
-<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.2.16...v0.3.0">0.3.0</a> (2026-07-23)<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
-<section id="id8">
-<h3>⚠ BREAKING CHANGES<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<section id="id9">
+<h2><a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/compare/v0.2.16...v0.3.0">0.3.0</a> (2026-07-23)<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<section id="id10">
+<h3>⚠ BREAKING CHANGES<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>All robot related methods and models have been removed. Use the client models and methods instead.</p></li>
 </ul>
 </section>
-<section id="id9">
-<h3>Features<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="id11">
+<h3>Features<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>per request auth (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/issues/123">#123</a>) (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/c9684d4e98f2db0dc8ea6b5106710f19f4e31500">c9684d4</a>)</p></li>
 <li><p>upgrade to Hub v0.12.2 (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/issues/118">#118</a>) (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/067582be3d173c649356dc52a96a1e02a1bb9273">067582b</a>)</p></li>
 </ul>
 </section>
-<section id="id10">
-<h3>Bug Fixes<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id12">
+<h3>Bug Fixes<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>error response model (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/issues/122">#122</a>) (<a class="reference external" href="https://github.com/PrivateAIM/hub-python-client/commit/85b72c8c0ec69c64a6ac466b07ff881d8db4a6b4">85b72c8</a>)</p></li>
 </ul>
