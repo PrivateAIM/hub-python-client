@@ -78,7 +78,7 @@ class RegistryProject(CreateRegistryProject):
     webhook_name: str | None
     webhook_exists: bool | None
     realm_id: uuid.UUID | None
-    registry: t.Annotated[Registry, IsIncludable] | None = None
+    registry: t.Annotated[Registry | None, IsIncludable] = None
     created_at: datetime
     updated_at: datetime
 
@@ -230,8 +230,8 @@ class ProjectNode(CreateProjectNode):
     comment: str | None
     created_at: datetime
     updated_at: datetime
-    node: t.Annotated[Node, IsIncludable] | None = None
-    project: t.Annotated[Project, IsIncludable] | None = None
+    node: t.Annotated[Node | None, IsIncludable] = None
+    project: t.Annotated[Project | None, IsIncludable] = None
     project_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -295,7 +295,7 @@ class Analysis(CreateAnalysis):
     user_id: uuid.UUID
     client_id: uuid.UUID | None
     project_id: uuid.UUID
-    project: t.Annotated[Project, IsIncludable] | None = None
+    project: t.Annotated[Project | None, IsIncludable] = None
     master_image: t.Annotated[MasterImage | None, IsIncludable] = None
 
 
@@ -342,8 +342,8 @@ class AnalysisNode(CreateAnalysisNode):
     artifact_digest: str | None
     created_at: datetime
     updated_at: datetime
-    analysis: t.Annotated[Analysis, IsIncludable] | None = None
-    node: t.Annotated[Node, IsIncludable] | None = None
+    analysis: t.Annotated[Analysis | None, IsIncludable] = None
+    node: t.Annotated[Node | None, IsIncludable] = None
     analysis_realm_id: uuid.UUID
     node_realm_id: uuid.UUID
 
@@ -396,12 +396,12 @@ class AnalysisBucketFile(CreateAnalysisBucketFile):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
-    analysis_bucket: t.Annotated[AnalysisBucket, IsIncludable] | None = None
+    analysis_bucket: t.Annotated[AnalysisBucket | None, IsIncludable] = None
     realm_id: uuid.UUID
     user_id: uuid.UUID | None
     client_id: uuid.UUID | None
     analysis_id: uuid.UUID
-    analysis: t.Annotated[Analysis, IsIncludable] | None = None
+    analysis: t.Annotated[Analysis | None, IsIncludable] = None
 
 
 class UpdateAnalysisBucketFile(CoreBaseModel):
