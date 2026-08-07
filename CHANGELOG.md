@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.2...v0.5.3) (2026-08-07)
+
+
+### Bug Fixes
+
+* annotate the whole type so that includable and optional fields are found ([f36c7f6](https://github.com/PrivateAIM/hub-python-client/commit/f36c7f6c7431180de6855a09ac8113c611010faa))
+
 ## [0.5.2](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.1...v0.5.2) (2026-08-06)
 
 
