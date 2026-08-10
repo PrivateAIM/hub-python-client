@@ -78,6 +78,8 @@ def test_build_filter_params(filter_params, expected):
         ({"by": "foobar"}, {"sort": "foobar"}),
         ({"by": "foobar", "order": "ascending"}, {"sort": "foobar"}),
         ({"by": "foobar", "order": "descending"}, {"sort": "-foobar"}),
+        ({"by": "foo_bar", "order": "ascending"}, {"sort": "fooBar"}),
+        ({"by": "fooBar", "order": "descending"}, {"sort": "-fooBar"}),
     ],
 )
 def test_build_sort_params(sort_params, expected):

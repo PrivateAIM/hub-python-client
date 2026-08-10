@@ -399,7 +399,7 @@ def build_sort_params(sort_params: SortParams | None = None) -> dict:
         # property gets a "-" prepended if sorting in descending order
         param_sort_prefix = "-" if param_sort_order == "descending" else ""
         # construct the actual query params
-        query_params["sort"] = f"{param_sort_prefix}{param_sort_by}"
+        query_params["sort"] = f"{param_sort_prefix}{to_camel(param_sort_by)}"
 
     return query_params
 
