@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.4](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.3...v0.5.4) (2026-08-10)
+
+
+### Bug Fixes
+
+* transform property name in sort params to camel case ([1dbbcf0](https://github.com/PrivateAIM/hub-python-client/commit/1dbbcf0433480913f0c8dd1354ce2c164e1d707c))
+
 ## [0.5.3](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.2...v0.5.3) (2026-08-07)
 
 
