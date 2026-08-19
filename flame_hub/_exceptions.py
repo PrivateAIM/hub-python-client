@@ -13,7 +13,7 @@ class ErrorResponse(BaseModel):
     """HTTP code of the response."""
     message: str
     """The error message."""
-    issues: list
+    issues: list = Field(default_factory=list)
     """List of issues."""
 
 
