@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.5](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.4...v0.5.5) (2026-08-19)
+
+
+### Bug Fixes
+
+* set a default factory for `issues` ([bbd0ad3](https://github.com/PrivateAIM/hub-python-client/commit/bbd0ad313b8e79116917a4aa9283f8bfca8472e8))
+
 ## [0.5.4](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.3...v0.5.4) (2026-08-10)
 
 
