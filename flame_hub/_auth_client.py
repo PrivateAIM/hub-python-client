@@ -194,6 +194,8 @@ class CreateClient(AuthBaseModel):
     grant_types: str | None
     auth_method: ClientAuthMethod
     token_binding_method: ClientTokenBindingMethod
+    backchannel_logout_uri: str | None
+    post_logout_redirect_uri: str | None
     realm_id: t.Annotated[uuid.UUID, Field(), WrapValidator(uuid_validator)]
 
 
@@ -208,9 +210,9 @@ class Client(AuthBaseModel):
     secret_hashed: bool
     grant_types: str | None
     secret_encrypted: bool
-    scope: str | None
+    backchannel_logout_uri: str | None
+    post_logout_redirect_uri: str | None
     base_url: str | None
-    root_url: str | None
     auth_method: ClientAuthMethod
     token_binding_method: ClientTokenBindingMethod
     created_at: datetime
@@ -231,6 +233,8 @@ class UpdateClient(AuthBaseModel):
     grant_types: str | None | UNSET_T = UNSET
     auth_method: ClientAuthMethod | UNSET_T = UNSET
     token_binding_method: ClientTokenBindingMethod | UNSET_T = UNSET
+    backchannel_logout_uri: str | None | UNSET_T = UNSET
+    post_logout_redirect_uri: str | None | UNSET_T = UNSET
 
 
 class AuthClient(BaseClient):
@@ -605,6 +609,8 @@ class AuthClient(BaseClient):
         grant_types: str | None = None,
         auth_method: ClientAuthMethod = "secret",
         token_binding_method: ClientTokenBindingMethod = "none",
+        post_logout_redirect_uri: str | None = None,
+        backchannel_logout_uri: str | None = None,
         **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._create_resource(
@@ -622,6 +628,8 @@ class AuthClient(BaseClient):
                 grant_types=grant_types,
                 auth_method=auth_method,
                 token_binding_method=token_binding_method,
+                post_logout_redirect_uri=post_logout_redirect_uri,
+                backchannel_logout_uri=backchannel_logout_uri,
             ),
             "clients",
             **params,
@@ -657,6 +665,8 @@ class AuthClient(BaseClient):
         grant_types: str | None | UNSET_T = UNSET,
         auth_method: ClientAuthMethod | UNSET_T = UNSET,
         token_binding_method: ClientTokenBindingMethod | UNSET_T = UNSET,
+        post_logout_redirect_uri: str | None | UNSET_T = UNSET,
+        backchannel_logout_uri: str | None | UNSET_T = UNSET,
         **params: te.Unpack[BaseKwargs],
     ) -> Client:
         return self._update_resource(
@@ -673,6 +683,8 @@ class AuthClient(BaseClient):
                 grant_types=grant_types,
                 auth_method=auth_method,
                 token_binding_method=token_binding_method,
+                post_logout_redirect_uri=post_logout_redirect_uri,
+                backchannel_logout_uri=backchannel_logout_uri,
             ),
             "clients",
             client_id,
