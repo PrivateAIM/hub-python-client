@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.5...v0.6.0) (2026-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* The `Client` model changed.
+
+### Features
+
+* hub v0.15.0 ([#137](https://github.com/PrivateAIM/hub-python-client/issues/137)) ([88398ee](https://github.com/PrivateAIM/hub-python-client/commit/88398ee6049b83acb6110eba16a03590b7c80d8b))
+
 ## [0.5.5](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.4...v0.5.5) (2026-08-19)
 
 
