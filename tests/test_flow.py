@@ -96,7 +96,7 @@ def test_password_auth_reissue_raise_error(password_auth, auth_base_url):
     with pytest.raises(HubAPIError) as e:
         new_client.get(auth_base_url)
 
-    assert "The JWT is invalid" in str(e.value)
+    assert "invalid_grant" in str(e.value)
     assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
 
 
@@ -128,4 +128,4 @@ def test_static_auth_raise_error(auth_base_url):
         client.get_users()
 
     assert "The JWT is invalid" in str(e.value)
-    assert e.value.error_response.status_code == httpx.codes.BAD_REQUEST.value
+    assert e.value.error_response.status_code == httpx.codes.UNAUTHORIZED.value
