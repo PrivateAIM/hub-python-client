@@ -379,11 +379,12 @@ possible, including status code and additional information in the response body.
 
 .. code-block:: console
 
-    received status code 400 (undefined): Can't find realm entity by realmId
+    received status code 500 (internal_error): Can't find realm entity by realmId
     {
-      "status_code": 400,
-      "code": "undefined",
-      "message": "Can't find realm entity by realmId"
+      "code": "internal_error",
+      "status_code": 500,
+      "message": "Can't find realm entity by realmId",
+      "issues": []
     }
 
 In this example a :py:exc:`.HubAPIError` is raised because there is no realm with an ID that matches the dynamically
