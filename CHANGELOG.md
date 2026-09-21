@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.6.0...v1.0.0) (2026-09-21)
+
+
+### Features
+
+* **build:** deactivate `bump-minor-pre-major` for release-please ([4ac6cef](https://github.com/PrivateAIM/hub-python-client/commit/4ac6cef4338802a6aaaf0a200a5dd2bb37f7d0eb))
+
 ## [0.6.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.5.5...v0.6.0) (2026-09-08)
 
 
