@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -118,23 +118,23 @@ the singular or plural form of a specific resource name following the
 <a class="reference external" href="https://peps.python.org/pep-0008/#function-and-variable-names">naming conventions of Python</a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">get_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.GetKwargs" title="flame_hub.types.GetKwargs"><span class="pre">GetKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceT</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span></dt>
-<dd><p>Takes an <code class="docutils literal notranslate"><span class="pre">id</span></code> and returns the corresponding resource or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if there is no resource with that <code class="docutils literal notranslate"><span class="pre">id</span></code>.
-<code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a> or a resource of the exact type you are searching
+<span class="sig-name descname"><span class="pre">get_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.GetKwargs" title="flame_hub.types.GetKwargs"><span class="pre">GetKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceT</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span></dt>
+<dd><p>Takes an <code class="docutils literal notranslate"><span class="pre">id</span></code> and returns the corresponding resource or <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if there is no resource with that <code class="docutils literal notranslate"><span class="pre">id</span></code>.
+<code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a> or a resource of the exact type you are searching
 for. The last option is basically irrelevant unless the resource was updated in the meanwhile and you want to get
 the updated resource.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">get_RESOURCE_NAME_PLURAL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.GetKwargs" title="flame_hub.types.GetKwargs"><span class="pre">GetKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></span></dt>
-<dd><p>Returns a list of the first <code class="code highlight python docutils literal highlight-python"><span class="n">DEFAULT_PAGE_PARAMS</span><span class="p">[</span><span class="s2">&quot;limit&quot;</span><span class="p">]</span></code> resources. See
+<span class="sig-name descname"><span class="pre">get_RESOURCE_NAME_PLURAL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.GetKwargs" title="flame_hub.types.GetKwargs"><span class="pre">GetKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<dd><p>Returns a list of the first <code class="code highlight python docutils literal highlight-python"><span class="n">DEFAULT_PAGE_PARAMS</span><span class="p">[</span><span class="s2">"limit"</span><span class="p">]</span></code> resources. See
 <a class="reference internal" href="defaults_api.html#flame_hub._base_client.DEFAULT_PAGE_PARAMS" title="flame_hub._base_client.DEFAULT_PAGE_PARAMS"><code class="xref py py-const docutils literal notranslate"><span class="pre">DEFAULT_PAGE_PARAMS</span></code></a> for the default setting.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">find_RESOURCE_NAME_PLURAL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><span class="pre">FindAllKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></span></dt>
+<span class="sig-name descname"><span class="pre">find_RESOURCE_NAME_PLURAL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.14)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><span class="pre">FindAllKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ResourceT</span><span class="p"><span class="pre">]</span></span></span></span></dt>
 <dd><p>Filters, sorts and pages resources and returns matching resources as a list. See <a class="reference internal" href="types_api.html#flame_hub.types.FindAllKwargs" title="flame_hub.types.FindAllKwargs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FindAllKwargs</span></code></a> for all
 possible keyword arguments and <a class="reference internal" href="#finding-resources"><span class="std std-ref">Finding resources</span></a> for examples on how to find resources.</p>
 </dd></dl>
@@ -149,8 +149,8 @@ new resource of a specific type. To see what parameters can be specified on crea
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">update_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceT</span></span></span></dt>
-<dd><p>Updates the resource that matches a given <code class="docutils literal notranslate"><span class="pre">id</span></code>. <code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a>
+<span class="sig-name descname"><span class="pre">update_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResourceT</span></span></span></dt>
+<dd><p>Updates the resource that matches a given <code class="docutils literal notranslate"><span class="pre">id</span></code>. <code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a>
 or a resource of the same type. <code class="docutils literal notranslate"><span class="pre">params</span></code> are keyword arguments that can be send to the Hub when updating an
 already existing resource of a specific type. To see what parameters can be specified on update, have a look at the
 concrete <em>update</em> method or at the corresponding <a class="reference internal" href="models_api.html"><span class="doc">update model</span></a>. Raises a <a class="reference internal" href="exceptions_api.html#flame_hub.HubAPIError" title="flame_hub.HubAPIError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">HubAPIError</span></code></a>
@@ -159,8 +159,8 @@ if there is no resource with this <code class="docutils literal notranslate"><sp
 
 <dl class="py method">
 <dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">delete_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Deletes the resource that matches a given <code class="docutils literal notranslate"><span class="pre">id</span></code>. <code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a>
+<span class="sig-name descname"><span class="pre">delete_RESOURCE_NAME</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ResourceT</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Deletes the resource that matches a given <code class="docutils literal notranslate"><span class="pre">id</span></code>. <code class="docutils literal notranslate"><span class="pre">id</span></code> can either be a <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, an <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UUID</span></code></a>
 or a resource of the same type. Raises a <a class="reference internal" href="exceptions_api.html#flame_hub.HubAPIError" title="flame_hub.HubAPIError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">HubAPIError</span></code></a> if there is no resource with this <code class="docutils literal notranslate"><span class="pre">id</span></code>.</p>
 </dd></dl>
 
@@ -233,15 +233,15 @@ certain criteria. To start off with an example, we create a core client and auth
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span>
 <span class="p">)</span>
-<span class="n">core_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">CoreClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/core/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">core_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">CoreClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/core/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">page</span></code> parameter enables control over the amount of returned results. You can define the limit and offset which
 affects pagination. They default to <code class="code highlight python docutils literal highlight-python"><span class="n">limit</span><span class="o">=</span><span class="mi">50</span></code> and <code class="code highlight python docutils literal highlight-python"><span class="n">offset</span><span class="o">=</span><span class="mi">0</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes_first_25</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">})</span>
-<span class="n">nodes_next_10</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes_first_25</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="p">{</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">25</span><span class="p">})</span>
+<span class="n">nodes_next_10</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">page</span><span class="o">=</span><span class="p">{</span><span class="s2">"limit"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"offset"</span><span class="p">:</span> <span class="mi">10</span><span class="p">})</span>
 
 <span class="k">assert</span> <span class="n">nodes_first_25</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span> <span class="o">==</span> <span class="n">nodes_next_10</span>
 </pre></div>
@@ -255,12 +255,12 @@ setting.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">filter</span></code> parameter allows you to filter by any fields. You can perform exact matching, but also any other
 operation supported by the FLAME Hub, including <em>like</em> and <em>not</em> queries and numeric <em>greater than</em> and <em>less than</em>
 comparisons.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;my-node-42&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"my-node-42"</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
-<span class="go">  &quot;name&quot;: &quot;my-node-42&quot;,</span>
-<span class="go">  &quot;id&quot;: &quot;2f8fc7df-d5ff-484c-bfed-76b8f3c43afd&quot;,</span>
+<span class="go">  "name": "my-node-42",</span>
+<span class="go">  "id": "2f8fc7df-d5ff-484c-bfed-76b8f3c43afd",</span>
 <span class="go">  ...</span>
 <span class="go">}</span>
 </pre></div>
@@ -268,9 +268,9 @@ comparisons.</p>
 <p>You can also use the <a class="reference internal" href="types_api.html#flame_hub.types.FilterOperator" title="flame_hub.types.FilterOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterOperator</span></code></a> enum class which contains all possible operators.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterOperator</span>
 
-<span class="n">nodes_with_4_in_name</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;~my-node-4&quot;</span><span class="p">})</span>
+<span class="n">nodes_with_4_in_name</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"~my-node-4"</span><span class="p">})</span>
 <span class="n">nodes_with_4_in_name_but_different</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span>
-    <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">FilterOperator</span><span class="o">.</span><span class="n">like</span><span class="p">,</span> <span class="s2">&quot;my-node-4&quot;</span><span class="p">)}</span>
+    <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="p">(</span><span class="n">FilterOperator</span><span class="o">.</span><span class="n">like</span><span class="p">,</span> <span class="s2">"my-node-4"</span><span class="p">)}</span>
 <span class="p">)</span>
 
 <span class="k">assert</span> <span class="n">nodes_with_4_in_name</span> <span class="o">==</span> <span class="n">nodes_with_4_in_name_but_different</span>
@@ -278,8 +278,8 @@ comparisons.</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">sort</span></code> parameter allows you to define a field to sort by in either ascending or descending order. If <code class="docutils literal notranslate"><span class="pre">order</span></code> is
 left unset, the client will sort in ascending order by default.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">})</span>
-<span class="n">sedon</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;by&quot;</span><span class="p">:</span> <span class="s2">&quot;createdAt&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;descending&quot;</span><span class="p">})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nodes</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">"by"</span><span class="p">:</span> <span class="s2">"createdAt"</span><span class="p">})</span>
+<span class="n">sedon</span> <span class="o">=</span> <span class="n">core_client</span><span class="o">.</span><span class="n">find_nodes</span><span class="p">(</span><span class="n">sort</span><span class="o">=</span><span class="p">{</span><span class="s2">"by"</span><span class="p">:</span> <span class="s2">"createdAt"</span><span class="p">,</span> <span class="s2">"order"</span><span class="p">:</span> <span class="s2">"descending"</span><span class="p">})</span>
 
 <span class="k">assert</span> <span class="n">nodes</span> <span class="o">==</span> <span class="n">sedon</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
@@ -293,16 +293,16 @@ with the <cite>fields</cite> keyword argument.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span>
 <span class="p">)</span>
-<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
-<span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 <span class="k">assert</span> <span class="n">admin</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="kc">None</span>
 </pre></div>
 </div>
 <p>You have to request <code class="docutils literal notranslate"><span class="pre">email</span></code> explicitly in order to get it.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="s2">&quot;email&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">admin</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">},</span> <span class="n">fields</span><span class="o">=</span><span class="s2">"email"</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -314,7 +314,7 @@ function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_field_names</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">flame_hub.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
 
-<span class="k">assert</span> <span class="n">get_field_names</span><span class="p">(</span><span class="n">User</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">,)</span>
+<span class="k">assert</span> <span class="n">get_field_names</span><span class="p">(</span><span class="n">User</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">"email"</span><span class="p">,)</span>
 </pre></div>
 </div>
 </section>
@@ -325,18 +325,18 @@ When set to <code class="code highlight python docutils literal highlight-python
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span>
 <span class="p">)</span>
-<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
 <span class="n">_</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">get_permissions</span><span class="p">(</span><span class="n">meta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
-<span class="go">    &quot;total&quot;: 106,</span>
-<span class="go">    &quot;limit&quot;: 50,</span>
-<span class="go">    &quot;offset&quot;: 0</span>
+<span class="go">    "total": 106,</span>
+<span class="go">    "limit": 50,</span>
+<span class="go">    "offset": 0</span>
 <span class="go">}</span>
 </pre></div>
 </div>
@@ -351,11 +351,11 @@ the resource you are requesting.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span>
 <span class="p">)</span>
-<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
-<span class="n">admin_user</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;admin&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">admin_user</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">admin_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">admin_user</span><span class="o">.</span><span class="n">realm</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -363,19 +363,19 @@ the resource you are requesting.</p>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">794f2375-f043-4789-bd0c-e5534e8deeaa</span>
 <span class="go">{</span>
-<span class="go">  &quot;name&quot;: &quot;master&quot;,</span>
-<span class="go">  &quot;displayName&quot;: null,</span>
-<span class="go">  &quot;description&quot;: null,</span>
-<span class="go">  &quot;id&quot;: &quot;794f2375-f043-4789-bd0c-e5534e8deeaa&quot;,</span>
-<span class="go">  &quot;builtIn&quot;: true,</span>
-<span class="go">  &quot;createdAt&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;,</span>
-<span class="go">  &quot;updatedAt&quot;: &quot;2025-05-12T09:44:08.284000Z&quot;</span>
+<span class="go">  "name": "master",</span>
+<span class="go">  "displayName": null,</span>
+<span class="go">  "description": null,</span>
+<span class="go">  "id": "794f2375-f043-4789-bd0c-e5534e8deeaa",</span>
+<span class="go">  "builtIn": true,</span>
+<span class="go">  "createdAt": "2025-05-12T09:44:08.284000Z",</span>
+<span class="go">  "updatedAt": "2025-05-12T09:44:08.284000Z"</span>
 <span class="go">}</span>
 </pre></div>
 </div>
 <p>Since the realm ID is present, we can use the <code class="docutils literal notranslate"><span class="pre">realm</span></code> property too. And just to be extremely sure, we verify that the
 admin’s realm is the master realm.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">master_realm</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_realms</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;master&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">master_realm</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_realms</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"master"</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
 <span class="k">assert</span> <span class="n">admin_user</span><span class="o">.</span><span class="n">realm</span> <span class="o">==</span> <span class="n">master_realm</span>
 </pre></div>
@@ -387,7 +387,7 @@ admin’s realm is the master realm.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">get_includable_names</span><span class="p">(</span><span class="n">Node</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">&#39;registry&#39;</span><span class="p">,</span> <span class="s1">&#39;registryProject&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="s1">'registry'</span><span class="p">,</span> <span class="s1">'registryProject'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -400,21 +400,21 @@ token as a string.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="c1"># Use a raw header value for this request only.</span>
-<span class="n">core_client</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="s2">&quot;&lt;token&gt;&quot;</span><span class="p">)</span>
+<span class="n">core_client</span><span class="o">.</span><span class="n">get_nodes</span><span class="p">(</span><span class="n">auth</span><span class="o">=</span><span class="s2">"&lt;token&gt;"</span><span class="p">)</span>
 
 <span class="c1"># Or use a dedicated authenticator for this request only.</span>
 <span class="n">core_client</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-node&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"my-node"</span><span class="p">,</span>
     <span class="n">realm_id</span><span class="o">=</span><span class="n">master_realm</span><span class="p">,</span>
     <span class="n">auth</span><span class="o">=</span><span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-        <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span>
-        <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span>
-        <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span><span class="p">,</span>
+        <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span>
+        <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is passed to <code class="docutils literal notranslate"><span class="pre">auth</span></code>, then the request is sent without any authentication.</p>
+<p>If <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is passed to <code class="docutils literal notranslate"><span class="pre">auth</span></code>, then the request is sent without any authentication.</p>
 </section>
 <section id="handling-exceptions">
 <h2>Handling exceptions<a class="headerlink" href="#handling-exceptions" title="Link to this heading"></a></h2>
@@ -425,23 +425,23 @@ possible, including status code and additional information in the response body.
 <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
-    <span class="n">username</span><span class="o">=</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;start123&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/auth/&quot;</span>
+    <span class="n">username</span><span class="o">=</span><span class="s2">"admin"</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">"start123"</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span>
 <span class="p">)</span>
-<span class="n">core_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">CoreClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://localhost:3000/core/&quot;</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
+<span class="n">core_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">CoreClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/core/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">core_client</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;my-new-node&quot;</span><span class="p">,</span> <span class="n">realm_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()))</span>
+    <span class="n">core_client</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"my-new-node"</span><span class="p">,</span> <span class="n">realm_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">()))</span>
 <span class="k">except</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">HubAPIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">error_response</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">received status code 500 (internal_error): Can&#39;t find realm entity by realmId</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">received status code 500 (internal_error): Can't find realm entity by realmId</span>
 <span class="go">{</span>
-<span class="go">  &quot;code&quot;: &quot;internal_error&quot;,</span>
-<span class="go">  &quot;status_code&quot;: 500,</span>
-<span class="go">  &quot;message&quot;: &quot;Can&#39;t find realm entity by realmId&quot;,</span>
-<span class="go">  &quot;issues&quot;: []</span>
+<span class="go">  "code": "internal_error",</span>
+<span class="go">  "status_code": 500,</span>
+<span class="go">  "message": "Can't find realm entity by realmId",</span>
+<span class="go">  "issues": []</span>
 <span class="go">}</span>
 </pre></div>
 </div>
@@ -464,8 +464,8 @@ Hub instance.</p>
 </pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
-<span class="go">  &quot;hidden&quot;: false,</span>
-<span class="go">  &quot;externalName&quot;: null</span>
+<span class="go">  "hidden": false,</span>
+<span class="go">  "externalName": null</span>
 <span class="go">}</span>
 </pre></div>
 </div>
