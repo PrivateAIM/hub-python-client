@@ -234,8 +234,8 @@ def analysis_log(core_client, configured_analysis):
 def registry(core_client):
     new_registry = core_client.create_registry(
         name=next_random_string(),
-        host=next_random_string(),
-        # account_name=next_random_string(),
+        host=f"{next_random_string()}.com",
+        account_name=next_random_string(),
         account_secret=next_random_string(),
     )
     yield new_registry
