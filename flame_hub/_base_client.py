@@ -365,7 +365,8 @@ def build_filter_params(filter_params: FilterParams | None = None) -> dict:
     query_params = {}
 
     for property_name, property_filter in filter_params.items():
-        query_param_name = f"filter[{to_camel(property_name)}]"
+        property_name = ".".join(to_camel(p) for p in property_name.split("."))
+        query_param_name = f"filter[{property_name}]"
 
         if not isinstance(property_filter, tuple):  # t.Any -> (FilterOperator, t.Any)
             property_filter = (FilterOperator.eq, property_filter)
