@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/PrivateAIM/hub-python-client/compare/v1.0.0...v1.1.0) (2026-10-16)
+
+
+### Features
+
+* compatibility for hub v0.18.0 ([#145](https://github.com/PrivateAIM/hub-python-client/issues/145)) ([4e34384](https://github.com/PrivateAIM/hub-python-client/commit/4e34384d781c6aa5ccbf3bfe0308584009a4f3a7))
+* enhanced error response model ([#146](https://github.com/PrivateAIM/hub-python-client/issues/146)) ([81cb58c](https://github.com/PrivateAIM/hub-python-client/commit/81cb58ce41fe90d1fe6e18617906db158bfe7fc7))
+
+
+### Bug Fixes
+
+* transform each filter key in a dotted relation to camel case separately ([#143](https://github.com/PrivateAIM/hub-python-client/issues/143)) ([1314660](https://github.com/PrivateAIM/hub-python-client/commit/13146602e34f20376f37c23690481290ee942dd6))
+
 ## [1.0.0](https://github.com/PrivateAIM/hub-python-client/compare/v0.6.0...v1.0.0) (2026-09-21)
 
 
