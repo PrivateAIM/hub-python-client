@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+import traceback
 
 import httpx2 as httpx
 from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
@@ -7,11 +8,11 @@ from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Configuration so that extra properties may be available."""
-    code: str
+    code: str = ""
     """Name of the error code."""
     status_code: int | None = Field(validation_alias=AliasChoices("status_code", "statusCode"), default=None)
     """HTTP code of the response."""
-    message: str
+    message: str = ""
     """The error message."""
     issues: list = Field(default_factory=list)
     """List of issues."""
@@ -26,18 +27,32 @@ class HubAPIError(httpx.HTTPError):
         The error message.
     request : :py:class:`httpx.Request`
         The request which caused the error.
+    headers : :py:class:`httpx.Headers`, optional
+        The headers of the unexpected response.
     error : :py:class:`.ErrorResponse`, optional
         Parsed response to enrich the error with additional information.
+    error_model_traceback : :py:class:`str`, optional
+        Holds the traceback if there is an error while validating the unexpected response against the
+        :py:class:`.ErrorResponse` model.
 
     See Also
     --------
     :py:exc:`.HubAPIError`, :py:func:`.new_hub_api_error_from_response`
     """
 
-    def __init__(self, message: str, request: httpx.Request, error: ErrorResponse | None = None) -> None:
+    def __init__(
+        self,
+        message: str,
+        request: httpx.Request,
+        headers: httpx.Headers = httpx.Headers(),
+        error: ErrorResponse | None = None,
+        error_model_traceback: str = "",
+    ) -> None:
         super().__init__(message)
         self._request = request
+        self.headers = headers
         self.error_response = error
+        self.error_model_traceback = error_model_traceback
 
 
 def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
@@ -63,6 +78,7 @@ def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
     """
     error_response = None
     error_message = f"received status code {r.status_code}"
+    error_model_traceback = ""
 
     try:
         error_response = ErrorResponse(**r.json())
@@ -76,7 +92,6 @@ def new_hub_api_error_from_response(r: httpx.Response) -> HubAPIError:
         else:
             error_message += error_response.message
     except (ValidationError, JSONDecodeError):
-        # quietly dismiss this error
-        pass
+        error_model_traceback = traceback.format_exc()
 
-    return HubAPIError(error_message, r.request, error_response)
+    return HubAPIError(error_message, r.request, r.headers, error_response, error_model_traceback)
