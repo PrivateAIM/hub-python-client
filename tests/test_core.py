@@ -175,7 +175,6 @@ def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_
 
     yield analysis_bucket_file
 
-    core_client.delete_analysis_bucket_file(analysis_bucket_file)
     storage_client.delete_bucket_file(bucket_file.id)
 
 
