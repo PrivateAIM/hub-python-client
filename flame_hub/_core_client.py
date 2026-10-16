@@ -2,10 +2,11 @@ from enum import Enum
 import typing as t
 import uuid
 from datetime import datetime
+import warnings
 
 import httpx2 as httpx
 import typing_extensions as te
-from pydantic import WrapValidator, Field, BeforeValidator
+from pydantic import WrapValidator, Field, BeforeValidator, AliasChoices
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -279,7 +280,15 @@ class Analysis(CreateAnalysis):
     configuration_node_default_valid: bool
     configuration_nodes_valid: bool
     build_status: ProcessStatus | None
-    build_nodes_valid: bool
+    # TODO: Drop build_nodes_valid in favor of distribution_nodes_valid in the next major version.
+    distribution_nodes_valid: bool = Field(
+        validation_alias=AliasChoices(
+            "distribution_nodes_valid",
+            "distributionNodesValid",
+            "build_nodes_valid",
+            "buildNodesValid",
+        )
+    )
     build_progress: int | None
     build_hash: str | None
     build_os: str | None
@@ -297,6 +306,15 @@ class Analysis(CreateAnalysis):
     project_id: uuid.UUID
     project: t.Annotated[Project | None, IsIncludable] = None
     master_image: t.Annotated[MasterImage | None, IsIncludable] = None
+
+    @property
+    def build_nodes_valid(self) -> bool:
+        warnings.warn(
+            "'build_nodes_valid' is deprecated, use 'distribution_nodes_valid' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.distribution_nodes_valid
 
 
 class UpdateAnalysis(CoreBaseModel):
