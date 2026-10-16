@@ -7,11 +7,11 @@ from pydantic import ValidationError, BaseModel, ConfigDict, Field, AliasChoices
 class ErrorResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
     """Configuration so that extra properties may be available."""
-    code: str
+    code: str = ""
     """Name of the error code."""
     status_code: int | None = Field(validation_alias=AliasChoices("status_code", "statusCode"), default=None)
     """HTTP code of the response."""
-    message: str
+    message: str = ""
     """The error message."""
     issues: list = Field(default_factory=list)
     """List of issues."""
