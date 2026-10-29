@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/PrivateAIM/hub-python-client/compare/v1.1.0...v2.0.0) (2026-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* The default behavior used to be that all nested resources were included. Now, no nested resource is included per default. Users need to explicitly specify the resources to include.
+
+### Features
+
+* specify includable resources ([#149](https://github.com/PrivateAIM/hub-python-client/issues/149)) ([836ac26](https://github.com/PrivateAIM/hub-python-client/commit/836ac26c9420f42e595e70e1cdfd4346a524f5b7))
+
 ## [1.1.0](https://github.com/PrivateAIM/hub-python-client/compare/v1.0.0...v1.1.0) (2026-10-16)
 
 
