@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fc837d61"></script>
+      <script src="_static/documentation_options.js?v=51b770b3"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -343,11 +343,10 @@ When set to <code class="code highlight python docutils literal highlight-python
 </section>
 <section id="nested-resources">
 <h2>Nested resources<a class="headerlink" href="#nested-resources" title="Link to this heading"></a></h2>
-<p>Some resources refer to other resources. For example, users are tied to a realm which is usually not sent back
-automatically. This applies to any other nested resource.</p>
-<p>All clients will automatically fetch all nested resources if they are available. This means that you can usually save
-yourself extra API calls. Be aware that the client is not capable of fetching nested resources on any level deeper than
-the resource you are requesting.</p>
+<p>Some resources refer to other resources. For example, users are tied to a realm which is not sent back automatically.
+This applies to any other nested resource.</p>
+<p>Clients need to specify nested resources in order to be able to fetch them. Be aware that the client is not capable of
+fetching nested resources on any level deeper than the resource you are requesting.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flame_hub</span>
 
 <span class="n">auth</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">PasswordAuth</span><span class="p">(</span>
@@ -355,21 +354,34 @@ the resource you are requesting.</p>
 <span class="p">)</span>
 <span class="n">auth_client</span> <span class="o">=</span> <span class="n">flame_hub</span><span class="o">.</span><span class="n">AuthClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:3000/auth/"</span><span class="p">,</span> <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="p">)</span>
 
-<span class="n">admin_user</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">})</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">admin_user</span> <span class="o">=</span> <span class="n">auth_client</span><span class="o">.</span><span class="n">find_users</span><span class="p">(</span><span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"admin"</span><span class="p">},</span> <span class="n">include</span><span class="o">=</span><span class="s2">"realm"</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">admin_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">admin_user</span><span class="o">.</span><span class="n">realm</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">admin_user</span><span class="o">.</span><span class="n">model_dump_json</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">794f2375-f043-4789-bd0c-e5534e8deeaa</span>
-<span class="go">{</span>
-<span class="go">  "name": "master",</span>
-<span class="go">  "displayName": null,</span>
-<span class="go">  "description": null,</span>
-<span class="go">  "id": "794f2375-f043-4789-bd0c-e5534e8deeaa",</span>
-<span class="go">  "builtIn": true,</span>
-<span class="go">  "createdAt": "2025-05-12T09:44:08.284000Z",</span>
-<span class="go">  "updatedAt": "2025-05-12T09:44:08.284000Z"</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">{</span>
+<span class="go">  "name": "admin",</span>
+<span class="go">  "displayName": "admin",</span>
+<span class="go">  "email": null,</span>
+<span class="go">  "active": true,</span>
+<span class="go">  "nameLocked": true,</span>
+<span class="go">  "firstName": null,</span>
+<span class="go">  "lastName": null,</span>
+<span class="go">  "id": "2e2108b3-c31d-480c-a33b-90142c0fc609",</span>
+<span class="go">  "avatar": null,</span>
+<span class="go">  "cover": null,</span>
+<span class="go">  "realmId": "4b98aa93-a83e-4ff8-bed4-d8968e0b7493",</span>
+<span class="go">  "realm": {</span>
+<span class="go">    "name": "master",</span>
+<span class="go">    "displayName": null,</span>
+<span class="go">    "description": null,</span>
+<span class="go">    "id": "4b98aa93-a83e-4ff8-bed4-d8968e0b7493",</span>
+<span class="go">    "builtIn": true,</span>
+<span class="go">    "createdAt": "2026-10-19T11:43:09.196000Z",</span>
+<span class="go">    "updatedAt": "2026-10-19T11:43:09.196000Z"</span>
+<span class="go">  },</span>
+<span class="go">  "createdAt": "2026-10-19T11:43:09.217000Z",</span>
+<span class="go">  "updatedAt": "2026-10-19T11:43:09.217000Z"</span>
 <span class="go">}</span>
 </pre></div>
 </div>
