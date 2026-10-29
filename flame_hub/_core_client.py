@@ -20,7 +20,6 @@ from flame_hub._base_client import (
     uuid_validator,
     IsOptionalField,
     IsIncludable,
-    get_includable_names,
     build_filter_params,
     ResourceListResult,
     AuthParam,
@@ -446,10 +445,10 @@ class CoreClient(BaseClient):
         super().__init__(base_url, auth, **kwargs)
 
     def get_nodes(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Node]:
-        return self._get_all_resources(Node, "nodes", include=get_includable_names(Node), **params)
+        return self._get_all_resources(Node, "nodes", **params)
 
     def find_nodes(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Node]:
-        return self._find_all_resources(Node, "nodes", include=get_includable_names(Node), **params)
+        return self._find_all_resources(Node, "nodes", **params)
 
     def create_node(
         self,
@@ -476,7 +475,7 @@ class CoreClient(BaseClient):
         )
 
     def get_node(self, node_id: Node | uuid.UUID | str, **params: te.Unpack[GetKwargs]) -> SingleResourceResult[Node]:
-        return self._get_single_resource(Node, "nodes", node_id, include=get_includable_names(Node), **params)
+        return self._get_single_resource(Node, "nodes", node_id, **params)
 
     def delete_node(
         self,
@@ -592,10 +591,10 @@ class CoreClient(BaseClient):
         return self._find_all_resources(MasterImage, "master-images", **params)
 
     def get_projects(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Project]:
-        return self._get_all_resources(Project, "projects", include=get_includable_names(Project), **params)
+        return self._get_all_resources(Project, "projects", **params)
 
     def find_projects(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Project]:
-        return self._find_all_resources(Project, "projects", include=get_includable_names(Project), **params)
+        return self._find_all_resources(Project, "projects", **params)
 
     def sync_master_images(self, **params: te.Unpack[BaseKwargs]):
         """This method will start to synchronize the master images. Note that an error is raised if you request a
@@ -653,9 +652,7 @@ class CoreClient(BaseClient):
         project_id: Project | uuid.UUID | str,
         **params: te.Unpack[GetKwargs],
     ) -> SingleResourceResult[Project]:
-        return self._get_single_resource(
-            Project, "projects", project_id, include=get_includable_names(Project), **params
-        )
+        return self._get_single_resource(Project, "projects", project_id, **params)
 
     def update_project(
         self,
@@ -690,21 +687,15 @@ class CoreClient(BaseClient):
         self._delete_resource("project-nodes", project_node_id, **params)
 
     def get_project_nodes(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[ProjectNode]:
-        return self._get_all_resources(
-            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), **params
-        )
+        return self._get_all_resources(ProjectNode, "project-nodes", **params)
 
     def find_project_nodes(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[ProjectNode]:
-        return self._find_all_resources(
-            ProjectNode, "project-nodes", include=get_includable_names(ProjectNode), **params
-        )
+        return self._find_all_resources(ProjectNode, "project-nodes", **params)
 
     def get_project_node(
         self, project_node_id: ProjectNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
     ) -> SingleResourceResult[ProjectNode]:
-        return self._get_single_resource(
-            ProjectNode, "project-nodes", project_node_id, include=get_includable_names(ProjectNode), **params
-        )
+        return self._get_single_resource(ProjectNode, "project-nodes", project_node_id, **params)
 
     def update_project_node(
         self,
@@ -751,19 +742,17 @@ class CoreClient(BaseClient):
         self._delete_resource("analyses", analysis_id, **params)
 
     def get_analyses(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[Analysis]:
-        return self._get_all_resources(Analysis, "analyses", include=get_includable_names(Analysis), **params)
+        return self._get_all_resources(Analysis, "analyses", **params)
 
     def find_analyses(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[Analysis]:
-        return self._find_all_resources(Analysis, "analyses", include=get_includable_names(Analysis), **params)
+        return self._find_all_resources(Analysis, "analyses", **params)
 
     def get_analysis(
         self,
         analysis_id: Analysis | uuid.UUID | str,
         **params: te.Unpack[GetKwargs],
     ) -> SingleResourceResult[Analysis]:
-        return self._get_single_resource(
-            Analysis, "analyses", analysis_id, include=get_includable_names(Analysis), **params
-        )
+        return self._get_single_resource(Analysis, "analyses", analysis_id, **params)
 
     def update_analysis(
         self,
@@ -887,19 +876,13 @@ class CoreClient(BaseClient):
     def get_analysis_node(
         self, analysis_node_id: AnalysisNode | uuid.UUID | str, **params: te.Unpack[GetKwargs]
     ) -> SingleResourceResult[AnalysisNode]:
-        return self._get_single_resource(
-            AnalysisNode, "analysis-nodes", analysis_node_id, include=get_includable_names(AnalysisNode), **params
-        )
+        return self._get_single_resource(AnalysisNode, "analysis-nodes", analysis_node_id, **params)
 
     def get_analysis_nodes(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[AnalysisNode]:
-        return self._get_all_resources(
-            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), **params
-        )
+        return self._get_all_resources(AnalysisNode, "analysis-nodes", **params)
 
     def find_analysis_nodes(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[AnalysisNode]:
-        return self._find_all_resources(
-            AnalysisNode, "analysis-nodes", include=get_includable_names(AnalysisNode), **params
-        )
+        return self._find_all_resources(AnalysisNode, "analysis-nodes", **params)
 
     def create_analysis_node_log(
         self,
@@ -974,14 +957,10 @@ class CoreClient(BaseClient):
         self._delete_resource("analysis-buckets", analysis_bucket_id, **params)
 
     def get_analysis_buckets(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[AnalysisBucket]:
-        return self._get_all_resources(
-            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), **params
-        )
+        return self._get_all_resources(AnalysisBucket, "analysis-buckets", **params)
 
     def find_analysis_buckets(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[AnalysisBucket]:
-        return self._find_all_resources(
-            AnalysisBucket, "analysis-buckets", include=get_includable_names(AnalysisBucket), **params
-        )
+        return self._find_all_resources(AnalysisBucket, "analysis-buckets", **params)
 
     def get_analysis_bucket(
         self, analysis_bucket_id: AnalysisBucket | uuid.UUID | str, **params: te.Unpack[GetKwargs]
@@ -990,19 +969,14 @@ class CoreClient(BaseClient):
             AnalysisBucket,
             "analysis-buckets",
             analysis_bucket_id,
-            include=get_includable_names(AnalysisBucket),
             **params,
         )
 
     def get_analysis_bucket_files(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[AnalysisBucketFile]:
-        return self._get_all_resources(
-            AnalysisBucketFile, "analysis-bucket-files", include=get_includable_names(AnalysisBucketFile), **params
-        )
+        return self._get_all_resources(AnalysisBucketFile, "analysis-bucket-files", **params)
 
     def find_analysis_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[AnalysisBucketFile]:
-        return self._find_all_resources(
-            AnalysisBucketFile, "analysis-bucket-files", include=get_includable_names(AnalysisBucketFile), **params
-        )
+        return self._find_all_resources(AnalysisBucketFile, "analysis-bucket-files", **params)
 
     def get_analysis_bucket_file(
         self, analysis_bucket_file_id: AnalysisBucketFile | uuid.UUID | str, **params: te.Unpack[GetKwargs]
@@ -1011,7 +985,6 @@ class CoreClient(BaseClient):
             AnalysisBucketFile,
             "analysis-bucket-files",
             analysis_bucket_file_id,
-            include=get_includable_names(AnalysisBucketFile),
             **params,
         )
 
@@ -1157,7 +1130,6 @@ class CoreClient(BaseClient):
             RegistryProject,
             "registry-projects",
             registry_project_id,
-            include=get_includable_names(RegistryProject),
             **params,
         )
 
@@ -1198,7 +1170,6 @@ class CoreClient(BaseClient):
         return self._get_all_resources(
             RegistryProject,
             "registry-projects",
-            include=get_includable_names(RegistryProject),
             **params,
         )
 
@@ -1206,7 +1177,6 @@ class CoreClient(BaseClient):
         return self._find_all_resources(
             RegistryProject,
             "registry-projects",
-            include=get_includable_names(RegistryProject),
             **params,
         )
 

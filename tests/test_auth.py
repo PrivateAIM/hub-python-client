@@ -137,7 +137,7 @@ def test_find_realms(auth_client, realm):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2660")
 def test_get_permission(auth_client, permission, permission_includables):
-    perm_get = auth_client.get_permission(permission.id)
+    perm_get = auth_client.get_permission(permission.id, include=permission_includables)
 
     assert perm_get.id == permission.id
     assert all(includable in perm_get.model_fields_set for includable in permission_includables)
@@ -149,7 +149,7 @@ def test_get_permission_not_found(auth_client):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2659")
 def test_get_permissions(auth_client, permission_includables):
-    perms_get = auth_client.get_permissions()
+    perms_get = auth_client.get_permissions(include=permission_includables)
 
     assert len(perms_get) > 0
     assert all(includable in p.model_fields_set for p in perms_get for includable in permission_includables)
@@ -157,7 +157,7 @@ def test_get_permissions(auth_client, permission_includables):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2659")
 def test_find_permissions(auth_client, permission, permission_includables):
-    perms_find = auth_client.find_permissions(filter={"id": permission.id})
+    perms_find = auth_client.find_permissions(filter={"id": permission.id}, include=permission_includables)
 
     assert [permission.id] == [p.id for p in perms_find]
     assert all(includable in p.model_fields_set for p in perms_find for includable in permission_includables)
@@ -174,7 +174,7 @@ def test_update_permission(auth_client, permission):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2662")
 def test_get_role(auth_client, role, role_includables):
-    role_get = auth_client.get_role(role.id)
+    role_get = auth_client.get_role(role.id, include=role_includables)
 
     assert role_get.id == role.id
     assert all(includable in role_get.model_fields_set for includable in role_includables)
@@ -185,14 +185,14 @@ def test_get_role_not_found(auth_client):
 
 
 def test_get_roles(auth_client, role, role_includables):
-    roles_get = auth_client.get_roles()
+    roles_get = auth_client.get_roles(include=role_includables)
 
     assert len(roles_get) > 0
     assert all(includable in r.model_fields_set for r in roles_get for includable in role_includables)
 
 
 def test_find_roles(auth_client, role, role_includables):
-    roles_find = auth_client.find_roles(filter={"id": role.id})
+    roles_find = auth_client.find_roles(filter={"id": role.id}, include=role_includables)
 
     assert [role.id] == [r.id for r in roles_find]
     assert all(includable in r.model_fields_set for r in roles_find for includable in role_includables)
@@ -208,7 +208,7 @@ def test_update_role(auth_client, role):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2643")
 def test_get_role_permission(auth_client, role_permission, role_permission_includables):
-    role_perm_get = auth_client.get_role_permission(role_permission.id)
+    role_perm_get = auth_client.get_role_permission(role_permission.id, include=role_permission_includables)
 
     assert role_perm_get.id == role_permission.id
     assert all(includable in role_perm_get.model_fields_set for includable in role_permission_includables)
@@ -220,7 +220,7 @@ def test_get_role_permission_not_found(auth_client):
 
 @pytest.mark.xfail(reason="bug in authup")
 def test_get_role_permissions(auth_client, role_permission, role_permission_includables):
-    role_perms_get = auth_client.get_role_permissions()
+    role_perms_get = auth_client.get_role_permissions(include=role_permission_includables)
 
     assert len(role_perms_get) > 0
     assert all(includable in rp.model_fields_set for rp in role_perms_get for includable in role_permission_includables)
@@ -229,7 +229,10 @@ def test_get_role_permissions(auth_client, role_permission, role_permission_incl
 @pytest.mark.xfail(reason="bug in authup")
 def test_find_role_permissions(auth_client, role_permission, role_permission_includables):
     # Use "role_id" for filtering because there is no filter mechanism for attribute "id".
-    role_perms_find = auth_client.find_role_permissions(filter={"roleId": role_permission.role_id})
+    role_perms_find = auth_client.find_role_permissions(
+        filter={"roleId": role_permission.role_id},
+        include=role_permission_includables,
+    )
 
     assert [role_permission.id] == [rp.id for rp in role_perms_find]
     assert all(
@@ -238,7 +241,7 @@ def test_find_role_permissions(auth_client, role_permission, role_permission_inc
 
 
 def test_get_user(auth_client, user, user_fields, user_includables):
-    user_get = auth_client.get_user(user.id, fields=user_fields)
+    user_get = auth_client.get_user(user.id, fields=user_fields, include=user_includables)
 
     assert user_get.id == user.id
     assert all(includable in user_get.model_fields_set for includable in user_includables)
@@ -250,7 +253,7 @@ def test_get_user_not_found(auth_client):
 
 
 def test_get_users(auth_client, user, user_fields, user_includables):
-    users_get = auth_client.get_users(fields=user_fields)
+    users_get = auth_client.get_users(fields=user_fields, include=user_includables)
 
     assert len(users_get) > 0
     assert all(includable in u.model_fields_set for u in users_get for includable in user_includables)
@@ -258,7 +261,7 @@ def test_get_users(auth_client, user, user_fields, user_includables):
 
 
 def test_find_users(auth_client, user, user_fields, user_includables):
-    users_find = auth_client.find_users(filter={"id": user.id}, fields=user_fields)
+    users_find = auth_client.find_users(filter={"id": user.id}, fields=user_fields, include=user_includables)
 
     assert [user.id] == [u.id for u in users_find]
     assert all(includable in u.model_fields_set for u in users_find for includable in user_includables)
@@ -275,7 +278,7 @@ def test_update_user(auth_client, user):
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2644")
 def test_get_user_permission(auth_client, user_permission, user_permission_includables):
-    user_perm_get = auth_client.get_user_permission(user_permission.id)
+    user_perm_get = auth_client.get_user_permission(user_permission.id, include=user_permission_includables)
 
     assert user_perm_get.id == user_permission.id
     assert all(includable in user_perm_get.model_fields_set for includable in user_permission_includables)
@@ -287,7 +290,7 @@ def test_get_user_permission_not_found(auth_client):
 
 @pytest.mark.xfail(reason="bug in authup")
 def test_get_user_permissions(auth_client, user_permission, user_permission_includables):
-    user_perms_get = auth_client.get_user_permissions()
+    user_perms_get = auth_client.get_user_permissions(include=user_permission_includables)
 
     assert len(user_perms_get) > 0
     assert all(includable in up.model_fields_set for up in user_perms_get for includable in user_permission_includables)
@@ -296,7 +299,10 @@ def test_get_user_permissions(auth_client, user_permission, user_permission_incl
 @pytest.mark.xfail(reason="bug in authup")
 def test_find_user_permissions(auth_client, user_permission, user_permission_includables):
     # Use "user_id" for filtering because there is no filter mechanism for attribute "id".
-    user_perms_find = auth_client.find_user_permissions(filter={"userId": user_permission.user_id})
+    user_perms_find = auth_client.find_user_permissions(
+        filter={"userId": user_permission.user_id},
+        include=user_permission_includables,
+    )
 
     assert len(user_perms_find) > 0
     assert all(
@@ -306,7 +312,7 @@ def test_find_user_permissions(auth_client, user_permission, user_permission_inc
 
 @pytest.mark.xfail(reason="bug in authup, see https://github.com/authup/authup/issues/2645")
 def test_get_user_role(auth_client, user_role, user_role_includables):
-    user_role_get = auth_client.get_user_role(user_role.id)
+    user_role_get = auth_client.get_user_role(user_role.id, include=user_role_includables)
 
     assert user_role_get.id == user_role.id
     assert all(includable in user_role_get.model_fields_set for includable in user_role_includables)
@@ -318,7 +324,7 @@ def test_get_user_role_not_found(auth_client):
 
 @pytest.mark.xfail(reason="bug in authup")
 def test_get_user_roles(auth_client, user_role, user_role_includables):
-    user_roles_get = auth_client.get_user_roles()
+    user_roles_get = auth_client.get_user_roles(include=user_role_includables)
 
     assert len(user_roles_get) > 0
     assert all(includable in ur.model_fields_set for ur in user_roles_get for includable in user_role_includables)
@@ -327,14 +333,14 @@ def test_get_user_roles(auth_client, user_role, user_role_includables):
 @pytest.mark.xfail(reason="bug in authup")
 def test_find_user_roles(auth_client, user_role, user_role_includables):
     # Use "user_id" for filtering because there is no filter mechanism for attribute "id".
-    user_roles_find = auth_client.find_user_roles(filter={"userId": user_role.user_id})
+    user_roles_find = auth_client.find_user_roles(filter={"userId": user_role.user_id}, include=user_role_includables)
 
     assert len(user_roles_find) > 0
     assert all(includable in ur.model_fields_set for ur in user_roles_find for includable in user_role_includables)
 
 
 def test_get_client(auth_client, client, client_includables):
-    client_get = auth_client.get_client(client_id=client)
+    client_get = auth_client.get_client(client_id=client, include=client_includables)
 
     assert client_get.id == client.id
     assert all(includable in client_get.model_fields_set for includable in client_includables)
@@ -345,7 +351,7 @@ def test_get_client_not_found(auth_client):
 
 
 def test_get_clients(auth_client, client, client_includables):
-    clients_get = auth_client.get_clients()
+    clients_get = auth_client.get_clients(include=client_includables)
 
     assert len(clients_get) > 0
     assert all(includable in c.model_fields_set for c in clients_get for includable in client_includables)
@@ -353,7 +359,7 @@ def test_get_clients(auth_client, client, client_includables):
 
 def test_find_clients(auth_client, client, client_includables):
     # Use "name" for filtering because there is no filter mechanism for attribute "id".
-    clients_find = auth_client.find_clients(filter={"name": client.name})
+    clients_find = auth_client.find_clients(filter={"name": client.name}, include=client_includables)
 
     assert [client.id] == [c.id for c in clients_find]
     assert all(includable in c.model_fields_set for c in clients_find for includable in client_includables)

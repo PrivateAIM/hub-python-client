@@ -12,7 +12,6 @@ from flame_hub._base_client import (
     GetKwargs,
     ClientKwargs,
     IsIncludable,
-    get_includable_names,
     ResourceListResult,
     AuthParam,
     BaseKwargs,
@@ -162,15 +161,13 @@ class StorageClient(BaseClient):
     def get_bucket_file(
         self, bucket_file_id: BucketFile | str | uuid.UUID, **params: te.Unpack[GetKwargs]
     ) -> SingleResourceResult[BucketFile]:
-        return self._get_single_resource(
-            BucketFile, "bucket-files", bucket_file_id, include=get_includable_names(BucketFile), **params
-        )
+        return self._get_single_resource(BucketFile, "bucket-files", bucket_file_id, **params)
 
     def get_bucket_files(self, **params: te.Unpack[GetKwargs]) -> ResourceListResult[BucketFile]:
-        return self._get_all_resources(BucketFile, "bucket-files", include=get_includable_names(BucketFile), **params)
+        return self._get_all_resources(BucketFile, "bucket-files", **params)
 
     def find_bucket_files(self, **params: te.Unpack[FindAllKwargs]) -> ResourceListResult[BucketFile]:
-        return self._find_all_resources(BucketFile, "bucket-files", include=get_includable_names(BucketFile), **params)
+        return self._find_all_resources(BucketFile, "bucket-files", **params)
 
     def stream_bucket_file(
         self,
