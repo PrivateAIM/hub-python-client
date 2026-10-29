@@ -79,7 +79,7 @@ def test_get_bucket_not_found(storage_client):
 
 
 def test_get_bucket_file(storage_client, bucket_file, bucket_file_includables):
-    bucket_file_get = storage_client.get_bucket_file(bucket_file.id)
+    bucket_file_get = storage_client.get_bucket_file(bucket_file.id, include=bucket_file_includables)
 
     assert bucket_file_get.id == bucket_file.id
     assert all(includable in bucket_file_get.model_fields_set for includable in bucket_file_includables)
@@ -90,14 +90,14 @@ def test_get_bucket_file_not_found(storage_client):
 
 
 def test_get_bucket_files(storage_client, bucket_file, bucket_file_includables):
-    bucket_files_get = storage_client.get_bucket_files()
+    bucket_files_get = storage_client.get_bucket_files(include=bucket_file_includables)
 
     assert len(bucket_files_get) > 0
     assert all(includable in bf.model_fields_set for bf in bucket_files_get for includable in bucket_file_includables)
 
 
 def test_find_bucket_files(storage_client, bucket_file, bucket_file_includables):
-    bucket_files_find = storage_client.find_bucket_files(filter={"id": bucket_file.id})
+    bucket_files_find = storage_client.find_bucket_files(filter={"id": bucket_file.id}, include=bucket_file_includables)
 
     assert [bucket_file.id] == [bf.id for bf in bucket_files_find]
     assert all(includable in bf.model_fields_set for bf in bucket_files_find for includable in bucket_file_includables)

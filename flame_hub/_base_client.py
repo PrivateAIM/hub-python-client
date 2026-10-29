@@ -324,6 +324,7 @@ class GetKwargs(BaseKwargs, total=False):
     :py:type:`~flame_hub.types.FieldParams`
     """
 
+    include: IncludeParams | None
     fields: FieldParams | None
     meta: bool
 
@@ -557,7 +558,6 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str,
-        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> ResourceListResult[ResourceT]:
@@ -575,13 +575,12 @@ class BaseClient(object):
         Default pagination parameters are applied as explained in the return section of :py:meth:`_find_all_resources`.
         """
 
-        return self._find_all_resources(resource_type, *path, include=include, expected_code=expected_code, **params)
+        return self._find_all_resources(resource_type, *path, expected_code=expected_code, **params)
 
     def _find_all_resources(
         self,
         resource_type: type[ResourceT],
         *path: str,
-        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[FindAllKwargs],
     ) -> ResourceListResult[ResourceT]:
@@ -631,6 +630,7 @@ class BaseClient(object):
         """
 
         # merge processed filter and page params
+        include_params = params.pop("include", None)
         page_params = params.pop("page", None)
         filter_params = params.pop("filter", None)
         sort_params = params.pop("sort", None)
@@ -641,7 +641,7 @@ class BaseClient(object):
             build_page_params(page_params)
             | build_filter_params(filter_params)
             | build_sort_params(sort_params)
-            | build_include_params(include)
+            | build_include_params(include_params)
             | build_field_params(field_params)
         )
 
@@ -706,7 +706,6 @@ class BaseClient(object):
         self,
         resource_type: type[ResourceT],
         *path: str | UuidIdentifiable,
-        include: IncludeParams | None = None,
         expected_code: int = httpx.codes.OK.value,
         **params: te.Unpack[GetKwargs],
     ) -> SingleResourceResult:
@@ -756,10 +755,11 @@ class BaseClient(object):
         :py:meth:`._get_all_resources`, :py:meth:`._find_all_resources`
         """
 
+        include_params = params.pop("include", None)
         field_params = params.pop("fields", None)
         meta_flag = params.pop("meta", False)
 
-        request_params = build_field_params(field_params) | build_include_params(include)
+        request_params = build_field_params(field_params) | build_include_params(include_params)
 
         try:
             r = self._request("GET", *path, expected_code=expected_code, params=request_params, **params)
