@@ -268,12 +268,11 @@ When set to :python:`True`, methods return a model containing all received meta 
 Nested resources
 ================
 
-Some resources refer to other resources. For example, users are tied to a realm which is usually not sent back
-automatically. This applies to any other nested resource.
+Some resources refer to other resources. For example, users are tied to a realm which is not sent back automatically.
+This applies to any other nested resource.
 
-All clients will automatically fetch all nested resources if they are available. This means that you can usually save
-yourself extra API calls. Be aware that the client is not capable of fetching nested resources on any level deeper than
-the resource you are requesting.
+Clients need to specify nested resources in order to be able to fetch them. Be aware that the client is not capable of
+fetching nested resources on any level deeper than the resource you are requesting.
 
 .. code-block:: python
 
@@ -284,22 +283,35 @@ the resource you are requesting.
     )
     auth_client = flame_hub.AuthClient(base_url="http://localhost:3000/auth/", auth=auth)
 
-    admin_user = auth_client.find_users(filter={"name": "admin"}).pop()
+    admin_user = auth_client.find_users(filter={"name": "admin"}, include="realm").pop()
 
-    print(admin_user.id)
-    print(admin_user.realm.model_dump_json(indent=2))
+    print(admin_user.model_dump_json(indent=2))
 
 .. code-block:: console
 
-    794f2375-f043-4789-bd0c-e5534e8deeaa
     {
-      "name": "master",
-      "displayName": null,
-      "description": null,
-      "id": "794f2375-f043-4789-bd0c-e5534e8deeaa",
-      "builtIn": true,
-      "createdAt": "2025-05-12T09:44:08.284000Z",
-      "updatedAt": "2025-05-12T09:44:08.284000Z"
+      "name": "admin",
+      "displayName": "admin",
+      "email": null,
+      "active": true,
+      "nameLocked": true,
+      "firstName": null,
+      "lastName": null,
+      "id": "2e2108b3-c31d-480c-a33b-90142c0fc609",
+      "avatar": null,
+      "cover": null,
+      "realmId": "4b98aa93-a83e-4ff8-bed4-d8968e0b7493",
+      "realm": {
+        "name": "master",
+        "displayName": null,
+        "description": null,
+        "id": "4b98aa93-a83e-4ff8-bed4-d8968e0b7493",
+        "builtIn": true,
+        "createdAt": "2026-10-19T11:43:09.196000Z",
+        "updatedAt": "2026-10-19T11:43:09.196000Z"
+      },
+      "createdAt": "2026-10-19T11:43:09.217000Z",
+      "updatedAt": "2026-10-19T11:43:09.217000Z"
     }
 
 Since the realm ID is present, we can use the ``realm`` property too. And just to be extremely sure, we verify that the
