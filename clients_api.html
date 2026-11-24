@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/documentation_options.js?v=20623aea"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -146,6 +146,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.send_analysis_command"><code class="docutils literal notranslate"><span class="pre">CoreClient.send_analysis_command()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.get_analysis_client_credentials"><code class="docutils literal notranslate"><span class="pre">CoreClient.get_analysis_client_credentials()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.update_analysis_client_credentials"><code class="docutils literal notranslate"><span class="pre">CoreClient.update_analysis_client_credentials()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.mint_storage_cap_token"><code class="docutils literal notranslate"><span class="pre">CoreClient.mint_storage_cap_token()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.create_analysis_node"><code class="docutils literal notranslate"><span class="pre">CoreClient.create_analysis_node()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.delete_analysis_node"><code class="docutils literal notranslate"><span class="pre">CoreClient.delete_analysis_node()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.CoreClient.update_analysis_node"><code class="docutils literal notranslate"><span class="pre">CoreClient.update_analysis_node()</span></code></a></li>
@@ -951,6 +952,11 @@ take some time.</p>
 <dd><p>Update the client credentials of the analysis. If <code class="docutils literal notranslate"><span class="pre">secret</span></code> is set to <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><code class="xref any docutils literal notranslate"><span class="pre">None</span></code></a>, then the Hub will create
 and set a random secret.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flame_hub.CoreClient.mint_storage_cap_token">
+<span class="sig-name descname"><span class="pre">mint_storage_cap_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analysis_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models_api.html#flame_hub.models.Analysis" title="flame_hub._core_client.Analysis"><span class="pre">Analysis</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.15)"><span class="pre">UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">capability_request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="models_api.html#flame_hub.models.StorageCapabilityTokenRequest" title="flame_hub._core_client.StorageCapabilityTokenRequest"><span class="pre">StorageCapabilityTokenRequest</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Unpack" title="(in Python v3.15)"><span class="pre">Unpack</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="types_api.html#flame_hub.types.BaseKwargs" title="flame_hub._base_client.BaseKwargs"><span class="pre">BaseKwargs</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="models_api.html#flame_hub.models.StorageCapabilityToken" title="flame_hub._core_client.StorageCapabilityToken"><span class="pre">StorageCapabilityToken</span></a></span></span><a class="headerlink" href="#flame_hub.CoreClient.mint_storage_cap_token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="flame_hub.CoreClient.create_analysis_node">

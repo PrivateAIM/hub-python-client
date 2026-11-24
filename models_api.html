@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="https://github.com/PrivateAIM/documentation/raw/refs/heads/master/src/public/images/icon/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=51b770b3"></script>
+      <script src="_static/documentation_options.js?v=20623aea"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -706,6 +706,26 @@
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.WrappedResource.data"><code class="docutils literal notranslate"><span class="pre">WrappedResource.data</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.WrappedResource.meta"><code class="docutils literal notranslate"><span class="pre">WrappedResource.meta</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.WrappedResource.model_config"><code class="docutils literal notranslate"><span class="pre">WrappedResource.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.models.StorageCapability"><code class="docutils literal notranslate"><span class="pre">StorageCapability</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapability.resource_type"><code class="docutils literal notranslate"><span class="pre">StorageCapability.resource_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapability.resource_id"><code class="docutils literal notranslate"><span class="pre">StorageCapability.resource_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapability.actions"><code class="docutils literal notranslate"><span class="pre">StorageCapability.actions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapability.serialize_model"><code class="docutils literal notranslate"><span class="pre">StorageCapability.serialize_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapability.model_config"><code class="docutils literal notranslate"><span class="pre">StorageCapability.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.models.StorageCapabilityToken"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityToken</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityToken.token"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityToken.token</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityToken.expires_at"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityToken.expires_at</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityToken.model_config"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityToken.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#flame_hub.models.StorageCapabilityTokenRequest"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityTokenRequest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityTokenRequest.capabilities"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityTokenRequest.capabilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityTokenRequest.lifetime"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityTokenRequest.lifetime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flame_hub.models.StorageCapabilityTokenRequest.model_config"><code class="docutils literal notranslate"><span class="pre">StorageCapabilityTokenRequest.model_config</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -3511,6 +3531,82 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flame_hub.models.WrappedResource.model_config">
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#flame_hub.models.WrappedResource.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.models.</span></span><span class="sig-name descname"><span class="pre">StorageCapability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resourceType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'bucket'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'bucket_file'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resourceId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.15)"><span class="pre">UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'read'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'write'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'delete'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.models.StorageCapability" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flame_hub.models.CoreBaseModel" title="flame_hub._core_client.CoreBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoreBaseModel</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability.resource_type">
+<span class="sig-name descname"><span class="pre">resource_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'bucket'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'bucket_file'</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.models.StorageCapability.resource_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability.resource_id">
+<span class="sig-name descname"><span class="pre">resource_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.15)"><span class="pre">UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.models.StorageCapability.resource_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability.actions">
+<span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.15)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'read'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'write'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'delete'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.models.StorageCapability.actions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability.serialize_model">
+<span class="sig-name descname"><span class="pre">serialize_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#flame_hub.models.StorageCapability.serialize_model" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapability.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'alias_generator':</span> <span class="pre">&lt;function</span> <span class="pre">to_camel&gt;,</span> <span class="pre">'serialize_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#flame_hub.models.StorageCapability.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityToken">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.models.</span></span><span class="sig-name descname"><span class="pre">StorageCapabilityToken</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">expiresAt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)"><span class="pre">datetime</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.models.StorageCapabilityToken" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flame_hub.models.CoreBaseModel" title="flame_hub._core_client.CoreBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoreBaseModel</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityToken.token">
+<span class="sig-name descname"><span class="pre">token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityToken.token" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityToken.expires_at">
+<span class="sig-name descname"><span class="pre">expires_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.15)"><span class="pre">datetime</span></a></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityToken.expires_at" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityToken.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'alias_generator':</span> <span class="pre">&lt;function</span> <span class="pre">to_camel&gt;,</span> <span class="pre">'serialize_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityToken.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityTokenRequest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flame_hub.models.</span></span><span class="sig-name descname"><span class="pre">StorageCapabilityTokenRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capabilities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flame_hub.models.StorageCapability" title="flame_hub._core_client.StorageCapability"><span class="pre">StorageCapability</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lifetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flame_hub.models.StorageCapabilityTokenRequest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#flame_hub.models.CoreBaseModel" title="flame_hub._core_client.CoreBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoreBaseModel</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityTokenRequest.capabilities">
+<span class="sig-name descname"><span class="pre">capabilities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#flame_hub.models.StorageCapability" title="flame_hub._core_client.StorageCapability"><span class="pre">StorageCapability</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityTokenRequest.capabilities" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityTokenRequest.lifetime">
+<span class="sig-name descname"><span class="pre">lifetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityTokenRequest.lifetime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flame_hub.models.StorageCapabilityTokenRequest.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'alias_generator':</span> <span class="pre">&lt;function</span> <span class="pre">to_camel&gt;,</span> <span class="pre">'serialize_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_alias':</span> <span class="pre">True,</span> <span class="pre">'validate_by_name':</span> <span class="pre">True}</span></em><a class="headerlink" href="#flame_hub.models.StorageCapabilityTokenRequest.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
 
