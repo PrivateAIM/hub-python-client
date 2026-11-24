@@ -6,7 +6,8 @@ import warnings
 
 import httpx2 as httpx
 import typing_extensions as te
-from pydantic import WrapValidator, Field, BeforeValidator, AliasChoices
+from pydantic import WrapValidator, Field, BeforeValidator, AliasChoices, model_serializer
+from pydantic.alias_generators import to_camel
 
 from flame_hub._auth_client import Realm
 from flame_hub._base_client import (
@@ -339,6 +340,26 @@ AnalysisCommand = t.Literal[
     "distributionCheck",
     "storageCheck",
 ]
+
+
+class StorageCapabilityToken(CoreBaseModel):
+    token: str
+    expires_at: datetime
+
+
+class StorageCapability(CoreBaseModel):
+    resource_type: t.Literal["bucket", "bucket_file"]
+    resource_id: uuid.UUID | str
+    actions: list[t.Literal["read", "write", "delete"]]
+
+    @model_serializer
+    def serialize_model(self) -> str:
+        return f"{to_camel(self.resource_type)}:{self.resource_id}:{','.join(self.actions)}"
+
+
+class StorageCapabilityTokenRequest(CoreBaseModel):
+    capabilities: list[StorageCapability] = Field(serialization_alias="cap")
+    lifetime: int
 
 
 class CreateAnalysisNode(CoreBaseModel):
@@ -834,6 +855,23 @@ class CoreClient(BaseClient):
             analysis_id,
             "client",
             "credentials",
+            expected_code=httpx.codes.OK.value,
+            **params,
+        )
+
+    def mint_storage_cap_token(
+        self,
+        analysis_id: Analysis | uuid.UUID | str,
+        capability_request: StorageCapabilityTokenRequest,
+        **params: te.Unpack[BaseKwargs],
+    ) -> StorageCapabilityToken:
+        return self._create_resource(
+            StorageCapabilityToken,
+            capability_request,
+            "analyses",
+            analysis_id,
+            "storage",
+            "token",
             expected_code=httpx.codes.OK.value,
             **params,
         )

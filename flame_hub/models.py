@@ -72,6 +72,9 @@ __all__ = [
     "SingleResourceMeta",
     "ResourceList",
     "WrappedResource",
+    "StorageCapability",
+    "StorageCapabilityToken",
+    "StorageCapabilityTokenRequest",
 ]
 
 from ._core_client import (
@@ -112,6 +115,9 @@ from ._core_client import (
     NodeRegistryCredentials,
     ClientCredentials,
     UpdateClientCredentials,
+    StorageCapability,
+    StorageCapabilityToken,
+    StorageCapabilityTokenRequest,
 )
 from ._storage_client import CreateBucket, Bucket, BucketFile, StorageBaseModel
 from ._base_client import (
