@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/PrivateAIM/hub-python-client/compare/v2.0.0...v2.1.0) (2026-11-24)
+
+
+### Features
+
+* storage capability tokens ([#152](https://github.com/PrivateAIM/hub-python-client/issues/152)) ([c1dcb35](https://github.com/PrivateAIM/hub-python-client/commit/c1dcb350e5d51c5c2e3b2768163689a7106ef432))
+
 ## [2.0.0](https://github.com/PrivateAIM/hub-python-client/compare/v1.1.0...v2.0.0) (2026-10-29)
 
 
