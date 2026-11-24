@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+import time
 import os
 import random
 import string
@@ -6,6 +8,7 @@ import typing as t
 import pytest
 
 from flame_hub import HubAPIError, get_includable_names, get_field_names
+from flame_hub.auth import ClientAuth
 from flame_hub.types import NodeType, ProcessStatus, AnalysisBucketType, LogLevel
 from flame_hub.models import (
     Registry,
@@ -17,6 +20,8 @@ from flame_hub.models import (
     AnalysisNode,
     AnalysisBucket,
     AnalysisBucketFile,
+    StorageCapabilityTokenRequest,
+    StorageCapability,
 )
 from tests.helpers import next_random_string, next_uuid, assert_eventually, next_random_number
 
@@ -68,6 +73,14 @@ def node(core_client, master_realm):
     new_node = core_client.create_node(next_random_string(), master_realm)
     yield new_node
     core_client.delete_node(new_node)
+
+
+@pytest.fixture()
+def node_client_auth(core_client, auth_base_url, node):
+    credentials = core_client.get_node_client_credentials(node_id=node)
+    client_auth = ClientAuth(client_id=str(credentials.id), client_secret=credentials.secret, base_url=auth_base_url)
+
+    return client_auth
 
 
 @pytest.fixture(scope="session")
@@ -126,19 +139,33 @@ def analysis_node_includables():
     return get_includable_names(AnalysisNode)
 
 
-@pytest.fixture()
-def analysis_code_bucket(core_client, analysis):
+def _get_analysis_bucket(core_client, analysis, bucket_type):
     def _wait_for_buckets():
         assert len(core_client.find_analysis_buckets(filter={"analysisId": analysis.id})) != 0
 
     assert_eventually(_wait_for_buckets)
 
     analysis_buckets = core_client.find_analysis_buckets(filter={"analysisId": analysis.id})
-    code_buckets = [bucket for bucket in analysis_buckets if bucket.type == AnalysisBucketType.CODE]
+    buckets = [bucket for bucket in analysis_buckets if bucket.type == bucket_type]
 
-    assert len(code_buckets) == 1
+    assert len(buckets) == 1
 
-    return code_buckets[0]
+    return buckets[0]
+
+
+@pytest.fixture()
+def analysis_code_bucket(core_client, analysis):
+    return _get_analysis_bucket(core_client, analysis, AnalysisBucketType.CODE)
+
+
+@pytest.fixture()
+def analysis_result_bucket(core_client, analysis):
+    return _get_analysis_bucket(core_client, analysis, AnalysisBucketType.RESULT)
+
+
+@pytest.fixture()
+def analysis_temp_bucket(core_client, analysis):
+    return _get_analysis_bucket(core_client, analysis, AnalysisBucketType.TEMP)
 
 
 @pytest.fixture(scope="session")
@@ -146,36 +173,40 @@ def analysis_bucket_includables():
     return get_includable_names(AnalysisBucket)
 
 
-@pytest.fixture()
-def analysis_bucket_file(core_client, storage_client, analysis_code_bucket, rng_bytes):
-    # Use the analysis bucket for code files so that the created bucket file can be used as an entrypoint to be able
-    # to generate analysis logs.
-
-    # Upload example file to referenced bucket.
+@contextmanager
+def _create_bucket_file(storage_client, core_client, rng_bytes, bucket):
+    # Upload example file to the bucket.
     file_name = next_random_string()
-    bucket_files = storage_client.upload_to_bucket(
-        analysis_code_bucket.bucket_id, {"file_name": file_name, "content": rng_bytes}
-    )
+    bucket_files = storage_client.upload_to_bucket(bucket.bucket_id, {"file_name": file_name, "content": rng_bytes})
     assert len(bucket_files) == 1
 
     # Find the corresponding analysis bucket file.
     bucket_file = bucket_files.pop()
 
     def _wait_for_analysis_bucket_file():
-        analysis_bucket_files = core_client.find_analysis_bucket_files(
-            filter={"analysisId": analysis_code_bucket.analysis_id}
-        )
+        analysis_bucket_files = core_client.find_analysis_bucket_files(filter={"analysisId": bucket.analysis_id})
         assert len(analysis_bucket_files) == 1
 
     assert_eventually(_wait_for_analysis_bucket_file)
 
-    analysis_bucket_file = core_client.find_analysis_bucket_files(
-        filter={"analysisId": analysis_code_bucket.analysis_id}
-    ).pop()
+    analysis_bucket_file = core_client.find_analysis_bucket_files(filter={"analysisId": bucket.analysis_id}).pop()
 
     yield analysis_bucket_file
 
     storage_client.delete_bucket_file(bucket_file.id)
+
+
+@pytest.fixture()
+def analysis_code_file(core_client, storage_client, analysis_code_bucket, rng_bytes):
+    # Create a file in the code bucket which is used as an entrypoint to be able to generate analysis logs.
+    with _create_bucket_file(storage_client, core_client, rng_bytes, analysis_code_bucket) as file:
+        yield file
+
+
+@pytest.fixture()
+def analysis_temp_file(core_client, storage_client, analysis_temp_bucket, rng_bytes):
+    with _create_bucket_file(storage_client, core_client, rng_bytes, analysis_temp_bucket) as file:
+        yield file
 
 
 @pytest.fixture(scope="session")
@@ -184,7 +215,7 @@ def analysis_bucket_file_includables():
 
 
 @pytest.fixture()
-def configured_analysis(core_client, registry, analysis, master_realm, analysis_bucket_file):
+def configured_analysis(core_client, registry, analysis, master_realm, analysis_code_file):
     # An analysis needs at least one default node,  one aggregator node, a base image and an entrypoint to be lockable.
     nodes = []
     for node_type in t.get_args(NodeType):
@@ -199,7 +230,7 @@ def configured_analysis(core_client, registry, analysis, master_realm, analysis_
         core_client.create_analysis_node(analysis, new_node)
 
     # Mark analysis bucket file as the entrypoint.
-    core_client.update_analysis_bucket_file(analysis_bucket_file, is_entrypoint=True)
+    core_client.update_analysis_bucket_file(analysis_code_file, is_entrypoint=True)
 
     # It takes some time until an analysis is lockable.
     def _check_analysis_lockable():
@@ -529,6 +560,29 @@ def test_update_analysis_client_credentials(core_client, analysis):
     assert new_credentials.secret == new_secret
 
 
+def test_mint_storage_cap_token(core_client, node_client_auth, analysis, analysis_result_bucket, analysis_node):
+    # analysis_node is important here, otherwise the node is not associated to the analysis.
+    lifetime = next_random_number(lower=10, upper=60, is_integer=True)
+    now = time.time()
+    token = core_client.mint_storage_cap_token(
+        analysis_id=analysis.id,
+        capability_request=StorageCapabilityTokenRequest(
+            capabilities=[
+                StorageCapability(
+                    resource_type="bucket",
+                    resource_id=analysis_result_bucket.bucket_id,
+                    actions=["write"],
+                ),
+            ],
+            lifetime=lifetime,
+        ),
+        auth=node_client_auth,
+    )
+
+    assert token.token
+    assert now < token.expires_at.timestamp()
+
+
 def test_update_analysis_node(core_client, analysis_node):
     progress = next_random_number(upper=100, is_integer=True)
     status = random.choice(t.get_args(ProcessStatus))
@@ -646,13 +700,13 @@ def test_find_analysis_buckets(core_client, analysis_code_bucket, analysis_bucke
     )
 
 
-def test_get_analysis_bucket_file(core_client, analysis_bucket_file, analysis_bucket_file_includables):
+def test_get_analysis_bucket_file(core_client, analysis_code_file, analysis_bucket_file_includables):
     analysis_bucket_file_get = core_client.get_analysis_bucket_file(
-        analysis_bucket_file.id,
+        analysis_code_file.id,
         include=analysis_bucket_file_includables,
     )
 
-    assert analysis_bucket_file_get.id == analysis_bucket_file.id
+    assert analysis_bucket_file_get.id == analysis_code_file.id
     assert all(
         includable in analysis_bucket_file_get.model_fields_set for includable in analysis_bucket_file_includables
     )
@@ -662,7 +716,7 @@ def test_get_analysis_bucket_file_not_found(core_client):
     assert core_client.get_analysis_bucket_file(next_uuid()) is None
 
 
-def test_get_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
+def test_get_analysis_bucket_files(core_client, analysis_code_file, analysis_bucket_file_includables):
     analysis_bucket_files_get = core_client.get_analysis_bucket_files(include=analysis_bucket_file_includables)
 
     assert len(analysis_bucket_files_get) > 0
@@ -673,14 +727,14 @@ def test_get_analysis_bucket_files(core_client, analysis_bucket_file, analysis_b
     )
 
 
-def test_find_analysis_bucket_files(core_client, analysis_bucket_file, analysis_bucket_file_includables):
+def test_find_analysis_bucket_files(core_client, analysis_code_file, analysis_bucket_file_includables):
     # Use "analysis_id" instead of "id" because filtering for ids does not work.
     analysis_bucket_files_find = core_client.find_analysis_bucket_files(
-        filter={"analysisId": analysis_bucket_file.analysis_id},
+        filter={"analysisId": analysis_code_file.analysis_id},
         include=analysis_bucket_file_includables,
     )
 
-    assert [analysis_bucket_file.id] == [abf.id for abf in analysis_bucket_files_find]
+    assert [analysis_code_file.id] == [abf.id for abf in analysis_bucket_files_find]
     assert all(
         includable in abf.model_fields_set
         for abf in analysis_bucket_files_find
@@ -688,13 +742,13 @@ def test_find_analysis_bucket_files(core_client, analysis_bucket_file, analysis_
     )
 
 
-def test_update_analysis_bucket_file(core_client, analysis_bucket_file):
+def test_update_analysis_bucket_file(core_client, analysis_code_file):
     new_analysis_bucket_file = core_client.update_analysis_bucket_file(
-        analysis_bucket_file.id, is_entrypoint=not analysis_bucket_file.root
+        analysis_code_file.id, is_entrypoint=not analysis_code_file.root
     )
 
-    assert new_analysis_bucket_file != analysis_bucket_file
-    assert new_analysis_bucket_file.root is not analysis_bucket_file.root
+    assert new_analysis_bucket_file != analysis_code_file
+    assert new_analysis_bucket_file.root is not analysis_code_file.root
 
 
 def test_get_registry(core_client, registry, registry_fields):
